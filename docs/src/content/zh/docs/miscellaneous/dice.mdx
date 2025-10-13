@@ -1,0 +1,29 @@
+# dice
+
+```js
+// 用法
+randBox.d4()
+randBox.d6()
+randBox.d8()
+randBox.d10()
+randBox.d12()
+randBox.d20()
+randBox.d30()
+randBox.d100()
+```
+
+<p class="pullquote" data-pullquote='"任何有分量的地下城主都不会不带着他的 20 面骰子出门。"' markdown="1"></p>
+
+返回等于投掷骰子的值。
+
+```js
+randBox.d20();
+=> 13
+
+randBox.d6();
+=> 4
+```
+
+这些只是 natural() 的封装器，但对游戏使用很方便。
+
+它们返回 1 到 `d` 后面数字之间的值，所以 `randBox.d4()` 返回 1、2、3 或 4，就像 4 面骰子一样。

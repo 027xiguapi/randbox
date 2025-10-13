@@ -1,0 +1,25 @@
+# letter
+
+```js
+// 用法
+randBox.letter()
+randBox.letter({ casing: 'lower' })
+```
+
+返回一个随机字母。
+
+```js
+randBox.letter();
+=> 'p'
+```
+
+默认情况下，它将返回一个随机的小写字母。
+
+<p class="pullquote">注意，原本想将这个选项命名为 <strong>case</strong> 而不是 <strong>casing</strong>，但不幸的是这在 JavaScript 中是 switch 语句的保留字</p>
+
+可以指定大写字母
+
+```js
+randBox.letter({casing: 'upper'});
+=> 'A'
+```

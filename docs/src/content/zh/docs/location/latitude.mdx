@@ -1,0 +1,43 @@
+# latitude
+
+```js
+// 用法
+randBox.latitude()
+randBox.latitude({fixed: 7})
+randBox.latitude({format: 'dms'})
+```
+
+生成一个随机纬度。
+
+```js
+randBox.latitude();
+=> 57.99514
+```
+
+_范围：-90 到 90_
+
+默认情况下，小数点后包含 5 位固定数字，可以指定其他设置。
+
+```js
+randBox.latitude({fixed: 7});
+=> -29.6443133
+```
+
+默认情况下，包含允许的整个纬度范围，可以指定最小值和/或最大值来限制它
+
+```js
+randBox.latitude({min: 38.7, max: 38.9});
+=> 38.82358
+```
+
+默认情况下，纬度格式为 dd，可以指定其他格式。
+
+```js
+randBox.latitude({format: 'ddm'});
+=> "41°44.9592"
+```
+
+```js
+randBox.latitude({format: 'dms'});
+=> "56°2'9.8187""
+```

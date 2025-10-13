@@ -1,0 +1,61 @@
+# character
+
+```js
+// 用法
+randBox.character()
+randBox.character({ pool: 'abcde' })
+randBox.character({ alpha: true })
+randBox.character({ numeric: true })
+randBox.character({ casing: 'lower' })
+randBox.character({ symbols: true })
+```
+
+返回一个随机字符。
+
+```js
+randBox.character();
+=> 'v'
+```
+
+默认情况下，它将从以下字符池中返回一个随机字符。
+
+```js
+'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()'
+```
+
+可以选择性地指定一个字符池，生成的字符将仅来自该字符池。
+
+```js
+randBox.character({ pool: 'abcde' });
+=> 'c'
+```
+
+可以选择性地指定 alpha 来获取字母字符。
+
+```js
+randBox.character({ alpha: true });
+=> 'N'
+```
+
+可以选择性地指定 numeric 来获取数字字符。
+
+```js
+randBox.character({ numeric: true });
+=> '8'
+```
+
+默认包括大写和小写字母。可以指定其中一种。
+
+```js
+randBox.character({ casing: 'lower' });
+=> 'j'
+```
+
+*注意，原本想将这个键命名为 ```case```，但不幸的是这在 JavaScript 中是 switch 语句的保留字*
+
+可以选择性地只返回符号字符
+
+```js
+randBox.character({ symbols: true });
+=> '%'
+```

@@ -1,0 +1,31 @@
+# first
+
+```js
+// 用法
+randBox.first()
+randBox.first({ nationality: 'en' })
+```
+
+生成一个随机名字
+
+```js
+randBox.first();
+=> 'Leila'
+```
+
+可选择指定性别以限制名字为该性别
+
+```js
+randBox.first({ gender: "female" });
+=> 'Emma'
+```
+
+可选择指定国籍以限制名字为该国籍最常见的名字
+
+```js
+randBox.first({ nationality: "it" });
+=> 'Alberto'
+```
+
+注意，目前对国籍的支持仅限于：`'en', 'it', 'nl', 'fr'`。
+

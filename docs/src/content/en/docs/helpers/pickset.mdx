@@ -1,0 +1,20 @@
+# pickset
+
+```js
+// usage
+randBox.pickset(array, quantity)
+```
+
+Given an array, pick some random elements and return them in a new array
+
+```js
+randBox.pickset(['alpha', 'bravo', 'charlie', 'delta', 'echo'], 3);
+=> ['echo', 'alpha', 'bravo']
+```
+
+Optionally omit the quantity to retrieve a set with length 1
+
+```js
+randBox.pickset(['alpha', 'bravo', 'charlie', 'delta', 'echo']);
+=> ['delta']
+```

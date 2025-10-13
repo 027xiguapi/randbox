@@ -4,6 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "lib": ["ES2022", "ESNext.Disposable", "DOM"],
+    "declarationDir": "./dist",
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,

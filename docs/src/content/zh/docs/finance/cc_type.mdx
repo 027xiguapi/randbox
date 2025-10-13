@@ -1,0 +1,41 @@
+# cc_type
+
+```js
+// 使用方法
+randBox.cc_type()
+randBox.cc_type({raw: true})
+```
+
+返回一个随机的信用卡类型。
+
+```js
+randBox.cc_type();
+=> 'Visa'
+```
+
+默认只返回名称。要返回整个对象（包括名称、简称、数字前缀和长度），请使用 raw 标志指定。
+
+```js
+randBox.cc_type({raw: true});
+=> {name: 'Discover Card', short_name: 'discover', prefix: '6011', length: 16}
+```
+
+可用的类型是（名称 - *简称*）：
+
+* American Express - *amex*
+* Bankcard - *bankcard*
+* China UnionPay - *chinaunion*
+* Diners Club Carte Blanche - *dccarte*
+* Diners Club enRoute - *dcenroute*
+* Diners Club International - *dcintl*
+* Diners Club United States & Canada - *dcusc*
+* Discover Card - *discover*
+* InstaPayment - *instapay*
+* JCB - *jcb*
+* Laser - *laser*
+* Maestro - *maestro*
+* Mastercard - *mc*
+* Solo - *solo*
+* Switch - *switch*
+* Visa - *visa*
+* Visa Electron - *electron*

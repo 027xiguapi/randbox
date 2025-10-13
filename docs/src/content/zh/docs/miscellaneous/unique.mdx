@@ -1,0 +1,47 @@
+# unique
+
+```js
+// 用法
+randBox.unique(randBox.state, 5)
+randBox.unique(randBox.state, 5, { comparator: func })
+```
+
+提供任何生成随机内容的函数（通常是另一个 **RandBox** 函数）和一个数字，`unique()` 将生成一个唯一（不重复）项目的随机数组，其长度与您指定的匹配。
+
+```js
+randBox.unique(randBox.state, 5);
+=> ["SC", "WA", "CO", "TX", "ND"]
+```
+
+当选项数量有限并且您希望获得一堆项目但要确保每个都不同时，这很有用。
+
+可选择指定用于确定生成的项目是否在已生成项目列表中的比较器。默认情况下，比较器只是检查新生成的项目是否在已生成项目的数组中。这适用于大多数简单情况（如 `randBox.state()`），但如果生成的项目是对象则不起作用（因为 `Array.prototype.indexOf()` 方法在对象上不起作用，因为除非两个对象是对同一对象的引用，否则它们不会严格相等 `===`）。
+
+```js
+randBox.unique(randBox.currency, 2, {
+comparator: function(arr, val) {
+return arr.reduce(function(acc, item) {
+return acc || (item.code === val.code);
+}, false);
+}
+});
+=> [{ code: "KYF", name: "Cayman Islands Dollar" }, { code: "CDF", name: "Congo/Kinshasa Franc" }]
+```
+
+您还可以在此第三个参数中指定任何任意选项，它们将传递给您指定为第一个的方法。
+
+例如，假设您想要检索 0 到 100 之间的 10 个唯一整数。通过指定 `randBox.integer` 作为函数、10 作为要检索的数量，以及在选项中指定最小值/最大值，这很容易实现。
+
+```js
+randBox.unique(randBox.integer, 10, {min: 0, max: 100});
+=> [78, 49, 7, 87, 59, 89, 84, 62, 60, 63]
+```
+
+注意，可能存在无法生成唯一数字的情况。例如，如果您选择如上所示的 `randBox.state` 作为随机函数，并且想要比如说 55 个唯一项，**RandBox** 将抛出 RangeError，因为无法生成 55 个唯一项，因为可用池中只有 51 个州（50 个州加上哥伦比亚特区）。
+
+```js
+randBox.unique(randBox.state, 55);
+=> RangeError: RandBox: num is likely too large for sample set
+```
+
+

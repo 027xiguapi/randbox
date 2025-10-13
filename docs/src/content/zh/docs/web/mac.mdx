@@ -1,0 +1,22 @@
+# mac
+
+```js
+// 用法
+randBox.mac()
+randBox.mac({delimiter: '-'})
+```
+
+返回一个随机的 MAC 地址（EUI-48）。
+
+```js
+randBox.mac()
+=> '08:c2:88:ad:49:23'
+```
+
+可选择指定八位字节之间的特定分隔符。
+
+```js
+randBox.mac({delimiter: '-'})
+=> '00-0d-b9-52-f2-f0'
+```
+

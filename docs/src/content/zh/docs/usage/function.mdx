@@ -1,0 +1,19 @@
+# function
+
+除了提供种子（将用于我们的 [Mersenne Twister](https://en.wikipedia.org/wiki/Mersenne_twister) 算法进行播种），你也可以指定一个任意函数来生成随机数，库的其余部分在生成其他所有内容时将使用该函数。
+
+一个相当简单的例子，只是使用 Math.random() 而不是我们的 Mersenne Twister
+
+```js
+// 使用 Math.random() 而不是我们的 Mersenne Twister
+var randBox = new RandBox(Math.random);
+
+randBox.address()
+=> '131 Asmun Pike'
+randBox.address()
+=> '261 Pawnaf Highway'
+```
+
+RandBox 看起来工作方式完全相同，但具有不同的底层随机生成器。
+
+此函数应返回 0 到 1 之间的任意数字。

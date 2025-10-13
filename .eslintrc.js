@@ -9,7 +9,7 @@ module.exports = {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly",
         "define": "writable",
-        "chance": "writable"
+        "randBox": "writable"
     },
     "parserOptions": {
         "ecmaVersion": 2018

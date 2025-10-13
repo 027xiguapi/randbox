@@ -1,0 +1,23 @@
+# cf
+
+```js
+// 用法
+randBox.cf()
+```
+生成一个随机意大利社会保险号码（Codice Fiscale）。
+
+```js
+randBox.cf();
+=> 'BRSMRT87S49A988X'
+```
+
+可选择指定任何或所有组件：名字、姓氏、性别、出生日期、出生地（使用意大利城市的 ISTAT 地理编码）。
+
+```js
+randBox.cf({first: 'Sergio', last: 'Leone'});
+=> 'LNESRG93P28F067V'
+
+randBox.cf({first: 'Sophia', last: 'Loren', gender: 'Female', birthday: new Date(1934,8,20), city: 'h501'});
+
+=> 'LRNSPH34P60H501G'
+```

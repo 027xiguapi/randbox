@@ -1,0 +1,33 @@
+# hash
+
+```js
+// 用法
+randBox.hash()
+randBox.hash({length: 25})
+randBox.hash({casing: 'upper'})
+```
+
+返回一个随机十六进制哈希
+
+```js
+randBox.hash()
+=> 'e5162f27da96ed8e1ae51def1ba643b91d2581d8'
+```
+
+默认情况下，哈希是小写的，长度为 40 个十六进制字符（与 git 提交哈希相同）。
+
+可选择指定长度
+
+```js
+randBox.hash({length: 15})
+=> 'c28f57cb599ada4'
+```
+
+可选择指定大小写以获得只有大写字母的哈希，而不是默认的小写
+
+```js
+randBox.hash({casing: 'upper'})
+=> '3F2EB3FB85D88984C1EC4F46A3DBE740B5E0E56E'
+```
+
+

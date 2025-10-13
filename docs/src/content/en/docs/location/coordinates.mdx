@@ -1,0 +1,34 @@
+# coordinates
+
+```js
+// usage
+randBox.coordinates()
+randBox.coordinates({fixed: 2})
+randBox.coordinates({format: 'dms'})
+```
+
+Generate random coordinates, which are latitude and longitude, comma separated.
+
+```js
+randBox.coordinates();
+=> "-29.52974, 24.52815"
+```
+
+By default includes 5 fixed digits after decimal, can specify otherwise.
+
+```js
+randBox.coordinates({fixed: 2});
+=> "-49.16, 68.81"
+```
+
+By default cooridnates' format is dd, can specify otherwise.
+
+```js
+randBox.coordinates({format: 'ddm'});
+=> "41°44.9592, 25°56.2622"
+```
+
+```js
+randBox.coordinates({format: 'dms'});
+=> "56°2’9.8187”, 79°55’40.6812”"
+```

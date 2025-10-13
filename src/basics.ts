@@ -335,7 +335,7 @@ export function string(this: RandBox, options?: Partial<StringOptions>): string 
  *      "a": a random lower case letter
  *      "A": a random upper case letter
  *
- *  Example: chance.template('{AA###}-{##}')
+ *  Example: randBox.template('{AA###}-{##}')
  *
  *  @param {String} template string.
  *  @returns {String} a random string matching the template.
@@ -347,7 +347,7 @@ export function template(this: RandBox, templateStr?: string): string {
 
     interface Token {
         c: string;
-        substitute(chance?: RandBox): string;
+        substitute(randBox?: RandBox): string;
     }
 
     function CopyToken(this: Token, c: string): void {
@@ -379,17 +379,17 @@ export function template(this: RandBox, templateStr?: string): string {
 
     ReplaceToken.prototype = {
         replacers: {
-            '#': function (chance: RandBox) { return chance.character({ pool: NUMBERS }); },
-            'A': function (chance: RandBox) { return chance.character({ pool: CHARS_UPPER }); },
-            'a': function (chance: RandBox) { return chance.character({ pool: CHARS_LOWER }); },
+            '#': function (randBox: RandBox) { return randBox.character({ pool: NUMBERS }); },
+            'A': function (randBox: RandBox) { return randBox.character({ pool: CHARS_UPPER }); },
+            'a': function (randBox: RandBox) { return randBox.character({ pool: CHARS_LOWER }); },
         },
 
-        substitute: function (chance: RandBox) {
+        substitute: function (randBox: RandBox) {
             const replacer = this.replacers[this.c];
             if (!replacer) {
                 throw new Error('Invalid replacement character: "' + this.c + '".');
             }
-            return replacer(chance);
+            return replacer(randBox);
         }
     };
 

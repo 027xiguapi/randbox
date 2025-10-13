@@ -1,0 +1,36 @@
+# cc
+
+```js
+// 使用方法
+randBox.cc()
+randBox.cc({type: 'Mastercard'})
+```
+
+<p class="pullquote" data-pullquote='显而易见的警告：请勿将此功能用于真实的支付网关...' markdown="1"></p>
+
+生成一个随机的信用卡号码。此卡号将通过[Luhn算法][Luhn]验证，看起来像一个合法的卡号。
+
+```js
+randBox.cc();
+=> '6304038511073827'
+```
+
+可以可选地指定要返回的特定类型的卡：
+
+```js
+randBox.cc({type: 'Mastercard'});
+=> '5171206237468496'
+```
+
+类型可以通过全名或简称来指定：
+
+```js
+randBox.cc({type: 'mc'});
+=> '5103820202214116'
+```
+
+
+[类型][types]在下面列举。
+
+[Luhn]: http://en.wikipedia.org/wiki/Luhn_algorithm
+[types]: #cc_type

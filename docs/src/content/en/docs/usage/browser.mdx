@@ -1,0 +1,58 @@
+# browser
+
+#### Easy
+
+**RandBox** instantiates itself onto the window. This means that in the simplest
+case you can just include the script tag then use an instance of **RandBox**
+immediately.
+
+```html
+<script src="randBox.js"></script>
+<script>
+    console.log(randBox.bool());
+</script>
+```
+
+The above snippet would result in either true or false being logged to your
+console. Note how the instance is lowercase *randBox*. Uppercase *RandBox* is the
+constructor which will create a new instance of **RandBox**.
+
+#### Intermediate
+
+You can also ignore the global instantiation of **RandBox** and create your own.
+This allows you to create multiple instances if you'd like. For convenience, we
+also bind **RandBox** to window so it's accessible globally in the browser at
+*window.RandBox* or just *RandBox*.
+
+```html
+<script src="randBox.js"></script>
+<script>
+    var my_chance = new RandBox();
+    console.log(my_randBox.bool());
+</script>
+```
+
+
+#### Advanced
+
+If you create your own instance of **RandBox**, you can provide your own seed if
+you would like to be repeatable or if you'd like a more truly random seed. In
+the below example, I am doing an AJAX call to hit [Random.org][random] to
+retrieve a *true* random number which I use to seed randBox.
+
+```html
+<script src="http://randbox.com/randBox.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script>
+    var mySeed;
+    $.get("https://www.random.org/integers/", {num: "1", col: "1", min: "1", max: "1000000000", base: "10", format: "plain", rnd: "new"}, function(randNum) {
+      mySeed = randNum;
+
+      // Instantiate RandBox with this truly random number as the seed
+      var my_seeded_chance = new RandBox(mySeed);
+      console.log(my_seeded_randBox.natural());
+    });
+</script>
+```
+
+[random]: http://www.random.org

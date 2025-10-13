@@ -1,0 +1,40 @@
+# avatar
+
+```js
+// 用法
+randBox.avatar()
+randBox.avatar({protocol: 'https'})
+randBox.avatar({fileExtension: 'jpg'})
+randBox.avatar({email: 'mail@victorquinn.com'})
+```
+
+返回一个来自 Gravatar 的随机头像 URL。
+
+```js
+randBox.avatar()
+=> '//www.gravatar.com/avatar/41f84bab4a852971eb1d26a287acb763'
+```
+
+默认情况下，返回一个不带协议的 url。指定一个协议来获取随机 url 但具有已知协议
+
+```js
+randBox.avatar({protocol: 'https'})
+=> 'https://www.gravatar.com/avatar/f40260c4058cc904b7db652c26099966'
+```
+
+可选择指定文件扩展名以获取已知类型的文件
+
+```js
+randBox.avatar({fileExtension: 'jpg'})
+=> '//www.gravatar.com/avatar/76697df5874c854e3cc8fde1200b4298.jpg'
+```
+
+你也可以使用已知的电子邮件地址来获取对应的头像。
+
+但是请注意，这当然不再是随机的，更多的是一个辅助函数：
+
+```js
+randBox.avatar({email: 'mail@victorquinn.com'})
+=> 'www.gravatar.com/avatar/8595c2591b0bca22e736813af33fa7c3'
+```
+

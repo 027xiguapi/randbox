@@ -1,0 +1,194 @@
+---
+title: "What's New"
+---
+
+import { Callout } from 'nextra/components'
+
+# 🎲 RandBox Full Feature Overview
+
+RandBox is a powerful JavaScript random data generation library, offering over 100 data types across 10+ major categories to meet your diverse needs in development, testing, and data simulation\!
+
+<Callout emoji={<span className='icon-[game-icons--dice-twenty-faces-twenty]'></span>} type="info">
+Powerful Features
+
+RandBox provides a rich API and flexible configuration options, supporting comprehensive random data generation from basic data types to complex business scenarios. Whether for unit testing, data population, or rapid prototyping, RandBox offers a reliable solution.
+</Callout>
+
+### 🎯 Usage Methods Module
+
+RandBox supports multiple environments and usage methods, making integration into various projects easy:
+
+  - 🌐 **Browser Environment**: Supports simple, intermediate, and advanced usage to meet different complexity needs.
+  - 📦 **Package Managers**: Supports installation via mainstream package managers like Bower, npm, and yarn.
+  - 🔧 **Module Loading**: Compatible with various loading methods, including RequireJS and ES6 modules.
+  - 🖥️ **Node.js Environment**: Perfect support for server-side JavaScript development.
+  - ⚙️ **Custom Functionality**: Supports custom random functions and a CLI command-line tool.
+  - 🌱 **Seed System**: Supports number, string, and multi-parameter seeds to ensure reproducible randomness.
+
+### 🎨 Basic Data Types
+
+Core random data generation features, covering all basic data types:
+
+  - 🔢 **Numeric Types**: Boolean, Integer, Floating-point, Natural Number, Prime Number
+  - 🔤 **Character Types**: Random Character, Letter, String, Template String
+  - 📝 **Special Types**: JavaScript Falsy values, Hexadecimal, Buffer
+
+### 💰 Financial Data Module
+
+Professional financial data generation, compliant with real-world standards:
+
+  - 💳 **Credit Card System**: Luhn-compliant credit card numbers, CVV, expiration dates
+  - 🏦 **Currency System**: Random currency codes, currency pairs, USD/Euro amounts
+  - 🌐 **International Standards**: Supports IBAN and various credit card type identification
+
+### 🛠️ Helper Tools Module
+
+Practical data manipulation and processing tools:
+
+  - 🎲 **Array Operations**: Random selection, shuffling, unique value generation
+  - 🔧 **String Utilities**: Capitalization, number padding, weighted selection
+  - ⚡ **Performance Optimization**: Mixin functionality, dataset overriding, batch generation
+
+### 🌍 Geographical Location Module
+
+Global geographical data generation, supporting multiple countries and regions:
+
+  - 🏠 **Address System**: Street address, City, Country, Coordinates
+  - 📞 **Communication Info**: Phone numbers, Area codes (supports USA, UK, France)
+  - 🗺️ **Geographical Data**: Latitude, Longitude, Altitude, Depth, Geohash, Timezone
+
+### 🎮 Miscellaneous Tools Module
+
+A wealth of practical utilities and gamified features:
+
+  - 🎯 **Random Selection**: Coin toss, Dice system (d4 to d100)
+  - 🆔 **Identifier Generation**: GUID, Hash value, Timestamp
+  - 📊 **Statistical Features**: Normal distribution, RPG dice system, Radio call signs
+
+### 📱 Mobile Device Module
+
+Dedicated identifier generation for mobile platforms:
+
+  - 🤖 **Android Platform**: GCM Registration ID, Device Identifier
+  - 🍎 **iOS Platform**: Apple Push Token, Device Identification
+  - 📱 **Other Platforms**: BlackBerry PIN, Windows Phone ANID
+
+### 🎵 Music Data Module
+
+Professional music-related data generation:
+
+  - 🎼 **Note System**: Random musical notes, flats, sharps, natural notes
+  - 🎸 **Music Genres**: 22 main genres, over 600 subgenres
+  - ⏱️ **Tempo System**: Random tempo (40-320 BPM range)
+
+### 👤 Personal Information Module
+
+Comprehensive personal identity data generation, supporting multi-national standards:
+
+  - 📝 **Basic Information**: Name, Age, Birthday, Gender, Zodiac Sign
+  - 🆔 **Identity Documents**: US SSN, Indian Aadhar, Italian CF, Brazilian CPF
+  - 🏷️ **Title System**: Name prefixes, suffixes, supporting multiple nationalities
+
+### 📝 Text Generation Module
+
+Intelligent text content generation:
+
+  - 📖 **Document Structure**: Paragraphs, Sentences, Words, Syllables
+  - 😊 **Emojis**: Supports categorization and length control
+  - 🗣️ **Phonetic Features**: Generation of semi-pronounceable nonsense words
+
+### 🐾 Entities Module
+
+Random generation of various entities:
+
+  - 🦁 **Animal System**: Supports categories like marine, desert, grassland, forest, farm, pet, zoo
+
+### ⏰ Date and Time Module
+
+A complete time data generation system:
+
+  - 📅 **Date & Time**: Random Date, Time, Timestamp, Timezone
+  - 🕐 **Time Components**: Hour, Minute, Second, Millisecond, AM/PM indicator
+  - 📆 **Date Components**: Year, Month, Weekday, Weekday restriction
+
+### 🌐 Web Data Module
+
+Comprehensive support for internet and network-related data:
+
+  - 🌍 **Network Identifiers**: IP Address, IPv6, MAC Address, Domain Name
+  - 📧 **Communication Tools**: Email, URL, Social Media Username
+  - 🎨 **Visual Elements**: Color generation (6 formats like hex, rgb, rgba)
+  - 🏢 **Business Data**: Company Name, Profession, Google Analytics Code
+
+## Quick Start
+
+### Install RandBox
+
+```bash
+# Using npm
+npm install randbox
+
+# Using yarn
+yarn add randbox
+
+# Using bower
+bower install randbox
+```
+
+### Basic Usage Example
+
+```javascript
+import RandBox from 'randbox';
+
+const randBox = new RandBox();
+
+// Basic Data Types
+console.log(randBox.bool());           // true/false
+console.log(randBox.integer(1, 100));  // 42
+console.log(randBox.string(10));       // "aBcD1234eF"
+
+// Personal Information
+console.log(randBox.name());           // "Sarah Johnson"
+console.log(randBox.email());          // "john.doe@example.com"
+console.log(randBox.age());            // 25
+
+// Geographical Location
+console.log(randBox.city());           // "New York"
+console.log(randBox.country());        // "United States"
+console.log(randBox.coordinates());    // "40.7128, -74.0060"
+
+// Financial Data
+console.log(randBox.cc());             // "4111111111111111"
+console.log(randBox.currency());       // "USD"
+```
+
+### Using a Seed for Reproducibility
+
+```javascript
+import RandBox from 'randbox';
+
+// Use the same seed to generate the same result
+const randBox1 = new RandBox(12345);
+const randBox2 = new RandBox(12345);
+
+console.log(randBox1.name()); // "Alice Smith"
+console.log(randBox2.name()); // "Alice Smith" (Same result)
+```
+
+## Documentation and Support
+
+  - 📚 [RandBox Full Documentation](https://randbox.top/docs)
+  - 🎲 [API Reference Manual](https://randbox.top/docs/basics)
+  - 💻 [GitHub Repository](https://github.com/027xiguapi/randbox)
+  - 🐞 Found an issue? Feel free to submit an [Issue](https://github.com/027xiguapi/randbox/issues)
+
+### Development Roadmap
+
+RandBox will continue to be updated and optimized, with plans to add more practical features:
+
+  - 🌍 **More Regional Support**: Expand data formats for more countries and regions
+  - 🚀 **Performance Optimization**: Continuously improve the efficiency of generation algorithms
+  - 📦 **Modular Enhancements**: Provide finer-grained module separation
+  - 🔧 **Custom Extensions**: Support more flexible custom data types
+
+If you find RandBox helpful, we welcome your support by clicking the [⭐️ Star](https://github.com/027xiguapi/randbox) button on the top right of the project\! Every star is the greatest encouragement for us, helping the project to continuously improve and move forward. Thank you very much for your support\! 🎲

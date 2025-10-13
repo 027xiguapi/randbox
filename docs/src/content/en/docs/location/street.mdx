@@ -1,0 +1,37 @@
+# street
+
+```js
+// usage
+randBox.street()
+randBox.street({country:it})
+```
+
+Generate a random street
+
+```js
+randBox.street();
+=> 'Tesca Circle'
+```
+
+Optionally mandate that it returns a short suffix
+
+```js
+randBox.street({short_suffix: true});
+=> 'Jiled St'
+```
+
+Optionally specify the number of syllables used to generate the street name
+
+```js
+randBox.street({syllables: 8});
+=> 'Teniefitinusewjircor Junction'
+```
+
+Optionally specify a country to localize street prefixes
+
+```js
+randBox.street({country: 'it'});
+=> 'Via Nefba'
+```
+
+Note, currently support for country is limited to: `'us', 'it'`.

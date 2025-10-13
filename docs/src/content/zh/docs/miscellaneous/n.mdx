@@ -1,0 +1,35 @@
+# n
+
+```js
+// 用法
+randBox.n(randBox.email, 5)
+randBox.n(randBox.email, 5, { domain: "socialradar.com" })
+```
+
+提供任何生成随机内容的函数（通常是另一个 **RandBox** 函数）和一个数字，`n()` 将生成一个项目数组，其长度与您指定的长度匹配。
+
+例如，生成 5 个电子邮件地址：
+
+```js
+randBox.n(randBox.email, 5);
+=> [ 'nese@me.gov',
+'tukvogi@novew.co.uk',
+'worzi@jotok.edu',
+'wicumafom@lalu.edu',
+'hifebwo@abecusa.com' ]
+```
+
+任何将发送到随机函数的选项都可以在数字后面添加。
+
+例如，`randBox.email()` 有可以指定的选项，所以您可以如下生成 5 个具有已知域名的电子邮件：
+
+```js
+randBox.n(randBox.email, 5, { domain: "socialradar.com" })
+=> [ 'nuvvu@socialradar.com',
+'icolul@socialradar.com',
+'rig@socialradar.com',
+'ca@socialradar.com',
+'uc@socialradar.com' ]
+```
+
+注意，这些项目不保证是唯一的。如果这是意图，请参见 [`randBox.unique()`](http://randbox.com/#unique)

@@ -1,0 +1,29 @@
+# altitude
+
+```js
+// 用法
+randBox.altitude()
+randBox.altitude({ fixed: 7 })
+randBox.altitude({ max: 1000 })
+```
+
+生成一个随机海拔高度，以米为单位。
+
+```js
+randBox.altitude()
+=> 1863.21417
+```
+
+默认情况下，在小数点后包含 5 位精度。可以使用 `fixed` 选项覆盖。
+
+```js
+randBox.altitude({ fixed: 7 })
+=> 6897.8978386
+```
+
+默认情况下，最大值为 8848 米（珠穆朗玛峰的高度），但可以使用 `max` 选项覆盖。
+
+```js
+randBox.altitude({ max: 1000 })
+=> 890.20665
+```

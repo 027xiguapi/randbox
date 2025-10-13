@@ -1,0 +1,46 @@
+# natural
+
+```js
+// 用法
+randBox.natural()
+randBox.natural({ min: 1, max: 20 })
+```
+
+返回一个自然数。
+
+_范围：0 到 9007199254740991_
+
+```js
+  randBox.natural();
+  => 125019392395
+```
+
+可以选择性地提供 min 和 max。
+
+```js
+randBox.natural({min: 1, max: 20});
+=> 14
+```
+
+可以选择性地提供您希望排除的数字。
+
+```js
+randBox.natural({min: 1, max: 5, exclude: [1, 3]});
+=> 2
+```
+
+这些是包含性的，因此它们包含在范围内。这意味着
+```randBox.natural({min: 1, max: 3});``` 将返回 1、2 或 3 中的任意一个，即：
+
+```js
+// 具体情况
+1 <= 随机数 <= 3
+
+// 一般情况
+min <= 随机数 <= max
+```
+
+[维基百科上的自然数][natural]
+
+[natural]: https://en.wikipedia.org/wiki/Natural_number
+

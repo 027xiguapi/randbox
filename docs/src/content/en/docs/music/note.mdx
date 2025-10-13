@@ -1,0 +1,33 @@
+# note
+
+```js
+// usage
+randBox.note();
+randBox.note({ notes: 'flatkey' });
+```
+
+Return a note. 🎵
+
+```js
+randBox.note();
+=> 'B'
+
+randBox.note();
+=> 'E♭'
+```
+
+Options
+flatKey - chromatic scale with flat notes (default)
+sharpKey - chromatic scale with sharp notes
+flats - just flat notes
+sharps - just sharp notes
+naturals - just natural notes
+all - naturals, sharps and flats
+
+```js
+randBox.note({notes: 'flats' });
+=> 'A'
+
+randBox.note({notes: 'sharps' });
+=> 'F♯'
+```

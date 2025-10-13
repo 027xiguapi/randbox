@@ -1,0 +1,31 @@
+# aadhar
+
+_Aadhar_（英语：Foundation）是一个 12 位唯一身份号码，印度居民可以基于其生物特征和人口统计数据获得。
+
+```js
+// 用法
+randBox.aadhar()
+randBox.aadhar({ onlyLastFour: true }) // 默认为 false
+randBox.aadhar({ separatedByWhiteSpace: false }) // 默认为 true
+```
+
+生成一个随机 aadhar。
+
+```js
+randBox.aadhar();
+=> '8506 7820 9696'
+```
+
+可选择提供仅获取最后四位数字的选项
+
+```js
+randBox.aadhar({ onlyLastFour: true });
+=> '1851'
+```
+
+可选择指定移除空格
+
+```js
+randBox.aadhar({ separatedByWhiteSpace: false });
+'873300307032'
+```

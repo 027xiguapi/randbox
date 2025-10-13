@@ -1,0 +1,40 @@
+# pad
+
+```js
+// usage
+randBox.pad(number, width)
+randBox.pad(number, width, padder)
+```
+
+Pad a number with some string until it reaches a desired width.
+
+By default, `randBox.pad()` will pad with zeroes. For example, to zero-pad
+numbers such that the outcome width is 5, do the following.
+
+```js
+randBox.pad(45, 5)
+=> '00045'
+
+randBox.pad(284, 5)
+=> '00284'
+
+randBox.pad(82843, 5)
+=> '82843'
+```
+
+Notice how every item returned is a string with leading zeroes until the width
+is 5 for each one.
+
+Can optionally specify a character if the desire is to pad with something other
+than zero.
+
+```js
+randBox.pad(81, 5, 'Z')
+=> 'ZZZ81'
+
+randBox.pad(692, 5, 'Z')
+=> 'ZZ692'
+
+randBox.pad(52859, 5)
+=> '52859'
+```

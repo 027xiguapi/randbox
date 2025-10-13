@@ -1,0 +1,21 @@
+# geohash
+
+```js
+// 用法
+randBox.geohash()
+randBox.geohash({ length: 5 })
+```
+
+生成一个随机地理哈希。[更多关于地理哈希是什么的详细信息](http://en.wikipedia.org/wiki/Geohash)。
+
+```js
+randBox.geohash()
+=> 'h9xhn7y'
+```
+
+默认情况下，包含 7 个字符的精度。可以使用 `length` 选项覆盖。
+
+```js
+randBox.geohash({ length: 5 })
+=> 'dr0kr'
+```

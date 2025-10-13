@@ -323,7 +323,7 @@ export function email(this: RandBox, options: any) {
  *
  * @example
  * ===============================================
- * chance.fbid() => '1000035231661304'
+ * randBox.fbid() => '1000035231661304'
  */
 export function fbid(this: RandBox): string {
 	return "10000" + this.string({ pool: "1234567890", length: 11 });

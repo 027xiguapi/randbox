@@ -43,3 +43,6 @@ target
 /wasm/*
 !/wasm/*.d.ts
 /wasm-node/
+
+/.next/
+/.claude/

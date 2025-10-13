@@ -1,0 +1,54 @@
+# color
+
+```js
+// 用法
+randBox.color()
+randBox.color({format: 'hex'})
+randBox.color({grayscale: true})
+randBox.color({casing: 'upper'})
+```
+
+返回一个随机格式的随机颜色。
+
+```js
+randBox.color()
+=> '#79c157'
+```
+
+颜色有六种基本类型：`hex`、`shorthex`、`rgb`、`rgba`、`0x`、`name`
+
+这些是可在 HTML 或 CSS 中使用的类型。可以选择指定类型
+
+```js
+randBox.color({format: 'hex'})
+=> '#d67118'
+
+randBox.color({format: 'shorthex'})
+=> '#60f'
+
+randBox.color({format: 'rgb'})
+=> 'rgb(110,52,164)'
+
+randBox.color({ format:'rgba' })
+=> 'rgba(76,11,110,0.1284)'
+
+randBox.color({format: '0x'})
+=> '0x67ae0b'
+
+randBox.color({ format:'name' })
+=> 'DarkOrange'
+```
+
+可以选择指定只生成灰度颜色
+
+```js
+randBox.color({grayscale: true})
+=> '#e2e2e2'
+```
+
+可选择指定大小写来获取颜色中只有大写字母
+
+```js
+randBox.color({casing: 'upper'})
+=> '#29CFA7'
+```

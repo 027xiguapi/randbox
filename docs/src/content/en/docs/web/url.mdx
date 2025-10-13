@@ -1,0 +1,53 @@
+# url
+
+```js
+// usage
+randBox.url()
+randBox.url({protocol: 'ftp'})
+randBox.url({domain: 'www.socialradar.com'})
+randBox.url({domain_prefix: 'docs'})
+randBox.url({path: 'images'})
+randBox.url({extensions: ['gif', 'jpg', 'png']})
+```
+
+Return a random url.
+
+```js
+randBox.url()
+=> 'http://vanogsi.io/pateliivi'
+```
+
+Optionally specify a protocol and the url will be random but the protocol will not.
+
+```js
+randBox.url({protocol: 'ftp'})
+=> 'ftp://mibfu.nr/kardate'
+```
+
+Optionally specify a domain and the url will be random but the domain will not.
+
+```js
+randBox.url({domain: 'www.socialradar.com'})
+=> 'http://www.socialradar.com/hob'
+```
+
+Optionally specify a domain prefix and domain will be random, and domain prefix will not.
+
+```js
+randBox.url({domain_prefix: 'docs'})
+=> 'http://docs.tuos.ni/itecabup'
+```
+
+Optionally specify a path and it will be obeyed.
+
+```js
+randBox.url({path: 'images'})
+=> 'http://tainvoz.net/images'
+```
+
+Optionally specify an array of extensions and one will be picked at random.
+
+```js
+randBox.url({extensions: ['gif', 'jpg', 'png']})
+=> 'http://vagjiup.gov/udmopke.png'
+```

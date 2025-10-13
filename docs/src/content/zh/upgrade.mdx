@@ -1,0 +1,194 @@
+---
+title: "功能概览"
+---
+
+import { Callout } from 'nextra/components'
+
+# 🎲 RandBox 全功能概览
+
+RandBox 是一个功能强大的 JavaScript 随机数据生成库，提供了 10+ 大类超过 100 种数据类型的生成功能，满足您在开发、测试和数据模拟中的各种需求！
+
+<Callout emoji={<span className='icon-[game-icons--dice-twenty-faces-twenty]'></span>} type="info">
+强大功能
+
+RandBox 提供了丰富的 API 和灵活的配置选项，支持从基础数据类型到复杂业务场景的全方位随机数据生成。无论是单元测试、数据填充还是原型开发，RandBox 都能为您提供可靠的解决方案。
+</Callout>
+
+### 🎯 使用方法模块
+
+RandBox 支持多种环境和使用方式，让您轻松集成到各种项目中：
+
+- 🌐 **浏览器环境**：支持简单、中级、高级三种使用方式，满足不同复杂度需求。
+- 📦 **包管理器**：支持 Bower、npm、yarn 等主流包管理器安装。
+- 🔧 **模块加载**：兼容 RequireJS、ES6 模块等多种加载方式。
+- 🖥️ **Node.js 环境**：完美支持服务端 JavaScript 开发。
+- ⚙️ **自定义功能**：支持自定义随机函数和 CLI 命令行工具。
+- 🌱 **种子系统**：支持数字、字符串、多参数种子，确保随机数可重现。
+
+### 🎨 基础数据类型
+
+核心的随机数据生成功能，涵盖所有基础数据类型：
+
+- 🔢 **数值类型**：布尔值、整数、浮点数、自然数、质数
+- 🔤 **字符类型**：随机字符、字母、字符串、模板字符串
+- 📝 **特殊类型**：JavaScript 虚假值、十六进制、缓冲区
+
+### 💰 金融数据模块
+
+专业的金融数据生成功能，符合真实标准格式：
+
+- 💳 **信用卡系统**：符合 Luhn 算法的信用卡号、CVV、到期日期
+- 🏦 **货币系统**：随机货币代码、货币对、美元/欧元金额
+- 🌐 **国际标准**：支持 IBAN、多种信用卡类型识别
+
+### 🛠️ 辅助工具模块
+
+实用的数据操作和处理工具：
+
+- 🎲 **数组操作**：随机选择、打乱顺序、唯一值生成
+- 🔧 **字符串工具**：首字母大写、数字填充、加权选择
+- ⚡ **性能优化**：混入功能、数据集覆盖、批量生成
+
+### 🌍 地理位置模块
+
+全球地理数据生成，支持多个国家和地区：
+
+- 🏠 **地址系统**：街道地址、城市、国家、坐标
+- 📞 **通信信息**：电话号码、区号（支持美国、英国、法国）
+- 🗺️ **地理数据**：经纬度、海拔、深度、地理哈希、时区
+
+### 🎮 杂项工具模块
+
+丰富的实用工具和游戏化功能：
+
+- 🎯 **随机选择**：抛硬币、骰子系统（d4 到 d100）
+- 🆔 **标识符生成**：GUID、哈希值、时间戳
+- 📊 **统计功能**：正态分布、RPG 骰子系统、无线电呼号
+
+### 📱 移动设备模块
+
+移动平台专用标识符生成：
+
+- 🤖 **Android 平台**：GCM 注册 ID、设备标识符
+- 🍎 **iOS 平台**：Apple 推送令牌、设备识别
+- 📱 **其他平台**：BlackBerry PIN、Windows Phone ANID
+
+### 🎵 音乐数据模块
+
+音乐相关的专业数据生成：
+
+- 🎼 **音符系统**：随机音符、降音符、升音符、自然音符
+- 🎸 **音乐类型**：22 个主要类型，超过 600 个子类型
+- ⏱️ **节拍系统**：随机节拍（40-320 BPM 范围）
+
+### 👤 个人信息模块
+
+全面的个人身份数据生成，支持多国标准：
+
+- 📝 **基本信息**：姓名、年龄、生日、性别、星座
+- 🆔 **身份证件**：美国 SSN、印度 Aadhar、意大利 CF、巴西 CPF
+- 🏷️ **称谓系统**：姓名前缀、后缀，支持多种国籍
+
+### 📝 文本生成模块
+
+智能文本内容生成：
+
+- 📖 **文档结构**：段落、句子、单词、音节
+- 😊 **表情符号**：支持分类和长度控制
+- 🗣️ **语音特性**：半可发音的无意义单词生成
+
+### 🐾 实体对象模块
+
+各种实体对象的随机生成：
+
+- 🦁 **动物系统**：支持海洋、沙漠、草原、森林、农场、宠物、动物园等分类
+
+### ⏰ 时间日期模块
+
+完整的时间数据生成系统：
+
+- 📅 **日期时间**：随机日期、时间、时间戳、时区
+- 🕐 **时间组件**：小时、分钟、秒、毫秒、上下午标识
+- 📆 **日期组件**：年、月、星期、工作日限制
+
+### 🌐 网络数据模块
+
+互联网和网络相关数据的全面支持：
+
+- 🌍 **网络标识**：IP 地址、IPv6、MAC 地址、域名
+- 📧 **通信工具**：电子邮件、URL、社交媒体用户名
+- 🎨 **视觉元素**：颜色生成（hex、rgb、rgba 等 6 种格式）
+- 🏢 **商业数据**：公司名称、职业、Google Analytics 代码
+
+## 快速开始
+
+### 安装 RandBox
+
+```bash
+# 使用 npm
+npm install randbox
+
+# 使用 yarn
+yarn add randbox
+
+# 使用 bower
+bower install randbox
+```
+
+### 基本使用示例
+
+```javascript
+import RandBox from 'randbox';
+
+const randBox = new RandBox();
+
+// 基础数据类型
+console.log(randBox.bool());           // true/false
+console.log(randBox.integer(1, 100));  // 42
+console.log(randBox.string(10));       // "aBcD1234eF"
+
+// 个人信息
+console.log(randBox.name());           // "Sarah Johnson"
+console.log(randBox.email());          // "john.doe@example.com"
+console.log(randBox.age());            // 25
+
+// 地理位置
+console.log(randBox.city());           // "New York"
+console.log(randBox.country());        // "United States"
+console.log(randBox.coordinates());    // "40.7128, -74.0060"
+
+// 金融数据
+console.log(randBox.cc());             // "4111111111111111"
+console.log(randBox.currency());       // "USD"
+```
+
+### 使用种子确保可重现
+
+```javascript
+import RandBox from 'randbox';
+
+// 使用相同种子生成相同结果
+const randBox1 = new RandBox(12345);
+const randBox2 = new RandBox(12345);
+
+console.log(randBox1.name()); // "Alice Smith"
+console.log(randBox2.name()); // "Alice Smith" (相同结果)
+```
+
+## 文档与支持
+
+- 📚 [RandBox 完整文档](https://randbox.top/docs)
+- 🎲 [API 参考手册](https://randbox.top/docs/basics)
+- 💻 [GitHub 仓库](https://github.com/027xiguapi/randbox)
+- 🐞 遇到问题？欢迎提交 [Issue](https://github.com/027xiguapi/randbox/issues)
+
+### 开发计划
+
+RandBox 将持续更新和优化，计划添加更多实用功能：
+
+- 🌍 **更多地区支持**：扩展更多国家和地区的数据格式
+- 🚀 **性能优化**：持续改进生成算法的效率
+- 📦 **模块化增强**：提供更细粒度的模块划分
+- 🔧 **自定义扩展**：支持更灵活的自定义数据类型
+
+如果你觉得 RandBox 对你有帮助，欢迎点击项目右上角的 [⭐️ Star](https://github.com/027xiguapi/randbox) 按钮进行支持！每一个星标都是对我们最大的鼓励，帮助项目不断改进和前进。非常感激你的支持！🎲

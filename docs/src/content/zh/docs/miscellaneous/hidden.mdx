@@ -1,0 +1,58 @@
+# hidden
+
+```js
+// 用法
+randBox.cc_types()
+randBox.mersenne_twister()
+randBox.mersenne_twister(12345)
+randBox.months()
+randBox.name_prefixes()
+randBox.provinces()
+randBox.states()
+randBox.street_suffix()
+randBox.street_suffixes()
+```
+
+这些实际上并不是真正隐藏的，只是旨在供内部使用但对外暴露的实用方法，以防对任何人有用。
+
+```js
+
+// 返回信用卡类型列表
+randBox.cc_types()
+=> [{name: "American Express", short_name: 'amex', prefix: '34', length: 15}, ...]
+
+// 返回一个新的梅森旋转器
+randBox.mersenne_twister()
+=> [object Object] // 梅森旋转器的实例
+
+// 可选择为该旋转器提供种子
+randBox.mersenne_twister(12345)
+=> [object Object] // 带有种子 12345 的旋转器实例
+
+// 返回我们的月份列表
+randBox.months();
+=> [{name: 'January', short_name 'Jan', numeric: '01'}, ...]
+
+// 返回我们的姓名前缀列表
+randBox.name_prefixes();
+=> [{name: 'Doctor', abbreviation: 'Dr.'}, {name: 'Miss', abbreviation: 'Miss'}, ...]
+
+// 返回省份列表
+randBox.provinces();
+=> [{name: 'Alberta', abbreviation: 'AB'}, {name: 'British Columbia', abbreviation: 'BC'}, ...]
+
+// 返回州列表
+randBox.states();
+=> [{name: 'Alabama', abbreviation: 'AL'}, {name: 'Alaska', abbreviation: 'AK'}, ...]
+
+// 返回随机街道后缀
+randBox.street_suffix();
+=> {name: 'Street', abbreviation: 'St'}
+
+// 返回街道后缀列表
+randBox.street_suffixes();
+=> [{name: 'Avenue', abbreviation: 'Ave'}, {name: 'Boulevard', abbreviation: 'Blvd'}, ...]
+
+```
+
+

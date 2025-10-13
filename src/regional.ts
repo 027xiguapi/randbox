@@ -16,7 +16,7 @@ export function it_vat(this: RandBox) {
 
 /*
 * this generator is written following the official algorithm
-* all data can be passed explicitely or randomized by calling chance.cf() without options
+* all data can be passed explicitely or randomized by calling randBox.cf() without options
 * the code does not check that the input data is valid (it goes beyond the scope of the generator)
 *
 * @param  [Object] options = { first: first name,

@@ -1,0 +1,63 @@
+# name
+
+```js
+// 用法
+randBox.name()
+randBox.name({ middle: true })
+randBox.name({ middle_initial: true })
+randBox.name({ prefix: true })
+randBox.name({ nationality: 'en' })
+```
+
+生成一个随机姓名
+
+```js
+  randBox.name();
+  => 'Dafi Vatemi'
+```
+
+可选择包含中间名
+
+```js
+  randBox.name({ middle: true });
+  => 'Nelgatwu Powuku Heup'
+```
+
+
+可选择包含中间名缩写
+
+```js
+  randBox.name({ middle_initial: true });
+  => 'Ezme I Iza'
+```
+
+可选择包含前缀
+
+```js
+  randBox.name({ prefix: true });
+  => 'Doctor Suosat Am'
+```
+
+可选择包含后缀
+
+```js
+  randBox.name({ suffix: true });
+  => 'Fanny Baker Esq.'
+```
+
+可选择指定性别
+
+```js
+  randBox.name({ gender: 'male' });
+  => "Patrick Copeland"
+```
+
+可选择指定国籍
+
+```js
+  randBox.name({ nationality: 'it' });
+  => "Roberta Mazzetti"
+```
+
+注意，目前对国籍的支持仅限于：`'en', 'it'`。
+

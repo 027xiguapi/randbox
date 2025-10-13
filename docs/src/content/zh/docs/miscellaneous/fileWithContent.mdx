@@ -1,0 +1,36 @@
+# File with content
+
+生成具有随机名称、扩展名和数据的文件
+```js
+// 用法
+randBox.fileWithContent({
+  fileName: "AwesomeFile",
+  fileExtension: "gif",
+  fileSize: 1024})
+
+```
+
+返回一个包含 fileData（作为 Buffer）和 fileName（作为字符串）的对象
+```js
+// 返回
+{
+  fileData: <Buffer 00 00 00... 1998 more bytes>,
+  fileName: 'zo.gif'
+}
+```
+
+随机名称和格式
+```js
+randBox.fileWithContent({fileSize: 1024})
+
+```
+随机格式
+```js
+randBox.fileWithContent({
+  fileName: "AwesomeFile",
+  fileSize: 2048})
+```
+* 接受可选的 fileName 和 fileExtension，否则从 file() 生成
+* 0 字节文件是可以的
+
+

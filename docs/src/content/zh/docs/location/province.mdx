@@ -1,0 +1,33 @@
+# province
+
+```js
+// 用法
+randBox.province()
+randBox.province({full: true})
+randBox.province({full: true})
+```
+
+返回一个随机省份。
+
+```js
+randBox.province();
+=> 'ON'
+```
+
+默认情况下，只返回省份的 2 字母缩写。
+
+可选择指定应该返回完整的省份名称。
+
+```js
+randBox.province({full: true});
+=> 'Nova Scotia'
+```
+
+可选择指定应该返回省份名称的国家。
+
+```js
+randBox.province({country: 'it', full: true});
+=> 'Vicenza'
+```
+
+注意，目前对国家的支持仅限于：`'ca', 'it'`。

@@ -1,0 +1,41 @@
+# integer
+
+```js
+// 用法
+randBox.integer()
+randBox.integer({ min: -20, max: 20 })
+```
+
+<p class="pullquote">9007199254740991 是 2^53 - 1，是 JavaScript 中最大的数字值</p>
+
+返回一个随机整数。
+
+_范围：-9007199254740991 到 9007199254740991_
+
+参见：[JavaScript 中的最大数字](http://vq.io/16qnIYj)
+
+```js
+randBox.integer();
+=> -1293235
+```
+
+可以选择性地提供 min 和 max。
+
+```js
+randBox.integer({ min: -20, max: 20 })
+=> -7
+```
+
+这些 min 和 max 是包含性的，因此它们包含在范围内。这意味着
+```js
+randBox.integer({ min: -2, max: 2 })
+```
+将返回 -2、-1、0、1 或 2 中的任何一个。
+
+```js
+// 具体情况
+-2 <= 随机数 <= 2
+
+// 一般情况
+min <= 随机数 <= max
+```

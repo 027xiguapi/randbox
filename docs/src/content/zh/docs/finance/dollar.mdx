@@ -1,0 +1,29 @@
+# dollar
+
+```js
+// 使用方法
+randBox.dollar()
+randBox.dollar({max: 250})
+```
+
+<p class="pullquote" data-pullquote="Dolla, dolla, bill ya'll" markdown="1"></p>
+
+返回一个随机的美元金额。
+
+```js
+randBox.dollar();
+=> "$2560.27"
+
+randBox.dollar();
+=> "$750.99"
+```
+
+默认返回不超过 10000 的美元金额。可以可选地指定 max 参数使其更大（或更小）。
+
+```js
+randBox.dollar({max: 20});
+=> "$15.23"
+
+randBox.dollar({max: 10000000})
+=> "$5051205.49"
+```

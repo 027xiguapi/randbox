@@ -1,0 +1,170 @@
+---
+title: "Introduction"
+---
+
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "@/components/ui/hover-card"
+
+# RandBox - JavaScript Random Data Generation Library
+
+RandBox is a powerful JavaScript random data generation library, offering a rich API for generating various types of random data. It features a modular design, supporting the ES6 module system and Tree Shaking, allowing you to bundle only the functionalities you need.
+
+```javascript
+import RandBox from 'randbox';
+
+const randBox = new RandBox();
+console.log(randBox.name());     // 'Sarah Johnson'
+console.log(randBox.email());    // 'john.doe@example.com'
+console.log(randBox.integer(1, 100)); // 42
+```
+
+## Installation and Usage
+
+### Install via npm
+
+```bash
+npm install randbox
+```
+
+### Install via yarn
+
+```bash
+yarn add randbox
+```
+
+### CDN Inclusion
+
+```html
+<script src="https://unpkg.com/randbox@latest/build/randbox.min.js"></script>
+```
+
+## Modular Architecture
+
+RandBox adopts a modular design, breaking down functionality into independent ES6 modules, providing better maintainability and Tree Shaking support.
+
+### Core Module (`core.js`)
+
+Contains the main RandBox constructor, constants, utility functions, and core functionality that other modules depend on.
+
+**Exports:**
+
+  - `RandBox` - Main constructor
+  - Constants: `MAX_INT`, `MIN_INT`, `NUMBERS`, `CHARS_LOWER`, `CHARS_UPPER`, `HEX_POOL`
+  - Utility Functions: `initOptions`, `testRange`, `range`, `base64`, `UnsupportedError`
+
+## Functional Module Overview
+
+Each module contains related functionalities and can be imported separately:
+
+1.  **Basic Data (`basics.js`)** - Core random number generation
+
+  - `bool`, `character`, `floating`, `integer`, `natural`, `string`, `buffer`, `hex`
+
+2.  **Helper Tools (`helpers.js`)** - Array and utility functions
+
+  - `capitalize`, `mixin`, `unique`, `n`, `pad`, `pick`, `pickone`, `pickset`, `shuffle`, `weighted`
+
+3.  **Text Generation (`text.js`)** - Text content generation
+
+  - `paragraph`, `sentence`, `syllable`, `word`, `emoji`
+
+4.  **Personal Information (`person.js`)** - Person-related data
+
+  - `age`, `birthday`, `first`, `last`, `name`, `gender`, `ssn`, `animal`, etc.
+
+5.  **Mobile Devices (`mobile.js`)** - Mobile device identifiers
+
+  - `android_id`, `apple_token`, `wp8_anid2`, `wp7_anid`, `bb_pin`
+
+6.  **Web Data (`web.js`)** - Web-related data
+
+  - `avatar`, `color`, `domain`, `email`, `ip`, `url`, `hashtag`, etc.
+
+7.  **Geographical Location (`location.js`)** - Geographical data
+
+  - `address`, `city`, `country`, `coordinates`, `latitude`, `longitude`, `phone`, etc.
+
+8.  **Financial Data (`finance.js`)** - Financial-related data
+
+  - `cc`, `currency`, `dollar`, `euro`, `iban`, `luhn_check`, etc.
+
+9.  **Music Data (`music.js`)** - Music-related data
+
+  - `note`, `chord`, `tempo`, `music_genre`
+
+10. **Miscellaneous Tools (`miscellaneous.js`)** - Various utility functions
+
+  - `coin`, dice functions (`d4`, `d6`, etc.), `guid`, `hash`, date functions, `normal`
+
+## Usage Methods
+
+### Import Full Library (Equivalent to Original Version)
+
+```javascript
+import RandBox from 'randbox';
+const randBox = new RandBox();
+console.log(randBox.name()); // Works exactly the same as the original version
+```
+
+### Import Specific Modules (Tree Shaking)
+
+```javascript
+import { RandBox } from 'randbox/src/core.js';
+import { name, email } from 'randbox/src/person.js';
+
+// Use as standalone functions
+console.log(name()); // Direct function call
+
+// Or extend the RandBox instance with specific modules
+const randBox = new RandBox();
+Object.assign(randBox, { name, email });
+console.log(randBox.name());
+```
+
+### Import Single Functions
+
+```javascript
+import { name } from 'randbox/src/person.js';
+import { email } from 'randbox/src/web.js';
+import { natural } from 'randbox/src/basics.js';
+
+// Use directly (Note: 'this' context needs to be bound to a RandBox instance)
+```
+
+## Advantages and Features
+
+1.  **Tree Shaking**: Bundle only the features you need
+2.  **Maintainability**: Related features are logically grouped
+3.  **Modularity**: Easy to add new modules or modify existing ones
+4.  **ES6 Compatibility**: Modern JavaScript module system
+5.  **Backward Compatibility**: `index.js` provides the same API as the original version
+
+## Dependencies
+
+Each module imports only what it needs from `core.js`, minimizing dependencies and enabling better optimization.
+
+<Alert>
+<AlertTitle>🎲 Get Started with RandBox</AlertTitle>
+<AlertDescription>
+Choose the import method suitable for your project and enjoy powerful random data generation.
+</AlertDescription>
+</Alert>
+
+-----
+
+<HoverCard>
+<HoverCardTrigger>
+<Button>
+🎲 Quick Experience
+</Button>
+</HoverCardTrigger>
+<HoverCardContent>
+RandBox - A powerful JavaScript random data generation library supporting 10+ data categories and 100+ functions.
+</HoverCardContent>
+</HoverCard>

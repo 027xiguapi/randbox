@@ -1,0 +1,23 @@
+# last
+
+```js
+// 用法
+randBox.last()
+randBox.last({ nationality: 'en' })
+```
+
+生成一个随机姓氏
+
+```js
+randBox.last();
+=> 'Mago'
+```
+
+可选择指定国籍以限制姓氏为该国籍最常见的姓氏
+
+```js
+randBox.last({ nationality: 'it' });
+=> 'Giovannini'
+```
+
+注意，目前对国籍的支持仅限于：`'en', 'it', 'nl', 'uk', 'de', 'jp', 'es', 'fr'`。

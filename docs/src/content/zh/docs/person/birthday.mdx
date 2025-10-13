@@ -1,0 +1,63 @@
+# birthday
+
+```js
+// 用法
+randBox.birthday()
+randBox.birthday({ string: true })
+randBox.birthday({ type: 'child' })
+```
+
+生成一个随机生日
+
+```js
+randBox.birthday();
+=> Fri Aug 16 1985 00:00:00 GMT-0400 (EDT)
+```
+
+默认情况下，返回实际的 JavaScript [Date][Date] 对象。
+
+可选择指定以字符串形式返回。
+
+```js
+randBox.birthday({string: true});
+=> '4/1/1968'
+```
+
+默认以 MM/DD/YYYY 格式返回。可以按如下方式指定 DD/MM/YYYY：
+
+```js
+randBox.birthday({string: true, american: false});
+=> '28/6/1993'
+```
+
+对于更复杂的日期格式，请使用 [Moment][Moment] 库。
+
+可以指定类型，与 [age](#age) 相同的类型。
+
+```js
+randBox.birthday({type: 'child'});
+=> Sat Sep 08 2001 00:00:00 GMT-0400 (EDT)
+```
+
+您可以与 `randBox.year` 组合使用来获得有趣的组合。例如，假设我们想获得一些文艺复兴艺术家的生日（出生在 1450 年至 1500 年之间）。我们可以生成一个年份，然后从那一年获得生日：
+
+```js
+var year = randBox.year({ min: 1450, max: 1500 });
+randBox.birthday({ year: year });
+=> Wed Aug 27 1484 11:24:14 GMT-0400 (EDT)
+
+// 可以简化为一行
+randBox.birthday({ year: randBox.year({ min: 1450, max: 1500 }) });
+=> Fri Nov 26 1469 09:17:13 GMT-0500 (EST)
+```
+
+可以指定 maxAge 和/或 minAge。这将返回一个产生给定范围内年龄的日期。注意限制：完整的生日日期被认为是允许范围的一部分（从最小日期的第一毫秒到最大日期的最后一秒）。
+
+```js
+randBox.birthday({minAge: 18, maxAge: 21});
+=> Thu Apr 18 2002 13:48:34 GMT-0400 (EDT)
+```
+
+
+[Date]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+[Moment]: http://momentjs.com

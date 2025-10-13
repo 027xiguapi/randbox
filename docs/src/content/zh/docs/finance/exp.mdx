@@ -1,0 +1,21 @@
+# exp
+
+```js
+// 使用方法
+randBox.exp()
+randBox.exp({raw: true})
+```
+
+生成一个随机的信用卡到期日期。
+
+```js
+randBox.exp();
+=> '10/2020'
+```
+
+可以可选地指定返回原始对象而不是字符串
+
+```js
+randBox.exp({raw: true});
+=> {month: '11', year: '2017'}
+```

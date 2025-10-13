@@ -1,0 +1,25 @@
+# tv
+
+```js
+// usage
+randBox.tv()
+randBox.tv({side: 'west'})
+```
+
+Generate a TV station call sign. This is an alias for `radio()` since they both
+follow the same rules.
+
+```js
+randBox.radio();
+=> 'WXTY'
+```
+
+Optionally specify a side of the Mississippi River to limit stations to that side.
+
+```js
+randBox.radio({side: 'west'});
+=> 'KCYL'
+
+randBox.radio({side: 'west'});
+=> 'KQDV'
+```

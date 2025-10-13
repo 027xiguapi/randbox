@@ -1,0 +1,25 @@
+# age
+
+```js
+// 用法
+randBox.age()
+randBox.age({ type: 'child' })
+```
+
+生成一个随机年龄
+
+```js
+randBox.age();
+=> 45
+```
+
+默认范围是 1 到 120 之间
+
+可选择指定几种枚举的年龄类型之一：
+
+```js
+randBox.age({type: 'child'});
+=> 9
+```
+
+允许的类型有：`child`、`teen`、`adult`、`senior`

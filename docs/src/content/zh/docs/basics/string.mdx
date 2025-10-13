@@ -1,0 +1,75 @@
+# string
+
+```js
+// 用法
+randBox.string()
+randBox.string({ length: 5 })
+randBox.string({ min: 5 })
+randBox.string({ max: 50 })
+randBox.string({ min: 5, max: 20 })
+randBox.string({ pool: 'abcde' })
+randBox.string({ alpha: true })
+randBox.string({ numeric: true })
+randBox.string({ casing: 'lower' })
+randBox.string({ symbols: true })
+```
+
+返回一个随机字符串。
+
+```js
+  randBox.string();
+  => 'Z&Q78&fqkPq'
+```
+
+默认情况下，它将返回一个长度为 5-20 个字符的随机长度字符串，并包含以下任意字符。
+
+```js
+  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()[]'
+```
+
+可以选择性地指定长度，字符串将恰好是该长度。
+
+```js
+  randBox.string({ length: 5 });
+  => 'YN%fG'
+```
+
+可以选择性地指定最小长度，字符串将具有最小长度
+
+```js
+  randBox.string({ min: 5 });
+  => '6(Ow1wF)qjUm%W)B2[Q]'
+```
+
+可以选择性地指定最大长度，字符串将具有最大长度
+
+```js
+  randBox.string({ max: 20 });
+  => 'k7fubkfMS@gs#E'
+```
+
+可以选择性地指定字符池，字符串将仅使用该字符池中的字符生成。
+
+```js
+  randBox.string({ pool: 'abcde' });
+  => 'cccdeeabedebb'
+```
+
+当然，这些选项也可以组合使用，使用 length 或 min 和 max。
+
+```js
+  randBox.string({ length: 5, pool: 'abcde' });
+  => 'cbbdc'
+```
+
+```js
+  randBox.string({ min: 5, max: 20, pool: 'abcde' });
+  => 'ebddceaaceeda'
+```
+
+支持 [randBox.character()](./character.md) 的所有选项：
+
+```js
+  randBox.string({ length: 8, casing: 'upper', alpha: true, numeric: true });
+  => '3THK7GB1'
+```

@@ -1,0 +1,20 @@
+# pickset
+
+```js
+// 用法
+randBox.pickset(array, quantity)
+```
+
+从给定的数组中选择一些随机元素并将它们返回到一个新数组中
+
+```js
+randBox.pickset(['alpha', 'bravo', 'charlie', 'delta', 'echo'], 3);
+=> ['echo', 'alpha', 'bravo']
+```
+
+可选择省略数量参数来获取长度为 1 的集合
+
+```js
+randBox.pickset(['alpha', 'bravo', 'charlie', 'delta', 'echo']);
+=> ['delta']
+```

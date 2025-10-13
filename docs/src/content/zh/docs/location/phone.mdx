@@ -1,0 +1,48 @@
+# phone
+
+```js
+// 用法
+randBox.phone()
+randBox.phone({ formatted: false })
+randBox.phone({ country: "fr" })
+randBox.phone({ country: "fr", mobile: true })
+```
+
+生成一个随机电话号码
+
+```js
+randBox.phone();
+=> '(494) 927-2152'
+```
+
+默认情况下，符合 [NANP](http://en.wikipedia.org/wiki/North_American_Numbering_Plan) 标准以生成正确的美国电话号码。
+
+可选择禁用格式化。
+
+```js
+randBox.phone({ formatted: false });
+=> '2617613391'
+```
+
+可选择指定国家。
+
+```js
+randBox.phone({ country: 'fr' });
+=> '01 60 44 92 67'
+```
+
+注意，目前我们只支持 `'us'`、`'uk'` 或 `'fr'` 这些国家。
+
+对于 `uk` 和 `fr`，可选择指定移动电话。
+
+```js
+randBox.phone({ country: 'uk', mobile: true });
+=> '07624 321221'
+```
+
+对于 `us`，可选择指定 exampleNumber 以获取 '555' 区号。
+
+```js
+randBox.phone({ country: 'us', exampleNumber: true });
+=> '(555) 927-2152'
+```

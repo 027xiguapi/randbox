@@ -306,8 +306,8 @@ export function mac_address(this: RandBox, options?: any) {
  * extension provided by the collection poolCollectionKey
  *
  * The user can provide an array or object collection for file extension
- * If an array is provided, chance will pick a random extension out of the array
- * If an object is provided, chance will pick a random extension out of the
+ * If an array is provided, randBox will pick a random extension out of the array
+ * If an object is provided, randBox will pick a random extension out of the
  * objects keys and then pick a random extension out of that collection
  *
  * @param {Object} [options={}] can specify fileType OR extension OR extensions

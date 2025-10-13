@@ -1,0 +1,25 @@
+# suffix
+
+```js
+// 用法
+randBox.suffix()
+randBox.suffix({ full: true })
+```
+
+生成一个随机姓名后缀
+
+```js
+randBox.suffix();
+=> 'Sr.'
+```
+
+默认情况下，返回较短的版本。
+
+可选择获取完整版本。
+
+```js
+randBox.suffix({ full: true });
+=> 'Juris Doctor'
+```
+
+*为了维护遗留支持，这也响应 randBox.name_suffix()。*

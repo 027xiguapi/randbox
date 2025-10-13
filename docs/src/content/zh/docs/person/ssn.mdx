@@ -1,0 +1,29 @@
+# ssn
+
+```js
+// 用法
+randBox.ssn()
+randBox.ssn({ ssnFour: true })
+randBox.ssn({ dashes: false })
+```
+
+生成一个随机社会保险号码。
+
+```js
+randBox.ssn();
+=> '411-90-0070'
+```
+
+可选择提供仅获取最后四位数字的选项
+
+```js
+randBox.ssn({ ssnFour: true });
+=> '2938'
+```
+
+可选择指定移除破折号
+
+```js
+randBox.ssn({ dashes: false });
+=> '293839295'
+```

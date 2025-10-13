@@ -1,0 +1,46 @@
+# seed
+
+你也可以使用已知种子实例化你自己的 RandBox 实例。这对于创建可重复的结果很有用。
+
+```js
+var chance1 = new RandBox(12345);
+var chance2 = new RandBox(12345);
+
+// 这些按顺序产生相同的值
+console.log(chance1.random());
+console.log(chance2.random());
+```
+
+由于两个 RandBox 副本具有相同的种子，每次调用时它们都会生成相同的随机数序列。
+
+如果需要的话，这允许可重复性。
+
+这是可能的，因为 **RandBox** 构建在 [Mersenne Twister][mersenne] 之上，这是一个伪随机数生成器，给定相同的种子会产生可重复的结果。
+
+可选择将种子作为字符串提供。
+
+```js
+var chance1 = new RandBox("foo");
+var chance2 = new RandBox("bar");
+
+// 这些将是不同的
+console.log(chance1.random());
+console.log(chance2.random());
+```
+
+可选择提供多个参数作为种子。
+
+```js
+var chance1 = new RandBox("hold", "me", "closer");
+var chance2 = new RandBox("tony", "danza");
+var chance3 = new RandBox("hold", "me", "closer");
+
+// 这些将是不同的
+console.log(chance1.random());
+console.log(chance2.random());
+
+// 这将与上面 chance1 的值相同
+console.log(chance3.random());
+```
+
+[mersenne]: http://en.wikipedia.org/wiki/Mersenne_twister

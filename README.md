@@ -50,23 +50,23 @@ Each module contains related functionality and can be imported individually:
 
 ### Import Everything (Equivalent to Original)
 ```javascript
-import Chance from './src/index.js';
-const chance = new Chance();
-console.log(chance.name()); // Works exactly like the original
+import RandBox from './src/index.js';
+const randBox = new RandBox();
+console.log(randBox.name()); // Works exactly like the original
 ```
 
 ### Import Specific Modules (Tree Shaking)
 ```javascript
-import { Chance, basicsFunctions } from './src/core.js';
+import { RandBox, basicsFunctions } from './src/core.js';
 import { name, email } from './src/person.js';
 
 // Use individual functions
 console.log(name()); // Direct function call
 
-// Or extend a Chance instance with specific modules
-const chance = new Chance();
-Object.assign(chance, { name, email });
-console.log(chance.name());
+// Or extend a RandBox instance with specific modules
+const randBox = new RandBox();
+Object.assign(randBox, { name, email });
+console.log(randBox.name());
 ```
 
 ### Import Individual Functions
@@ -75,7 +75,7 @@ import { name } from './src/person.js';
 import { email } from './src/web.js';
 import { natural } from './src/basics.js';
 
-// Use directly (note: 'this' context will need to be bound to a Chance instance)
+// Use directly (note: 'this' context will need to be bound to a RandBox instance)
 ```
 
 ## Benefits

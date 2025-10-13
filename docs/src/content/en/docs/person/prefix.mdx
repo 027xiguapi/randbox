@@ -1,0 +1,35 @@
+# prefix
+
+```js
+// usage
+randBox.prefix()
+randBox.prefix({ full: true })
+```
+
+Generate a random name prefix
+
+```js
+randBox.prefix();
+=> 'Mrs.'
+```
+
+By default, returns the shorter version.
+
+Optionally get back the full version.
+
+```js
+randBox.prefix({ full: true });
+=> 'Mister'
+```
+
+Optionally specify a gender. Valid options are `male`, `female`, or `all` (the default).
+
+```js
+randBox.prefix({ gender: "male" });
+=> 'Mr.'
+
+randBox.prefix({ gender: "female" });
+=> 'Miss'
+```
+
+*To maintain legacy support, this also responds to randBox.name_prefix().*

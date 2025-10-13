@@ -1,0 +1,62 @@
+# state
+
+```js
+// 用法
+randBox.state()
+randBox.state({ full: true })
+randBox.state({ territories: true })
+randBox.state({ armed_forces: true })
+randBox.state({ us_states_and_dc: false })
+randBox.state({ country: 'us' })
+```
+
+返回一个随机州。
+
+```js
+randBox.state();
+=> 'AK'
+```
+
+默认情况下，只返回州的 2 字母缩写。
+
+可选择指定应该返回完整的州名称。
+
+```js
+randBox.state({ full: true });
+=> 'Florida'
+```
+
+可选择添加美国领土（'美属萨摩亚'、'密克罗尼西亚联邦'、'关岛'、'马绍尔群岛'、'北马里亚纳群岛'、'波多黎各'、'美属维尔京群岛'）到随机选择项目的混合中：
+
+```js
+randBox.state({ territories: true, full: true })
+=> 'Guam'
+```
+
+可选择也将武装部队添加到列表中：
+
+```js
+randBox.state({ armed_forces: true, full: true })
+=> 'Armed Forces Pacific'
+```
+
+对于所有美国州、领土和武装部队，指定所有选项：
+
+```js
+randBox.state({ armed_forces: true, territories: true })
+=> 'NY'
+```
+
+对于只有领土或武装部队，指定不应该返回美国州：
+
+```js
+randBox.state({ territories: true, us_states_and_dc: false })
+=> 'PR'
+```
+
+可选择指定一个国家（如果指定了国家且与 `'us'` 不同，则忽略美国特定选项）：
+
+```js
+randBox.state({ country: 'it', full: true })
+=> 'Toscana'
+```

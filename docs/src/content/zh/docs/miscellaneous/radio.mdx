@@ -1,0 +1,27 @@
+# radio
+
+```js
+// 用法
+randBox.radio()
+```
+
+<p class="pullquote" data-pullquote='广播呼号如果在密西西比河以东以 W 开头，如果在西边则以 K 开头。' markdown="1"></p>
+
+生成一个随机无线电呼号。
+
+```js
+randBox.radio();
+=> 'KCXW'
+```
+
+可选择指定密西西比河的一侧，以将电台限制到该侧。
+
+更多详细信息请参见 [K 和 W](http://en.wikipedia.org/wiki/Call_signs_in_North_America#K_and_W)
+
+```js
+randBox.radio({side: 'east'});
+=> 'WKOQ'
+
+randBox.radio({side: 'east'});
+=> 'WNOW'
+```

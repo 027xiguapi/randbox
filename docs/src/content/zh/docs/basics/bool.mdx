@@ -1,0 +1,29 @@
+import RandBoxTemp from "@/components/RandBoxTemp";
+
+# bool
+
+```js
+    // 用法
+    randBox.bool()
+    randBox.bool({ likelihood: 30 })
+```
+返回一个随机布尔值（`true` 或 `false`）。
+
+```js
+randBox.bool();
+=> true
+```
+
+默认情况下成功（返回 `true`）的可能性是 50%。
+可以选择性地指定百分比概率：
+
+```js
+randBox.bool({likelihood: 30});
+=> false
+```
+
+在这种情况下，只有 30% 的概率返回 `true`，70% 的概率返回 `false`。
+
+
+<RandBoxTemp text={'随机'} funcName={'bool'} module={'basics'} option={{ likelihood: 30 }} />
+

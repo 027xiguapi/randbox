@@ -1,0 +1,53 @@
+# url
+
+```js
+// 用法
+randBox.url()
+randBox.url({protocol: 'ftp'})
+randBox.url({domain: 'www.socialradar.com'})
+randBox.url({domain_prefix: 'docs'})
+randBox.url({path: 'images'})
+randBox.url({extensions: ['gif', 'jpg', 'png']})
+```
+
+返回一个随机 url。
+
+```js
+randBox.url()
+=> 'http://vanogsi.io/pateliivi'
+```
+
+可选择指定协议，url 将是随机的但协议不是。
+
+```js
+randBox.url({protocol: 'ftp'})
+=> 'ftp://mibfu.nr/kardate'
+```
+
+可选择指定域名，url 将是随机的但域名不是。
+
+```js
+randBox.url({domain: 'www.socialradar.com'})
+=> 'http://www.socialradar.com/hob'
+```
+
+可选择指定域名前缀，域名将是随机的，域名前缀不是。
+
+```js
+randBox.url({domain_prefix: 'docs'})
+=> 'http://docs.tuos.ni/itecabup'
+```
+
+可选择指定路径，它将被遵守。
+
+```js
+randBox.url({path: 'images'})
+=> 'http://tainvoz.net/images'
+```
+
+可选择指定扩展名数组，将随机选择其中一个。
+
+```js
+randBox.url({extensions: ['gif', 'jpg', 'png']})
+=> 'http://vagjiup.gov/udmopke.png'
+```

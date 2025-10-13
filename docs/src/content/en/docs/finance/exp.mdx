@@ -1,0 +1,21 @@
+# exp
+
+```js
+// usage
+randBox.exp()
+randBox.exp({raw: true})
+```
+
+Generate a random credit card expiration.
+
+```js
+randBox.exp();
+=> '10/2020'
+```
+
+Optionally specify that a raw object be returned rather than a string
+
+```js
+randBox.exp({raw: true});
+=> {month: '11', year: '2017'}
+```

@@ -1,0 +1,188 @@
+# RandBox Documentation
+
+RandBox is a powerful JavaScript random data generation library, providing a rich API for generating various types of random data. This document covers all of RandBox's functional modules and usage methods.
+
+## usage - Usage Methods
+
+How to install and use RandBox in different environments:
+
+1. **[bower.mdx](/en/docs/usage/bower)** - Installation and usage method for the Bower package manager
+2. **[browser.mdx](/en/docs/usage/browser)** - Usage methods in a browser environment (simple, intermediate, advanced)
+3. **[requirejs.mdx](/en/docs/usage/requirejs)** - RequireJS module loading method
+4. **[node.mdx](/en/docs/usage/node)** - Installation and usage in a Node.js environment (npm, yarn, ES6)
+5. **[function.mdx](/en/docs/usage/function)** - Instructions for using custom random functions
+6. **[cli.mdx](/en/docs/usage/cli)** - Command Line Interface installation and usage method
+7. **[seed.mdx](/en/docs/usage/seed)** - Detailed explanation of seed functionality (number, string, multi-parameter seed)
+
+## basics - Basic Data Types
+
+Basic data type generation functionality:
+
+1. **[bool.mdx](/en/docs/basics/bool)** - Generate a random boolean value, supports specifying probability
+2. **[character.mdx](/en/docs/basics/character)** - Generate a random character, supports options like letters, numbers, symbols
+3. **[falsy.mdx](/en/docs/basics/falsy)** - Generate JavaScript falsy values
+4. **[floating.mdx](/en/docs/basics/floating)** - Generate a random floating-point number, supports range and precision settings
+5. **[integer.mdx](/en/docs/basics/integer)** - Generate a random integer, supports minimum and maximum settings
+6. **[letter.mdx](/en/docs/basics/letter)** - Generate a random letter, supports case control
+7. **[natural.mdx](/en/docs/basics/natural)** - Generate a natural number (non-negative integer)
+8. **[prime.mdx](/en/docs/basics/prime)** - Generate a random prime number
+9. **[string.mdx](/en/docs/basics/string)** - Generate a random string, supports multiple options like length, character pool, case
+10. **[template.mdx](/en/docs/basics/template)** - Generate a string based on a template, supports placeholder replacement
+
+## finance - Financial Data
+
+Financial related data generation functionality:
+
+1. **[cc.mdx](/en/docs/finance/cc)** - Generate a random credit card number compliant with the Luhn algorithm, supports specifying card type
+2. **[cc_type.mdx](/en/docs/finance/cc_type)** - Get credit card type information, including full name and abbreviation
+3. **[currency.mdx](/en/docs/finance/currency)** - Generate a random currency code or name
+4. **[currency_pair.mdx](/en/docs/finance/currency_pair)** - Generate a random currency pair
+5. **[dollar.mdx](/en/docs/finance/dollar)** - Generate a random US dollar amount, supports maximum value setting
+6. **[euro.mdx](/en/docs/finance/euro)** - Generate a random Euro amount, supports maximum value setting
+7. **[exp.mdx](/en/docs/finance/exp)** - Generate a credit card expiration date (MM/YY format)
+8. **[exp_month.mdx](/en/docs/finance/exp_month)** - Generate a credit card expiration month (01-12)
+9. **[exp_year.mdx](/en/docs/finance/exp_year)** - Generate a credit card expiration year, supports 2-digit or 4-digit format
+
+## helpers - Helper Tools
+
+Practical helper functions and data manipulation tools:
+
+1. **[capitalize.mdx](/en/docs/helpers/capitalize)** - Capitalize the first letter of a word
+2. **[pick.mdx](/en/docs/helpers/pick)** - Deprecated selection function, recommend using pickone and pickset
+3. **[pickset.mdx](/en/docs/helpers/pickset)** - Select multiple random elements from an array
+4. **[pickone.mdx](/en/docs/helpers/pickone)** - Select one random element from an array
+5. **[shuffle.mdx](/en/docs/helpers/shuffle)** - Shuffle the order of an array
+6. **[pad.mdx](/en/docs/helpers/pad)** - Number padding functionality
+7. **[set.mdx](/en/docs/helpers/set)** - Override default data sets
+8. **[mixin.mdx](/en/docs/helpers/mixin)** - Mixin functionality, used to extend RandBox
+
+## location - Geographical Location
+
+Geographical location and address related data generation:
+
+1. **[address.mdx](/en/docs/location/address)** - Generate a random street address
+2. **[altitude.mdx](/en/docs/location/altitude)** - Generate a random altitude
+3. **[areacode.mdx](/en/docs/location/areacode)** - Generate a random area code (USA)
+4. **[city.mdx](/en/docs/location/city)** - Generate a random city name
+5. **[coordinates.mdx](/en/docs/location/coordinates)** - Generate random coordinates (latitude and longitude)
+6. **[country.mdx](/en/docs/location/country)** - Generate a random country code or full name
+7. **[depth.mdx](/en/docs/location/depth)** - Generate a random depth (negative number)
+8. **[geohash.mdx](/en/docs/location/geohash)** - Generate a random geohash
+9. **[latitude.mdx](/en/docs/location/latitude)** - Generate a random latitude
+10. **[locale.mdx](/en/docs/location/locale)** - Generate a random language code or regional code
+11. **[longitude.mdx](/en/docs/location/longitude)** - Generate a random longitude
+12. **[phone.mdx](/en/docs/location/phone)** - Generate a random phone number (supports USA, UK, France)
+13. **[postal.mdx](/en/docs/location/postal)** - Generate a Canadian postal code
+14. **[postcode.mdx](/en/docs/location/postcode)** - Generate a UK postcode
+15. **[province.mdx](/en/docs/location/province)** - Generate a random province (supports Canada, Italy)
+16. **[state.mdx](/en/docs/location/state)** - Generate a random state (supports USA, Italy)
+17. **[street.mdx](/en/docs/location/street)** - Generate a random street name
+18. **[zip.mdx](/en/docs/location/zip)** - Generate a US ZIP code
+
+## miscellaneous - Miscellaneous Tools
+
+Various practical random data generation tools:
+
+1. **[coin.mdx](/en/docs/miscellaneous/coin)** - Coin toss functionality
+2. **[dice.mdx](/en/docs/miscellaneous/dice)** - Dice functionality (d4, d6, d8, d10, d12, d20, d30, d100)
+3. **[fileWithContent.mdx](/en/docs/miscellaneous/fileWithContent)** - Generate a file with random content
+4. **[guid.mdx](/en/docs/miscellaneous/guid)** - Generate a random GUID (versions 4 and 5)
+5. **[hash.mdx](/en/docs/miscellaneous/hash)** - Generate a random hexadecimal hash
+6. **[hidden.mdx](/en/docs/miscellaneous/hidden)** - Internal utility methods (credit card types, Mersenne Twister, months, etc.)
+7. **[n.mdx](/en/docs/miscellaneous/n)** - Generate an array of a specified number of random items
+8. **[normal.mdx](/en/docs/miscellaneous/normal)** - Normal distribution random number generation
+9. **[radio.mdx](/en/docs/miscellaneous/radio)** - Generate a random radio call sign
+10. **[rpg.mdx](/en/docs/miscellaneous/rpg)** - RPG dice system (e.g., 3d10)
+11. **[tv.mdx](/en/docs/miscellaneous/tv)** - Generate a TV station call sign (alias for radio)
+12. **[unique.mdx](/en/docs/miscellaneous/unique)** - Generate an array of unique items
+13. **[weighted.mdx](/en/docs/miscellaneous/weighted)** - Weighted random selection
+
+## mobile - Mobile Devices
+
+Mobile device identifier generation:
+
+1. **[android_id.mdx](/en/docs/mobile/android_id)** - Generate a random GCM registration ID
+2. **[apple_token.mdx](/en/docs/mobile/apple_token)** - Generate a random Apple Push Token
+3. **[bb_pin.mdx](/en/docs/mobile/bb_pin)** - Generate a random BlackBerry device PIN
+4. **[wp7_anid.mdx](/en/docs/mobile/wp7_anid)** - Generate a random Windows Phone 7 ANID
+5. **[wp8_anid2.mdx](/en/docs/mobile/wp8_anid2)** - Generate a random Windows Phone 8 ANID2
+
+## music - Music
+
+Music-related data generation:
+
+1. **[music_genre.mdx](/en/docs/music/music_genre)** - Generate a random music genre, includes 22 main genres and over 600 subgenres
+2. **[note.mdx](/en/docs/music/note)** - Generate a random musical note, supports various options (flats, sharps, natural notes, etc.)
+3. **[tempo.mdx](/en/docs/music/tempo)** - Generate a random tempo (default 40-320 BPM)
+
+## person - Personal Information
+
+Personal information and identity-related data generation:
+
+1. **[aadhar.mdx](/en/docs/person/aadhar)** - Generate an Indian identity number (Aadhar)
+2. **[age.mdx](/en/docs/person/age)** - Generate a random age, supports different types (child, teen, adult, senior)
+3. **[birthday.mdx](/en/docs/person/birthday)** - Generate a random birthday, supports multiple formats and types
+4. **[cf.mdx](/en/docs/person/cf)** - Generate an Italian social security number (Codice Fiscale)
+5. **[cpf.mdx](/en/docs/person/cpf)** - Generate a Brazilian tax number
+6. **[first.mdx](/en/docs/person/first)** - Generate a random first name, supports gender and nationality limits
+7. **[gender.mdx](/en/docs/person/gender)** - Generate a random gender, supports additional gender options
+8. **[last.mdx](/en/docs/person/last)** - Generate a random last name, supports multiple nationalities
+9. **[name.mdx](/en/docs/person/name)** - Generate a full random name, supports middle name, prefix, suffix options
+10. **[prefix.mdx](/en/docs/person/prefix)** - Generate a random name prefix (e.g., Mr., Mrs.)
+11. **[ssn.mdx](/en/docs/person/ssn)** - Generate a US Social Security Number
+12. **[suffix.mdx](/en/docs/person/suffix)** - Generate a random name suffix (e.g., Jr., Sr.)
+13. **[zodiac.mdx](/en/docs/person/zodiac)** - Generate a random zodiac sign
+
+## text - Text Generation
+
+Text and language related content generation:
+
+1. **[emoji.mdx](/en/docs/text/emoji)** - Generate a random emoji, supports specifying category and length
+2. **[paragraph.mdx](/en/docs/text/paragraph)** - Generate a random paragraph, composed of semi-pronounceable nonsense words, supports specifying sentence count and newline option
+3. **[sentence.mdx](/en/docs/text/sentence)** - Generate a random sentence, composed of semi-pronounceable nonsense words, supports specifying word count
+4. **[syllable.mdx](/en/docs/text/syllable)** - Generate semi-pronounceable syllables, used as building blocks for words
+5. **[word.mdx](/en/docs/text/word)** - Generate a semi-pronounceable random word, supports specifying syllable count or length (mutually exclusive options)
+
+## thing - Entities
+
+Generation of various entities:
+
+1. **[animal.mdx](/en/docs/thing/animal)** - Generate a random animal name, supports specifying specific types (marine, desert, grassland, forest, farm, pet, zoo)
+
+## time - Date and Time
+
+Date and time related data generation:
+
+1. **[ampm.mdx](/en/docs/time/ampm)** - Generate AM or PM identifier
+2. **[date.mdx](/en/docs/time/date)** - Generate a random date, supports multiple formats and specified components
+3. **[hammertime.mdx](/en/docs/time/hammertime)** - Generate a Unix timestamp with milliseconds
+4. **[hour.mdx](/en/docs/time/hour)** - Generate a random hour (12-hour or 24-hour format)
+5. **[millisecond.mdx](/en/docs/time/millisecond)** - Generate a random millisecond between 0-999
+6. **[minute.mdx](/en/docs/time/minute)** - Generate a random minute between 0-59
+7. **[month.mdx](/en/docs/time/month)** - Generate a random month, supports raw object format
+8. **[second.mdx](/en/docs/time/second)** - Generate a random second between 0-59
+9. **[timestamp.mdx](/en/docs/time/timestamp)** - Generate a standard Unix timestamp
+10. **[timezone.mdx](/en/docs/time/timezone)** - Generate a random timezone information object
+11. **[weekday.mdx](/en/docs/time/weekday)** - Generate a weekday, supports limiting to weekdays
+12. **[year.mdx](/en/docs/time/year)** - Generate a random year, supports range limits
+
+## web - Web Related
+
+Web and internet related data generation:
+
+1. **[avatar.mdx](/en/docs/web/avatar)** - Generate a Gravatar avatar URL
+2. **[color.mdx](/en/docs/web/color)** - Generate a color, supports 6 color formats (hex, rgb, rgba, etc.)
+3. **[company.mdx](/en/docs/web/company)** - Generate a random company name
+4. **[domain.mdx](/en/docs/web/domain)** - Generate a random domain name
+5. **[email.mdx](/en/docs/web/email)** - Generate a random email address
+6. **[fbid.mdx](/en/docs/web/fbid)** - Generate a Facebook ID
+7. **[google_analytics.mdx](/en/docs/web/google_analytics)** - Generate a Google Analytics tracking code
+8. **[hashtag.mdx](/en/docs/web/hashtag)** - Generate a random hashtag
+9. **[ip.mdx](/en/docs/web/ip)** - Generate a random IP address
+10. **[ipv6.mdx](/en/docs/web/ipv6)** - Generate a random IPv6 address
+11. **[klout.mdx](/en/docs/web/klout)** - Generate a Klout score
+12. **[mac.mdx](/en/docs/web/mac)** - Generate a MAC address
+13. **[profession.mdx](/en/docs/web/profession)** - Generate a random profession, supports rank options
+14. **[tld.mdx](/en/docs/web/tld)** - Generate a Top-Level Domain
+15. **[twitter.mdx](/en/docs/web/twitter)** - Generate a Twitter username
+16. **[url.mdx](/en/docs/web/url)** - Generate a URL, supports multiple custom options

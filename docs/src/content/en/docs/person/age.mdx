@@ -1,0 +1,25 @@
+# age
+
+```js
+// usage
+randBox.age()
+randBox.age({ type: 'child' })
+```
+
+Generate a random age
+
+```js
+randBox.age();
+=> 45
+```
+
+Default range is between 1 and 120
+
+Optionally specify one of a handful of enumerated age types:
+
+```js
+randBox.age({type: 'child'});
+=> 9
+```
+
+Allowed types are: `child`, `teen`, `adult`, `senior`

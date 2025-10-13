@@ -1,0 +1,48 @@
+# browser
+
+#### 简单使用
+
+**RandBox** 会自动实例化到 window 对象上。这意味着在最简单的情况下，你只需要包含脚本标签，然后立即使用 **RandBox** 实例。
+
+```html
+<script src="randBox.js"></script>
+<script>
+    console.log(randBox.bool());
+</script>
+```
+
+上面的代码片段会在你的控制台中打印出 true 或 false。注意实例是小写的 *randBox*。大写的 *RandBox* 是构造函数，用于创建 **RandBox** 的新实例。
+
+#### 中级使用
+
+你也可以忽略全局实例化的 **RandBox** 并创建你自己的实例。这允许你根据需要创建多个实例。为了方便起见，我们也将 **RandBox** 绑定到 window，所以它在浏览器中可以通过 *window.RandBox* 或直接通过 *RandBox* 全局访问。
+
+```html
+<script src="randBox.js"></script>
+<script>
+    var my_chance = new RandBox();
+    console.log(my_randBox.bool());
+</script>
+```
+
+
+#### 高级使用
+
+如果你创建自己的 **RandBox** 实例，你可以提供自己的种子，如果你想要可重复的结果，或者你想要更真正的随机种子。在下面的例子中，我通过 AJAX 调用 [Random.org][random] 来获取一个 *真正* 的随机数，用它来为 randBox 设置种子。
+
+```html
+<script src="http://randbox.com/randBox.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script>
+    var mySeed;
+    $.get("https://www.random.org/integers/", {num: "1", col: "1", min: "1", max: "1000000000", base: "10", format: "plain", rnd: "new"}, function(randNum) {
+      mySeed = randNum;
+
+      // 使用这个真正的随机数作为种子来实例化 RandBox
+      var my_seeded_chance = new RandBox(mySeed);
+      console.log(my_seeded_randBox.natural());
+    });
+</script>
+```
+
+[random]: http://www.random.org

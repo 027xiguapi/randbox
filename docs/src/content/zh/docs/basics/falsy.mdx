@@ -1,0 +1,22 @@
+# falsy
+
+```js
+// 用法
+randBox.falsy()
+randBox.falsy({ pool: [ NaN, undefined ] })
+```
+返回一个随机的假值（`false`、`null`、`undefined`、`0`、`NaN`、`''`）。
+
+```js
+randBox.falsy();
+=> false
+```
+
+默认的值池可以根据需要进行修改：
+
+```js
+randBox.falsy({ pool: [ NaN, undefined ] });
+=> NaN
+```
+
+

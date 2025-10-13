@@ -1,0 +1,25 @@
+# animal
+
+```js
+// 用法
+randBox.animal()
+randBox.animal({type: 'zoo'})
+```
+
+生成一个随机动物
+
+```js
+randBox.animal();
+=> 'Cobra'
+```
+
+默认是任何类型的动物。
+
+可选择指定特定类型的动物
+
+```js
+randBox.animal({type: 'zoo'});
+=> 'Lion'
+```
+
+允许的类型有：`ocean`、`desert`、`grassland`、`forest`、`farm`、`pet` 和 `zoo`

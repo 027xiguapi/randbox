@@ -1,0 +1,23 @@
+# set
+
+```js
+// 用法
+randBox.set(key, value)
+```
+
+用于覆盖 randBox 使用的默认数据。
+
+例如，如果不想使用默认的姓氏集合（它们来自美国人口普查数据，因此明显偏向美国），您可以用更适合您任务的内容替换名字数据。例如，如果您想要从《冰与火之歌》中的家族姓氏中选择，您可以这样做：
+
+```js
+randBox.set('lastNames', ['Arryn', 'Baratheon', 'Bolton', 'Frey', 'Greyjoy', 'Lannister', 'Martell', 'Stark', 'Targaryen', 'Tully', 'Tyrell']);
+
+// 然后
+randBox.last()
+=> 'Lannister'
+```
+
+这对国际化非常有用。
+
+可用于覆盖的数据集键：`firstNames`、`lastNames`、`provinces`、`us_states_and_dc`、`territories`、`armed_forces`、`street_suffixes`、`months`、`cc_types`、`currency_types`
+

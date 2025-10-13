@@ -1,0 +1,25 @@
+# locale
+
+```js
+// 用法
+randBox.locale()
+randBox.locale({region: true})
+```
+
+生成一个随机 ISO-639-1 语言代码
+
+```js
+randBox.locale();
+=> 'ca'
+```
+
+生成一个随机 IETF 区域代码
+
+```js
+randBox.locale({region: true});
+=> 'es-EA'
+```
+
+
+_注意，语言代码来自 [ISO-639-1 规范](http://www.loc.gov/standards/iso639-2/php/code_list.php)，
+区域代码来自 [IETF 标准](http://data.okfn.org/data/core/language-codes#resource-language-codes-full)_

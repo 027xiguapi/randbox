@@ -1,0 +1,30 @@
+# dollar
+
+```js
+// usage
+randBox.dollar()
+randBox.dollar({max: 250})
+```
+
+<p class="pullquote" data-pullquote="Dolla, dolla, bill ya'll" markdown="1"></p>
+
+Return a random dollar amount.
+
+```js
+randBox.dollar();
+=> "$2560.27"
+
+randBox.dollar();
+=> "$750.99"
+```
+
+By default returns dollar amount no larger than 10000. Optionally specify
+the max to make it larger (or smaller).
+
+```js
+randBox.dollar({max: 20});
+=> "$15.23"
+
+randBox.dollar({max: 10000000})
+=> "$5051205.49"
+```

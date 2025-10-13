@@ -55,7 +55,7 @@ export function file(this: RandBox, options?: any): string {
 }
 
 /**
- * Generates file data of random bytes using the chance.file method for the file name
+ * Generates file data of random bytes using the randBox.file method for the file name
  *
  * @param {object}
  * fileName: String

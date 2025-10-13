@@ -1,0 +1,59 @@
+# date
+
+```js
+// 用法
+randBox.date()
+randBox.date({string: true})
+randBox.date({string: true, american: false})
+randBox.date({year: 1983})
+```
+
+生成一个随机日期
+
+```js
+randBox.date();
+=> Sat Apr 09 2072 00:00:00 GMT-0400 (EDT)
+```
+
+默认情况下，返回实际的 [Date][Date] 对象
+
+可选择指定将日期作为字符串返回
+
+```js
+randBox.date({string: true});
+=> "5/27/2078"
+```
+
+这将返回格式为 MM/DD/YYYY 的日期字符串。
+
+当然，MM/DD/YYYY 是"美式"日期方法，但它是默认格式，因为这里还没有太多国际化支持。此外，这是 [Facebook][FB] 和其他服务用于生日和其他非日期对象日期的格式。
+
+但是，当请求字符串日期并传递 `american: false` 时，我们也支持以 DD/MM/YYYY 格式返回日期。
+
+```js
+randBox.date({string: true, american: false});
+=> "13/2/2017"
+```
+
+如果您想要对日期格式进行更丰富的控制，强烈建议使用 [Moment][Moment] 库。我们的格式化非常简单，提供多种格式的日期不在我们的核心能力范围内。
+
+可选择为日、月或年中的任何一个指定默认值。
+
+```js
+randBox.date({year: 1983});
+=> Wed May 04 1983 00:00:00 GMT-0400 (EDT)
+
+randBox.date({month: 0});
+=> Tue Jan 18 2084 00:00:00 GMT-0500 (EST)
+
+randBox.date({day: 21});
+=> Sun Oct 21 2103 00:00:00 GMT-0400 (EDT)
+```
+
+生成随机日期，但您指定的默认值保持不变。
+
+注意，月份是从 0 开始索引的。这是从我们内部用于生成日期的核心 JavaScript [Date][Date] 对象继承而来的。
+
+[Date]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+[FB]: https://developers.facebook.com/docs/reference/api/user/
+[Moment]: http://momentjs.com

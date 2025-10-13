@@ -1,0 +1,38 @@
+# paragraph
+
+```js
+// 用法
+randBox.paragraph()
+randBox.paragraph({ sentences: 1 })
+randBox.paragraph({ linebreak: true })
+```
+
+返回一个由半可发音的随机（无意义）单词组成的句子生成的随机段落。
+
+```js
+  randBox.paragraph();
+  => 'Lel fi huepe jupu akse zej ire vesik kojvulom zon is biwuwkef pa. Uv hokivej voh ebu numdogi akolo hik uwlez ta vacev ofdaimi acunetum suvet uhdab ir soglazo ju pafbeb. Pub cezeh fuc kebamnul he ok luumoabi rawkig me fov pin zup biv risugra. Ralpunad apkomgib alnirciw akel wa lus wahfum burog buol vecotihe abadahoj ugolo wovki ucojal fec.'
+```
+
+默认是一个包含 3 到 7 个句子的段落。
+
+可选择指定段落中的句子数量。
+
+```js
+  randBox.paragraph({ sentences: 1 });
+  => 'Idefeulo foc omoemowa wahteze liv juvde puguprof epehuji upuga zige odfe igo sit pilamhul oto ukurecef.'
+```
+
+可选择指定段落中的每个句子是否应该开始新行。
+
+```js
+  randBox.paragraph({ linebreak: true });
+  => `
+      Moku kazkubib adi apo bebiw movarne rab tusa vura nok ji iv otukib dewut.
+      Tiwlo orojel vuhhet emluliv loha ma rulical fokuv re dob fabup bit.
+      Veza ermethit osgues dohjeci pezlal su ibi cib zerezci bode ca hopmub gigwosut culhoca nubu.
+     `
+```
+
+
+

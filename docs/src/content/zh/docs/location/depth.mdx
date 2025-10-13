@@ -1,0 +1,29 @@
+# depth
+
+```js
+// 用法
+randBox.depth()
+randBox.depth({ fixed: 2 })
+randBox.depth({ min: -1000 })
+```
+
+生成一个随机深度，以米为单位。深度总是负数
+
+```js
+randBox.depth()
+=> -2126.95039
+```
+
+默认情况下，在小数点后包含 5 位精度。可以使用 `fixed` 选项覆盖。
+
+```js
+randBox.depth({ fixed: 2 })
+=> -1542.11
+```
+
+默认情况下，最大（或最小，取决于您的参考框架）深度为 -2550（马里亚纳海沟的深度），但可以使用 `min` 选项覆盖。
+
+```js
+randBox.depth({ min: -1000 })
+=> -718.41976
+```

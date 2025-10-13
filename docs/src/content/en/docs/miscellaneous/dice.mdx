@@ -1,0 +1,29 @@
+# dice
+
+```js
+// usage
+randBox.d4()
+randBox.d6()
+randBox.d8()
+randBox.d10()
+randBox.d12()
+randBox.d20()
+randBox.d30()
+randBox.d100()
+```
+
+<p class="pullquote" data-pullquote='"Any dungeon master worth his weight in geldings goes nowhere without his 20 sided die."' markdown="1"></p>
+
+Return a value equal to the roll of a die.
+
+```js
+randBox.d20();
+=> 13
+
+randBox.d6();
+=> 4
+```
+
+These are just wrappers around natural() but are convenient for use by games.
+
+They return values between 1 and the number after the `d`, so `randBox.d4()` returns 1, 2, 3, or 4, just like a 4 sided die would.

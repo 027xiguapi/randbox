@@ -1,0 +1,159 @@
+---
+title: "介绍"
+---
+
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
+
+# RandBox - JavaScript 随机数据生成库
+
+RandBox 是一个功能强大的 JavaScript 随机数据生成库，提供了丰富的 API 用于生成各种类型的随机数据。采用模块化设计，支持 ES6 模块系统和 Tree Shaking，让您只打包需要的功能。
+
+```javascript
+import RandBox from 'randbox';
+
+const randBox = new RandBox();
+console.log(randBox.name());     // 'Sarah Johnson'
+console.log(randBox.email());    // 'john.doe@example.com'
+console.log(randBox.integer(1, 100)); // 42
+```
+
+## 安装和使用
+
+### 通过 npm 安装
+
+```bash
+npm install randbox
+```
+
+### 通过 yarn 安装
+
+```bash
+yarn add randbox
+```
+
+### CDN 引入
+
+```html
+<script src="https://unpkg.com/randbox@latest/build/randbox.min.js"></script>
+```
+
+## 模块化架构
+
+RandBox 采用模块化设计，将功能分解为独立的 ES6 模块，提供更好的可维护性和 Tree Shaking 支持。
+
+### 核心模块 (`core.js`)
+
+包含主要的 RandBox 构造函数、常量、工具函数和其他模块依赖的核心功能。
+
+**导出内容:**
+- `RandBox` - 主构造函数
+- 常量: `MAX_INT`, `MIN_INT`, `NUMBERS`, `CHARS_LOWER`, `CHARS_UPPER`, `HEX_POOL`
+- 工具函数: `initOptions`, `testRange`, `range`, `base64`, `UnsupportedError`
+
+## 功能模块概览
+
+每个模块包含相关功能，可以单独导入使用：
+
+1. **基础数据 (`basics.js`)** - 核心随机数生成
+   - `bool`, `character`, `floating`, `integer`, `natural`, `string`, `buffer`, `hex`
+
+2. **辅助工具 (`helpers.js`)** - 数组和工具函数
+   - `capitalize`, `mixin`, `unique`, `n`, `pad`, `pick`, `pickone`, `pickset`, `shuffle`, `weighted`
+
+3. **文本生成 (`text.js`)** - 文本内容生成
+   - `paragraph`, `sentence`, `syllable`, `word`, `emoji`
+
+4. **个人信息 (`person.js`)** - 人员相关数据
+   - `age`, `birthday`, `first`, `last`, `name`, `gender`, `ssn`, `animal` 等
+
+5. **移动设备 (`mobile.js`)** - 移动设备标识符
+   - `android_id`, `apple_token`, `wp8_anid2`, `wp7_anid`, `bb_pin`
+
+6. **网络数据 (`web.js`)** - 网络相关数据
+   - `avatar`, `color`, `domain`, `email`, `ip`, `url`, `hashtag` 等
+
+7. **地理位置 (`location.js`)** - 地理数据
+   - `address`, `city`, `country`, `coordinates`, `latitude`, `longitude`, `phone` 等
+
+8. **金融数据 (`finance.js`)** - 金融相关数据
+   - `cc`, `currency`, `dollar`, `euro`, `iban`, `luhn_check` 等
+
+9. **音乐数据 (`music.js`)** - 音乐相关数据
+   - `note`, `chord`, `tempo`, `music_genre`
+
+10. **杂项工具 (`miscellaneous.js`)** - 各种实用功能
+    - `coin`, dice 函数 (`d4`, `d6` 等), `guid`, `hash`, 日期函数, `normal`
+
+## 使用方式
+
+### 导入完整库（等效于原始版本）
+
+```javascript
+import RandBox from 'randbox';
+const randBox = new RandBox();
+console.log(randBox.name()); // 与原始版本完全相同的工作方式
+```
+
+### 导入特定模块（Tree Shaking）
+
+```javascript
+import { RandBox } from 'randbox/src/core.js';
+import { name, email } from 'randbox/src/person.js';
+
+// 使用单独的函数
+console.log(name()); // 直接函数调用
+
+// 或者使用特定模块扩展 RandBox 实例
+const randBox = new RandBox();
+Object.assign(randBox, { name, email });
+console.log(randBox.name());
+```
+
+### 导入单个函数
+
+```javascript
+import { name } from 'randbox/src/person.js';
+import { email } from 'randbox/src/web.js';
+import { natural } from 'randbox/src/basics.js';
+
+// 直接使用（注意：'this' 上下文需要绑定到 RandBox 实例）
+```
+
+## 优势和特性
+
+1. **Tree Shaking**: 只打包您需要的功能
+2. **可维护性**: 相关功能组织在一起
+3. **模块化**: 轻松添加新模块或修改现有模块
+4. **ES6 兼容**: 现代 JavaScript 模块系统
+5. **向后兼容**: `index.js` 提供与原始版本相同的 API
+
+## 依赖关系
+
+每个模块只从 `core.js` 导入所需的内容，最大限度地减少依赖关系并实现更好的优化。
+
+<Alert>
+  <AlertTitle>🎲 开始使用 RandBox</AlertTitle>
+  <AlertDescription>
+    选择适合您项目的导入方式，享受强大的随机数据生成功能。
+  </AlertDescription>
+</Alert>
+
+---
+
+<HoverCard>
+  <HoverCardTrigger>
+    <Button>
+      🎲 快速体验
+    </Button>
+  </HoverCardTrigger>
+  <HoverCardContent>
+    RandBox - 强大的 JavaScript 随机数据生成库，支持 10+ 数据类别和 100+ 函数。
+  </HoverCardContent>
+</HoverCard>

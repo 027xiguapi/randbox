@@ -1,0 +1,189 @@
+# RandBox 文档
+
+RandBox 是一个功能强大的 JavaScript 随机数据生成库，提供了丰富的 API 用于生成各种类型的随机数据。本文档涵盖了 RandBox 的所有功能模块和使用方法。
+
+## usage - 使用方法
+
+如何在不同环境中安装和使用 RandBox：
+
+1. **[bower.mdx](/zh/docs/usage/bower)** - Bower 包管理器安装和使用方法
+2. **[browser.mdx](/zh/docs/usage/browser)** - 浏览器环境中的使用方法（简单、中级、高级）
+3. **[requirejs.mdx](/zh/docs/usage/requirejs)** - RequireJS 模块加载方式
+4. **[node.mdx](/zh/docs/usage/node)** - Node.js 环境中的安装和使用（npm、yarn、ES6）
+5. **[function.mdx](/zh/docs/usage/function)** - 自定义随机函数的使用说明
+6. **[cli.mdx](/zh/docs/usage/cli)** - 命令行工具的安装和使用方法
+7. **[seed.mdx](/zh/docs/usage/seed)** - 种子功能详解（数字、字符串、多参数种子）
+
+## basics - 基础数据类型
+
+基础数据类型生成功能：
+
+1. **[bool.mdx](/zh/docs/basics/bool)** - 生成随机布尔值，支持指定概率
+2. **[character.mdx](/zh/docs/basics/character)** - 生成随机字符，支持字母、数字、符号等选项
+3. **[falsy.mdx](/zh/docs/basics/falsy)** - 生成 JavaScript 中的虚假值
+4. **[floating.mdx](/zh/docs/basics/floating)** - 生成随机浮点数，支持范围和精度设置
+5. **[integer.mdx](/zh/docs/basics/integer)** - 生成随机整数，支持最小值和最大值设置
+6. **[letter.mdx](/zh/docs/basics/letter)** - 生成随机字母，支持大小写控制
+7. **[natural.mdx](/zh/docs/basics/natural)** - 生成自然数（非负整数）
+8. **[prime.mdx](/zh/docs/basics/prime)** - 生成随机质数
+9. **[string.mdx](/zh/docs/basics/string)** - 生成随机字符串，支持长度、字符池、大小写等多种选项
+10. **[template.mdx](/zh/docs/basics/template)** - 基于模板生成字符串，支持占位符替换
+
+## finance - 金融数据
+
+金融相关数据生成功能：
+
+1. **[cc.mdx](/zh/docs/finance/cc)** - 生成符合 Luhn 算法的随机信用卡号，支持指定卡类型
+2. **[cc_type.mdx](/zh/docs/finance/cc_type)** - 获取信用卡类型信息，包括全名和简称
+3. **[currency.mdx](/zh/docs/finance/currency)** - 生成随机货币代码或名称
+4. **[currency_pair.mdx](/zh/docs/finance/currency_pair)** - 生成随机货币对
+5. **[dollar.mdx](/zh/docs/finance/dollar)** - 生成随机美元金额，支持最大值设置
+6. **[euro.mdx](/zh/docs/finance/euro)** - 生成随机欧元金额，支持最大值设置
+7. **[exp.mdx](/zh/docs/finance/exp)** - 生成信用卡到期日期（MM/YY 格式）
+8. **[exp_month.mdx](/zh/docs/finance/exp_month)** - 生成信用卡到期月份（01-12）
+9. **[exp_year.mdx](/zh/docs/finance/exp_year)** - 生成信用卡到期年份，支持 2 位或 4 位格式
+
+## helpers - 辅助工具
+
+实用的辅助功能和数据操作工具：
+
+1. **[capitalize.mdx](/zh/docs/helpers/capitalize)** - 将单词首字母大写
+2. **[pick.mdx](/zh/docs/helpers/pick)** - 已弃用的选择功能，推荐使用 pickone 和 pickset
+3. **[pickset.mdx](/zh/docs/helpers/pickset)** - 从数组中选择多个随机元素
+4. **[pickone.mdx](/zh/docs/helpers/pickone)** - 从数组中选择一个随机元素
+5. **[shuffle.mdx](/zh/docs/helpers/shuffle)** - 打乱数组顺序
+6. **[pad.mdx](/zh/docs/helpers/pad)** - 数字填充功能
+7. **[set.mdx](/zh/docs/helpers/set)** - 覆盖默认数据集
+8. **[mixin.mdx](/zh/docs/helpers/mixin)** - 混入功能，用于扩展 RandBox
+
+## location - 地理位置
+
+地理位置和地址相关数据生成：
+
+1. **[address.mdx](/zh/docs/location/address)** - 生成随机街道地址
+2. **[altitude.mdx](/zh/docs/location/altitude)** - 生成随机海拔高度
+3. **[areacode.mdx](/zh/docs/location/areacode)** - 生成随机区号（美国）
+4. **[city.mdx](/zh/docs/location/city)** - 生成随机城市名称
+5. **[coordinates.mdx](/zh/docs/location/coordinates)** - 生成随机坐标（纬度和经度）
+6. **[country.mdx](/zh/docs/location/country)** - 生成随机国家代码或完整名称
+7. **[depth.mdx](/zh/docs/location/depth)** - 生成随机深度（负数）
+8. **[geohash.mdx](/zh/docs/location/geohash)** - 生成随机地理哈希
+9. **[latitude.mdx](/zh/docs/location/latitude)** - 生成随机纬度
+10. **[locale.mdx](/zh/docs/location/locale)** - 生成随机语言代码或区域代码
+11. **[longitude.mdx](/zh/docs/location/longitude)** - 生成随机经度
+12. **[phone.mdx](/zh/docs/location/phone)** - 生成随机电话号码（支持美国、英国、法国）
+13. **[postal.mdx](/zh/docs/location/postal)** - 生成加拿大邮政编码
+14. **[postcode.mdx](/zh/docs/location/postcode)** - 生成英国邮政编码
+15. **[province.mdx](/zh/docs/location/province)** - 生成随机省份（支持加拿大、意大利）
+16. **[state.mdx](/zh/docs/location/state)** - 生成随机州（支持美国、意大利）
+17. **[street.mdx](/zh/docs/location/street)** - 生成随机街道名称
+18. **[zip.mdx](/zh/docs/location/zip)** - 生成美国邮政编码
+
+## miscellaneous - 杂项工具
+
+各种实用的随机数据生成工具：
+
+1. **[coin.mdx](/zh/docs/miscellaneous/coin)** - 抛硬币功能
+2. **[dice.mdx](/zh/docs/miscellaneous/dice)** - 骰子功能（d4、d6、d8、d10、d12、d20、d30、d100）
+3. **[fileWithContent.mdx](/zh/docs/miscellaneous/fileWithContent)** - 生成带有随机内容的文件
+4. **[guid.mdx](/zh/docs/miscellaneous/guid)** - 生成随机 GUID（版本 4 和 5）
+5. **[hash.mdx](/zh/docs/miscellaneous/hash)** - 生成随机十六进制哈希
+6. **[hidden.mdx](/zh/docs/miscellaneous/hidden)** - 内部实用方法（信用卡类型、梅森旋转器、月份等）
+7. **[n.mdx](/zh/docs/miscellaneous/n)** - 生成指定数量的随机项目数组
+8. **[normal.mdx](/zh/docs/miscellaneous/normal)** - 正态分布随机数生成
+9. **[radio.mdx](/zh/docs/miscellaneous/radio)** - 生成随机无线电呼号
+10. **[rpg.mdx](/zh/docs/miscellaneous/rpg)** - RPG 骰子系统（如 3d10）
+11. **[tv.mdx](/zh/docs/miscellaneous/tv)** - 生成电视台呼号（radio 的别名）
+12. **[unique.mdx](/zh/docs/miscellaneous/unique)** - 生成唯一项目数组
+13. **[weighted.mdx](/zh/docs/miscellaneous/weighted)** - 加权随机选择
+
+## mobile - 移动设备
+
+移动设备相关标识符生成：
+
+1. **[android_id.mdx](/zh/docs/mobile/android_id)** - 生成随机 GCM 注册 ID
+2. **[apple_token.mdx](/zh/docs/mobile/apple_token)** - 生成随机 Apple 推送令牌
+3. **[bb_pin.mdx](/zh/docs/mobile/bb_pin)** - 生成随机 BlackBerry 设备 PIN
+4. **[wp7_anid.mdx](/zh/docs/mobile/wp7_anid)** - 生成随机 Windows Phone 7 ANID
+5. **[wp8_anid2.mdx](/zh/docs/mobile/wp8_anid2)** - 生成随机 Windows Phone 8 ANID2
+
+## music - 音乐
+
+音乐相关数据生成：
+
+1. **[music_genre.mdx](/zh/docs/music/music_genre)** - 生成随机音乐类型，包含 22 个主要类型和超过 600 个子类型
+2. **[note.mdx](/zh/docs/music/note)** - 生成随机音符，支持多种选项（降音符、升音符、自然音符等）
+3. **[tempo.mdx](/zh/docs/music/tempo)** - 生成随机节拍（默认 40-320 BPM）
+
+## person - 个人信息
+
+个人信息和身份相关数据生成：
+
+1. **[aadhar.mdx](/zh/docs/person/aadhar)** - 生成印度身份证号码（Aadhar）
+2. **[age.mdx](/zh/docs/person/age)** - 生成随机年龄，支持不同类型（儿童、青少年、成人、老年人）
+3. **[birthday.mdx](/zh/docs/person/birthday)** - 生成随机生日，支持多种格式和类型
+4. **[cf.mdx](/zh/docs/person/cf)** - 生成意大利社会保险号码（Codice Fiscale）
+5. **[cpf.mdx](/zh/docs/person/cpf)** - 生成巴西税号
+6. **[first.mdx](/zh/docs/person/first)** - 生成随机名字，支持性别和国籍限制
+7. **[gender.mdx](/zh/docs/person/gender)** - 生成随机性别，支持额外性别选项
+8. **[last.mdx](/zh/docs/person/last)** - 生成随机姓氏，支持多种国籍
+9. **[name.mdx](/zh/docs/person/name)** - 生成完整随机姓名，支持中间名、前缀、后缀等选项
+10. **[prefix.mdx](/zh/docs/person/prefix)** - 生成随机姓名前缀（如 Mr.、Mrs. 等）
+11. **[ssn.mdx](/zh/docs/person/ssn)** - 生成美国社会保险号码
+12. **[suffix.mdx](/zh/docs/person/suffix)** - 生成随机姓名后缀（如 Jr.、Sr. 等）
+13. **[zodiac.mdx](/zh/docs/person/zodiac)** - 生成随机星座
+
+## text - 文本生成
+
+文本和语言相关内容生成：
+
+1. **[emoji.mdx](/zh/docs/text/emoji)** - 生成随机表情符号，支持指定类别和长度
+2. **[paragraph.mdx](/zh/docs/text/paragraph)** - 生成随机段落，由半可发音的无意义单词组成，支持指定句子数量和换行选项
+3. **[sentence.mdx](/zh/docs/text/sentence)** - 生成随机句子，由半可发音的无意义单词组成，支持指定单词数量
+4. **[syllable.mdx](/zh/docs/text/syllable)** - 生成半可发音的音节，作为单词的构建块
+5. **[word.mdx](/zh/docs/text/word)** - 生成半可发音的随机单词，支持指定音节数或长度（互斥选项）
+
+## thing - 实体对象
+
+各种实体对象的生成：
+
+1. **[animal.mdx](/zh/docs/thing/animal)** - 生成随机动物名称，支持指定特定类型（海洋、沙漠、草原、森林、农场、宠物、动物园）
+
+## time - 时间日期
+
+时间和日期相关数据生成：
+
+1. **[ampm.mdx](/zh/docs/time/ampm)** - 生成上午或下午标识符
+2. **[date.mdx](/zh/docs/time/date)** - 生成随机日期，支持多种格式和指定组件
+3. **[hammertime.mdx](/zh/docs/time/hammertime)** - 生成带毫秒的 Unix 时间戳
+4. **[hour.mdx](/zh/docs/time/hour)** - 生成随机小时（12 小时制或 24 小时制）
+5. **[millisecond.mdx](/zh/docs/time/millisecond)** - 生成 0-999 之间的随机毫秒
+6. **[minute.mdx](/zh/docs/time/minute)** - 生成 0-59 之间的随机分钟
+7. **[month.mdx](/zh/docs/time/month)** - 生成随机月份，支持原始对象格式
+8. **[second.mdx](/zh/docs/time/second)** - 生成 0-59 之间的随机秒
+9. **[timestamp.mdx](/zh/docs/time/timestamp)** - 生成标准 Unix 时间戳
+10. **[timezone.mdx](/zh/docs/time/timezone)** - 生成随机时区信息对象
+11. **[weekday.mdx](/zh/docs/time/weekday)** - 生成星期几，支持工作日限制
+12. **[year.mdx](/zh/docs/time/year)** - 生成随机年份，支持范围限制
+
+## web - 网络相关
+
+网络和互联网相关数据生成：
+
+1. **[avatar.mdx](/zh/docs/web/avatar)** - 生成 Gravatar 头像 URL
+2. **[color.mdx](/zh/docs/web/color)** - 生成颜色，支持 6 种颜色格式（hex、rgb、rgba 等）
+3. **[company.mdx](/zh/docs/web/company)** - 生成随机公司名称
+4. **[domain.mdx](/zh/docs/web/domain)** - 生成随机域名
+5. **[email.mdx](/zh/docs/web/email)** - 生成随机电子邮件地址
+6. **[fbid.mdx](/zh/docs/web/fbid)** - 生成 Facebook ID
+7. **[google_analytics.mdx](/zh/docs/web/google_analytics)** - 生成 Google Analytics 跟踪代码
+8. **[hashtag.mdx](/zh/docs/web/hashtag)** - 生成随机标签
+9. **[ip.mdx](/zh/docs/web/ip)** - 生成随机 IP 地址
+10. **[ipv6.mdx](/zh/docs/web/ipv6)** - 生成随机 IPv6 地址
+11. **[klout.mdx](/zh/docs/web/klout)** - 生成 Klout 分数
+12. **[mac.mdx](/zh/docs/web/mac)** - 生成 MAC 地址
+13. **[profession.mdx](/zh/docs/web/profession)** - 生成随机职业，支持职级选项
+14. **[tld.mdx](/zh/docs/web/tld)** - 生成顶级域名
+15. **[twitter.mdx](/zh/docs/web/twitter)** - 生成 Twitter 用户名
+16. **[url.mdx](/zh/docs/web/url)** - 生成 URL，支持多种自定义选项
+

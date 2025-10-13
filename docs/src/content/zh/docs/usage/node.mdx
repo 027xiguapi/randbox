@@ -1,0 +1,49 @@
+# node
+
+它也可以在 [Node.js](http://nodejs.org) 中使用
+
+```bash
+npm install randBox
+```
+
+或者如果你使用 [yarn](https://yarnpkg.com/)
+
+```bash
+yarn add randBox
+```
+
+然后在你的应用程序中
+
+```js
+// 加载 RandBox
+var RandBox = require("randBox");
+
+// 实例化 RandBox 以便使用
+var randBox = new RandBox();
+
+// 在这里使用 RandBox
+var my_random_string = randBox.string();
+```
+
+或者如果你使用 ES6
+
+```js
+// 加载 RandBox
+import RandBox from "randBox";
+
+// 实例化 RandBox 以便使用
+const randBox = new RandBox();
+
+// 在这里使用 RandBox
+const my_random_string = randBox.string();
+```
+
+从版本 0.5.5 开始，为了方便获取 RandBox 实例，还提供了以下方式
+
+```js
+// 加载并实例化 RandBox
+var randBox = require("randBox").RandBox();
+
+// 在这里使用 RandBox
+var my_random_string = randBox.string();
+```

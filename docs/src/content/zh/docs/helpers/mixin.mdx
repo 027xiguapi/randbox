@@ -1,0 +1,79 @@
+# mixin
+
+```js
+// 用法
+randBox.mixin(<Object>)
+```
+
+混入是扩展 **RandBox** 以适应您特定应用需求的一种非常强大的方法。
+
+首先，如果您正在考虑为 **RandBox** 使用混入，请首先考虑您的用途是否对其他人有益。如果是这样，请提交一个 [拉取请求][PR] 而不是使用混入！
+
+传播爱意，让每个人都受益于您出色的生成器 :)
+
+话虽如此，肯定会有一些时候您想要生成一些随机的、特定于您的应用程序但不广泛适用的东西。这时就该使用混入了！
+
+**RandBox** 混入允许您向 **RandBox** 添加一次性方法，以后可以使用。
+
+例如，假设我有一个由名字、姓氏和电子邮件组成的用户对象。
+
+```js
+
+var user = {
+first: 'John',
+last: 'Smith',
+email: 'john@aol.com'
+};
+
+```
+
+假设我想要能够随机生成这些用户对象。
+
+这不是广泛适用的东西，因为它特定于我的应用程序，所以非常适合混入！
+
+要创建混入，构建一个对象，其键是方法名称，其值是要调用的函数。
+
+注意：在每个函数内，您都可以访问 `randBox` 本身！
+
+例如，创建 `user` 混入：
+
+```js
+randBox.mixin({
+'user': function() {
+return {
+first: randBox.first(),
+last: randBox.last(),
+email: randBox.email()
+};
+}
+});
+
+// 然后您可以调用您的混入
+randBox.user();
+
+=> {first: 'Eli', last: 'Benson', email: 'gembibuj@dugesan.com'}
+```
+
+混入甚至可以包含其他混入！
+
+例如，"扩展"用户对象：
+```js
+randBox.mixin({
+'user': function () {
+return {
+first: randBox.first(),
+last: randBox.last(),
+email: randBox.email()
+};
+},
+'social_user': function () {
+var user = randBox.user();
+user.network = randBox.pick(['facebook', 'twitter']);
+return user;
+}
+});
+```
+
+所以我们这里有第二个混入 `social_user`，它使用了 `user` 混入并在其基础上增加功能！注意，如果同时声明，这些混入可以在对象上以任何顺序定义。
+
+[PR]: https://github.com/victorquinn/randbox/pulls

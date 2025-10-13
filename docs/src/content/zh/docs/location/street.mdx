@@ -1,0 +1,37 @@
+# street
+
+```js
+// 用法
+randBox.street()
+randBox.street({country:it})
+```
+
+生成一个随机街道
+
+```js
+randBox.street();
+=> 'Tesca Circle'
+```
+
+可选择要求返回短后缀
+
+```js
+randBox.street({short_suffix: true});
+=> 'Jiled St'
+```
+
+可选择指定用于生成街道名称的音节数
+
+```js
+randBox.street({syllables: 8});
+=> 'Teniefitinusewjircor Junction'
+```
+
+可选择指定一个国家来本地化街道前缀
+
+```js
+randBox.street({country: 'it'});
+=> 'Via Nefba'
+```
+
+注意，目前对国家的支持仅限于：`'us', 'it'`。

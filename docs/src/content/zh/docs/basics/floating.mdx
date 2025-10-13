@@ -1,0 +1,41 @@
+# floating
+
+```js
+// 用法
+randBox.floating()
+randBox.floating({ fixed: 7 })
+randBox.floating({ min: 0, max: 100 })
+```
+<p class="pullquote">我本想使用 float 或 double 作为方法名，但这两个都是 JS 保留字，尽管它们实际上并没有被真正使用...</p>
+
+返回一个随机浮点数。
+
+```js
+randBox.floating();
+=> -211920142886.5024
+```
+
+默认情况下，它将返回一个小数点后最多 4 位数字的固定数字。
+
+注意：*最多* 4 位数字。这是因为，除非我们返回尾随零（JavaScript 浮点数中不允许），否则我们无法保证小数点后有 4 位数字。因此，如果随机 randBox 返回 `82383854.2000`，那么返回的将是 `82383854.2`。
+
+要获取小数点后固定位数的数字，请将其作为选项提供。
+
+```js
+randBox.floating({ fixed: 7 });
+=> -749512327.7447168
+```
+
+与其他数字函数一样，可以包含 min 和/或 max。
+
+```js
+randBox.floating({ min: 0, max: 100 });
+=> 31.9021
+```
+
+或者将它们组合使用。
+
+```js
+randBox.floating({ min: 0, max: 100, fixed: 8 });
+=> 45.92367599
+```

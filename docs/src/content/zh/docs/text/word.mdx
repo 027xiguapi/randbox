@@ -1,0 +1,47 @@
+# word
+
+```js
+// 用法
+randBox.word()
+randBox.word({ syllables: 3 })
+randBox.word({ length: 5 })
+```
+
+返回一个半可发音的随机（无意义）单词。
+
+```js
+  randBox.word();
+  => 'bappada'
+```
+
+单词以全小写形式返回。
+
+默认是一个包含 1 到 3 个音节的单词。
+
+<p class="pullquote">选择这个长度是因为它产生的平均单词长度约为 5-6 个字符，这似乎是合适的。</p>
+
+可选择指定单词包含的音节数量。
+
+注意，这些不是严格语言定义中的音节，而是我们在这里定义的音节，即 2 或 3 个字符，大多在元音和辅音之间交替。这是我们用纯随机生成能做到的最好程度。
+
+```js
+  randBox.word({ syllables: 3 });
+  => 'tavnamgi'
+```
+
+可选择指定长度，单词将遵守该边界。
+
+```js
+  randBox.word({ length: 5 });
+  => 'ralve'
+```
+
+在这种情况下，这两个选项是互斥的，即它们不能组合，因为它们通常没有意义。拥有一个 7 个音节且长度为 5 的单词，或长度为 30 但 2 个音节的单词是不可能的。
+
+因此，如果同时指定了两者，将抛出异常，以便开发人员可以处理他们的错误情况。
+
+```js
+  randBox.word({ length: 5, syllables: 20 });
+  => new RangeError("RandBox: Cannot specify both syllables AND length.");
+```
+

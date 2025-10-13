@@ -1,0 +1,30 @@
+# year
+
+```js
+// 用法
+randBox.year()
+randBox.year({min: 1900, max: 2100})
+```
+
+生成一个随机年份
+
+```js
+randBox.year();
+=> '2053'
+```
+
+默认情况下，min 是当前年份，max 是 min 加上 100 年。
+
+这作为字符串返回。如果出于某种原因您需要数字，只需解析它：
+
+```js
+parseInt(randBox.year());
+=> 2042
+```
+
+可选择指定 min、max 或两者来限制范围。
+
+```js
+randBox.year({min: 1900, max: 2100});
+=> '1983'
+```

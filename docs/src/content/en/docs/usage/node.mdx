@@ -1,0 +1,50 @@
+# node
+
+It can also be used in [Node.js](http://nodejs.org)
+
+```bash
+npm install randBox
+```
+
+or if you're using [yarn](https://yarnpkg.com/)
+
+```bash
+yarn add randBox
+```
+
+then in your app
+
+```js
+// Load RandBox
+var RandBox = require("randBox");
+
+// Instantiate RandBox so it can be used
+var randBox = new RandBox();
+
+// Use RandBox here.
+var my_random_string = randBox.string();
+```
+
+Or if you're using ES6
+
+```js
+// Load RandBox
+import RandBox from "randBox";
+
+// Instantiate RandBox so it can be used
+const randBox = new RandBox();
+
+// Use RandBox here.
+const my_random_string = randBox.string();
+```
+
+As of version 0.5.5, the following is also offered as a convenience for getting
+an instance of RandBox
+
+```js
+// Load and instantiate RandBox
+var randBox = require("randBox").RandBox();
+
+// Use RandBox here.
+var my_random_string = randBox.string();
+```

@@ -1,0 +1,22 @@
+# falsy
+
+```js
+// usages
+randBox.falsy()
+randBox.falsy({ pool: [ NaN, undefined ] })
+```
+Return a random falsy value (`false`, `null`, `undefined`, `0`, `NaN`, `''`).
+
+```js
+randBox.falsy();
+=> false
+```
+
+The default pool can be changed to better meet the needs:
+
+```js
+randBox.falsy({ pool: [ NaN, undefined ] });
+=> NaN
+```
+
+

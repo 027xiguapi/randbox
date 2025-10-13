@@ -1,0 +1,22 @@
+# domain
+
+```js
+// 用法
+randBox.domain()
+randBox.domain({tld: 'com'})
+```
+
+返回一个带有随机[tld](#tld)的随机域名。
+
+```js
+randBox.domain()
+=> 'onaro.net'
+```
+
+可选择指定 tld，域名将是随机的但 tld 不是。
+
+```js
+randBox.domain({tld: 'ie'})
+=> 'gotaujo.ie'
+```
+

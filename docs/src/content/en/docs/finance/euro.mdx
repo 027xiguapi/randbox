@@ -1,0 +1,28 @@
+# euro
+
+```js
+// usage
+randBox.euro()
+randBox.euro({max: 250})
+```
+
+Return a random euro amount. Formatting depends on the current locale (samples are displayed with european formatting)
+
+```js
+randBox.euro();
+=> "2.560,27€"
+
+randBox.euro();
+=> "750.99€"
+```
+
+By default returns euro amount no larger than 10000. Optionally specify
+the max to make it larger (or smaller).
+
+```js
+randBox.euro({max: 20});
+=> "15,23€"
+
+randBox.euro({max: 10000000})
+=> "5.051.205,49€"
+```

@@ -1,0 +1,35 @@
+# prefix
+
+```js
+// 用法
+randBox.prefix()
+randBox.prefix({ full: true })
+```
+
+生成一个随机姓名前缀
+
+```js
+randBox.prefix();
+=> 'Mrs.'
+```
+
+默认情况下，返回较短的版本。
+
+可选择获取完整版本。
+
+```js
+randBox.prefix({ full: true });
+=> 'Mister'
+```
+
+可选择指定性别。有效选项为 `male`、`female` 或 `all`（默认）。
+
+```js
+randBox.prefix({ gender: "male" });
+=> 'Mr.'
+
+randBox.prefix({ gender: "female" });
+=> 'Miss'
+```
+
+*为了维护遗留支持，这也响应 randBox.name_prefix()。*

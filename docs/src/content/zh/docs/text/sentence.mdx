@@ -1,0 +1,27 @@
+# sentence
+
+```js
+// 用法
+randBox.sentence()
+randBox.sentence({ words: 5 })
+```
+
+返回一个由半可发音的随机（无意义）单词组成的随机句子。
+
+```js
+  randBox.sentence();
+  => 'Witpevze mappos isoletu fo res bi geow pofin mu rupoho revzi utva ne.'
+```
+
+句子以大写字母开头，以句号结尾。
+
+默认是一个包含 12 到 18 个单词的句子。
+
+*选择这个长度作为默认值，因为平均英语句子就在这个范围内。*
+
+可选择指定句子中的单词数量。
+
+```js
+  randBox.sentence({ words: 5 });
+  => 'Waddik jeasmov cakgilta ficub up.'
+```

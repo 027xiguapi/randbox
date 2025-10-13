@@ -1,0 +1,43 @@
+# longitude
+
+```js
+// 用法
+randBox.longitude()
+randBox.longitude({fixed: 7})
+randBox.longitude({format: 'dms'})
+```
+
+生成一个随机经度。
+
+```js
+randBox.longitude();
+=> 149.41549
+```
+
+_范围：-180 到 180_
+
+默认情况下，小数点后包含 5 位固定数字，可以指定其他设置。
+
+```js
+randBox.longitude({fixed: 7});
+=> 51.4549925
+```
+
+默认情况下，包含允许的整个经度范围，可以指定最小值和/或最大值来限制它
+
+```js
+randBox.longitude({min: -78, max: -77});
+=> -77.22644
+```
+
+默认情况下，经度格式为 dd，可以指定其他格式。
+
+```js
+randBox.longitude({format: 'ddm'});
+=> "41°44.9592"
+```
+
+```js
+randBox.longitude({format: 'dms'});
+=> "56°2'9.8187""
+```

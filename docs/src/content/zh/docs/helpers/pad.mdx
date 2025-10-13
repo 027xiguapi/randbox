@@ -1,0 +1,37 @@
+# pad
+
+```js
+// 用法
+randBox.pad(number, width)
+randBox.pad(number, width, padder)
+```
+
+用某个字符串填充数字直到达到所需的宽度。
+
+默认情况下，`randBox.pad()` 会用零填充。例如，要将数字填充零使输出宽度为 5，请执行以下操作。
+
+```js
+randBox.pad(45, 5)
+=> '00045'
+
+randBox.pad(284, 5)
+=> '00284'
+
+randBox.pad(82843, 5)
+=> '82843'
+```
+
+注意每个返回的项目都是一个字符串，带有前导零直到每个的宽度为 5。
+
+如果希望用零以外的字符填充，可以选择指定一个字符。
+
+```js
+randBox.pad(81, 5, 'Z')
+=> 'ZZZ81'
+
+randBox.pad(692, 5, 'Z')
+=> 'ZZ692'
+
+randBox.pad(52859, 5)
+=> '52859'
+```

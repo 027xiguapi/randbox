@@ -1,0 +1,39 @@
+# prime
+
+```js
+// 用法
+randBox.prime()
+randBox.prime({ min: 1, max: 20 })
+```
+
+返回一个质数。
+
+_默认范围：0 到 10000_
+
+```js
+  randBox.prime();
+  => 929
+```
+
+可以选择性地提供 min 和 max。
+
+```js
+randBox.prime({min: 1, max: 20});
+=> 13
+```
+
+这些是包含性的，因此它们包含在范围内。这意味着
+```randBox.prime({min: 2, max: 5});``` 将返回 2、3 或 5 中的任意一个，即：
+
+```js
+// 具体情况
+2 <= 随机数 <= 5
+
+// 一般情况
+min <= 随机数 <= max
+```
+
+[维基百科上的质数][prime]
+
+[prime]: https://en.wikipedia.org/wiki/Prime_number
+

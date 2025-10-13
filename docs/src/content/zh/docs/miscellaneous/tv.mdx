@@ -1,0 +1,24 @@
+# tv
+
+```js
+// 用法
+randBox.tv()
+randBox.tv({side: 'west'})
+```
+
+生成一个电视台呼号。这是 `radio()` 的别名，因为它们都遵循相同的规则。
+
+```js
+randBox.radio();
+=> 'WXTY'
+```
+
+可选择指定密西西比河的一侧，以将电台限制到该侧。
+
+```js
+randBox.radio({side: 'west'});
+=> 'KCYL'
+
+randBox.radio({side: 'west'});
+=> 'KQDV'
+```

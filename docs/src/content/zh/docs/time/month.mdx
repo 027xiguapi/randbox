@@ -1,0 +1,22 @@
+# month
+
+```js
+// 用法
+randBox.month()
+```
+
+生成一个随机月份。
+
+```js
+randBox.month();
+=> 'January'
+```
+
+默认情况下，只返回完整名称。
+
+可选择指定 raw 来获取包含 name、short_name 和 numeric 的完整月份对象。
+
+```js
+randBox.month({raw: true});
+=> {name: 'October', short_name: 'Oct', numeric: '10'}
+```

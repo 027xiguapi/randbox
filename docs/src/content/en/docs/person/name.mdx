@@ -1,0 +1,63 @@
+# name
+
+```js
+// usage
+randBox.name()
+randBox.name({ middle: true })
+randBox.name({ middle_initial: true })
+randBox.name({ prefix: true })
+randBox.name({ nationality: 'en' })
+```
+
+Generate a random name
+
+```js
+  randBox.name();
+  => 'Dafi Vatemi'
+```
+
+Optionally include the middle name
+
+```js
+  randBox.name({ middle: true });
+  => 'Nelgatwu Powuku Heup'
+```
+
+
+Optionally include the middle initial
+
+```js
+  randBox.name({ middle_initial: true });
+  => 'Ezme I Iza'
+```
+
+Optionally include the prefix
+
+```js
+  randBox.name({ prefix: true });
+  => 'Doctor Suosat Am'
+```
+
+Optionally include the suffix
+
+```js
+  randBox.name({ suffix: true });
+  => 'Fanny Baker Esq.'
+```
+
+Optionally specify a gender
+
+```js
+  randBox.name({ gender: 'male' });
+  => "Patrick Copeland"
+```
+
+Optionally specify a nationality
+
+```js
+  randBox.name({ nationality: 'it' });
+  => "Roberta Mazzetti"
+```
+
+Note, currently support for nationality is limited to: `'en', 'it'`.
+

@@ -1,0 +1,27 @@
+# hour
+
+```js
+// 用法
+randBox.hour()
+randBox.hour({twentyfour: true})
+```
+
+生成一个随机小时
+
+```js
+randBox.hour();
+=> 9
+```
+
+默认情况下，返回标准 [12 小时制][12h] 的 1 到 12 之间的小时。
+
+可选择指定完整的 24 小时。
+
+```js
+randBox.hour({twentyfour: true});
+=> 21
+```
+
+这将返回 1 到 24 之间的小时。
+
+[12h]: https://en.wikipedia.org/wiki/12-hour_clock
