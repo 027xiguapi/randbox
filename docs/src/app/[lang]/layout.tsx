@@ -17,7 +17,7 @@ export const metadata = {
   // Define your metadata here
   // For more information on metadata API, see: https://nextjs.org/docs/app/building-your-application/optimizing/metadata
   metadataBase: new URL('https://randbox.top'),
-  icons: { icon: '/favicon.svg' },
+  icons: { icon: '/favicon.ico' },
 } satisfies Metadata
 
 const repo = 'https://github.com/027xiguapi/randbox'

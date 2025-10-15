@@ -41,4 +41,7 @@ export default {
   stratified: {
     title: 'Stratified Random',
   },
+  history: {
+    title: 'History',
+  },
 } satisfies MetaRecord

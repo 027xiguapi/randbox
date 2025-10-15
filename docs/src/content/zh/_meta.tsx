@@ -40,4 +40,7 @@ export default {
   stratified: {
     title: '分层随机化',
   },
+  history: {
+    title: '历史',
+  },
 } satisfies MetaRecord

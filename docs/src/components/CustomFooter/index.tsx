@@ -66,6 +66,15 @@ export function CustomFooter() {
               </>
             )}
           />
+          <UnderlineLink
+            link="https://beian.miit.gov.cn/"
+            label={(
+              <>
+                鄂ICP备2024064740号-1
+              </>
+            )}
+          />
+
         </div>
 
         <Separator

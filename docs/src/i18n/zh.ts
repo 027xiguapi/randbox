@@ -258,24 +258,108 @@ export default {
     tools: {
       simple: {
         title: '简单随机化',
-        description: '基础的随机分组算法，适用于大多数场景'
+        description: '基础的随机分组算法，适用于大多数场景',
       },
       block: {
         title: '区组随机化',
-        description: '确保每个区组内的平衡分配，减少偏差'
+        description: '确保每个区组内的平衡分配，减少偏差',
       },
       stratified: {
         title: '分层随机化',
-        description: '根据不同特征分层进行随机化，确保每层平衡'
-      }
+        description: '根据不同特征分层进行随机化，确保每层平衡',
+      },
     },
     getStarted: '开始使用',
     features: {
       title: '功能特色',
       reproducible: '支持种子设置，确保结果可重现',
       history: '自动保存历史记录到本地存储',
-      export: '支持数据导出和报告生成'
-    }
+      export: '支持数据导出和报告生成',
+    },
+  },
+
+  historyPage: {
+    title: '随机化历史',
+    subtitle: '管理和查看您的随机化记录，支持导出和删除操作',
+    header: {
+      title: '历史记录',
+      searchPlaceholder: '搜索历史记录...',
+      clearAll: '清空全部',
+      exportHistory: '导出历史',
+      importHistory: '导入历史',
+      totalRecords: '共 {{count}} 条记录',
+      filterByType: '按类型筛选',
+      allTypes: '全部类型',
+      sortBy: '排序方式',
+      sortByNewest: '最新优先',
+      sortByOldest: '最旧优先',
+      sortByType: '按类型',
+    },
+    recordCard: {
+      viewDetails: '查看详情',
+      deleteRecord: '删除记录',
+      copyResult: '复制结果',
+      exportRecord: '导出记录',
+      editTitle: '编辑标题',
+      saveTitle: '保存',
+      cancelEdit: '取消',
+      participants: '参与者',
+      groups: '组',
+      strata: '分层',
+      blocks: '区组',
+      samples: '样本',
+      generatedAt: '生成时间',
+      algorithm: '算法',
+      parameters: '参数',
+    },
+    typeLabels: {
+      simple: '简单随机化',
+      block: '区组随机化',
+      stratified: '分层随机化',
+    },
+    noRecords: {
+      title: '暂无历史记录',
+      description: '您还没有任何随机化记录',
+      suggestion: '开始使用随机化工具来创建您的第一个记录',
+      createRecord: '开始随机化',
+    },
+    confirmations: {
+      clearAll: {
+        title: '确认清空历史',
+        description: '这将删除所有历史记录，此操作无法撤销。',
+        confirm: '确认清空',
+        cancel: '取消',
+      },
+      deleteRecord: {
+        title: '确认删除记录',
+        description: '确定要删除这条历史记录吗？此操作无法撤销。',
+        confirm: '确认删除',
+        cancel: '取消',
+      },
+    },
+    messages: {
+      cleared: '历史记录已清空',
+      deleted: '记录已删除',
+      titleUpdated: '标题已更新',
+      exported: '历史记录已导出',
+      imported: '历史记录已导入',
+      importError: '导入失败，请检查文件格式',
+      copied: '结果已复制到剪贴板',
+    },
+    detailModal: {
+      title: '随机化详情',
+      close: '关闭',
+      basicInfo: '基本信息',
+      recordId: '记录ID',
+      type: '类型',
+      timestamp: '生成时间',
+      parameters: '参数',
+      results: '结果',
+      statistics: '统计信息',
+      groupDetails: '分组详情',
+      exportJson: '导出JSON',
+      exportTxt: '导出TXT',
+    },
   },
 
 }

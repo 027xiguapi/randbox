@@ -1,6 +1,6 @@
 'use client'
 
-import { Grid3X3, Layers, Shuffle } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,25 +14,22 @@ export default function RandomizationTools() {
       id: 'simple',
       title: t('randomizationTools.tools.simple.title'),
       description: t('randomizationTools.tools.simple.description'),
-      icon: <Shuffle className="w-6 h-6" />,
       href: `/${currentLocale}/simple`,
-      color: 'from-blue-500 to-cyan-500',
+      img: '/img/projects/simple.png',
     },
     {
       id: 'block',
       title: t('randomizationTools.tools.block.title'),
       description: t('randomizationTools.tools.block.description'),
-      icon: <Grid3X3 className="w-6 h-6" />,
       href: `/${currentLocale}/block`,
-      color: 'from-green-500 to-emerald-500',
+      img: '/img/projects/block.png',
     },
     {
       id: 'stratified',
       title: t('randomizationTools.tools.stratified.title'),
       description: t('randomizationTools.tools.stratified.description'),
-      icon: <Layers className="w-6 h-6" />,
       href: `/${currentLocale}/stratified`,
-      color: 'from-purple-500 to-pink-500',
+      img: '/img/projects/stratified.png',
     },
   ]
 
@@ -49,9 +46,13 @@ export default function RandomizationTools() {
         {tools.map((tool) => (
           <Card key={tool.id} className="group hover:shadow-lg transition-all duration-300 cursor-pointer">
             <CardHeader className="text-center">
-              <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${tool.color} flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300`}>
-                {tool.icon}
-              </div>
+              <Image
+                src={tool.img}
+                alt={tool.title}
+                width={500}
+                height={350}
+                className="relative w-full max-w-lg rounded-xl object-cover shadow-lg group-hover:shadow-xl transition-all duration-300 border border-sky-100"
+              />
               <CardTitle className="text-xl">{tool.title}</CardTitle>
               <CardDescription className="text-sm text-muted-foreground">
                 {tool.description}
