@@ -1,0 +1,40 @@
+---
+title: "RandBox Module Tour (3/12): helpers – Utility Toolkit"
+description: "Selection, shuffling, formatting, and extensibility with pickone/pickset/shuffle, capitalize/pad, and set/mixin. Examples, FAQs, and references."
+date: 2025-10-16
+tags: [RandBox, helpers, selection, shuffle, formatting, extensibility]
+keywords: [RandBox, pickone, pickset, shuffle, capitalize, mixin]
+slug: randbox-helpers
+---
+
+# RandBox Module Tour (3/12): helpers – Utility Toolkit
+
+The helpers module adds selection, shuffling, formatting, and extensibility utilities.
+
+**Overview**
+- Collections: `pickone/pickset/shuffle`
+- Text: `capitalize/pad`
+- Extend: `set/mixin`
+
+**Examples**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const tag = rb.pickone?.(['A','B','C'])
+const many = rb.pickset?.(['x','y','z'], 2)
+const mixed = rb.shuffle?.([1,2,3,4])
+```
+
+**Links**
+- Index: `/en/docs/helpers/`
+- Pages: `/en/docs/helpers/pickone`, `/en/docs/helpers/mixin`
+
+## FAQ
+
+- Does `pickset` allow duplicates?
+  - Typically returns unique items unless configured otherwise.
+- Which shuffle algorithm?
+  - Fisher–Yates for uniform distribution.
+- Can `mixin` overwrite existing methods?
+  - Possible; use cautiously and see docs for patterns.
+

@@ -1,0 +1,44 @@
+---
+title: "RandBox 模块导览（6/12）：mobile - 移动设备"
+description: "RandBox 移动设备模块：Android/iOS/Windows Phone 标识符生成与示例；含常见问题与参考链接，适合客户端测试与上报链路演示的 SEO 内容。"
+date: "2025-10-16"
+tags: ["RandBox", "移动设备", "Android ID", "Apple Token", "Windows Phone"]
+keywords: ["RandBox", "android_id", "apple_token", "wp7_anid", "wp8_anid2"]
+---
+
+# RandBox 模块导览（6/12）：mobile - 移动设备
+
+移动模块生成常见移动平台设备标识符。更多函数参见 `/zh/docs/index` 与 `/zh/docs/mobile/`。
+
+**模块概览**
+- Android：`android_id`
+- iOS：`apple_token`
+- Windows Phone：`wp7_anid`、`wp8_anid2`
+
+**示例**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const aid = rb.android_id?.()
+const ios = rb.apple_token?.()
+```
+
+**文档与链接**
+- 中文索引：`/zh/docs/index`
+- 模块索引：`/zh/docs/mobile/`
+- 条目示例：`/zh/docs/mobile/android_id`、`/zh/docs/mobile/wp8_anid2`
+
+## Q&A 常见问题（FAQ）
+
+- 这些标识符是否与真实设备一致？
+  - 仅用于模拟与测试，不对应真实设备。
+- 是否可控制长度或前缀？
+  - 视具体函数支持，可在选项中调整格式与长度。
+
+## 参考与出处（References）
+
+- RandBox 中文文档索引：`/zh/docs/index`
+- Mobile 模块文档：`/zh/docs/mobile/index.mdx`
+- 相关 API 页：`/zh/docs/mobile/android_id`、`/zh/docs/mobile/apple_token`
+
+

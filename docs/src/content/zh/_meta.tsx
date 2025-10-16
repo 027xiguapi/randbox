@@ -22,6 +22,10 @@ export default {
     title: '📦 示例代码',
     type: 'page',
   },
+  blog: {
+    title: '博客',
+    type: 'page',
+  },
   upgrade: {
     title: (
       <span className="flex items-center leading-[1]">

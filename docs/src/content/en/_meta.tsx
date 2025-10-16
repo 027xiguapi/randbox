@@ -23,6 +23,10 @@ export default {
     title: '📦 Some Examples',
     type: 'page',
   },
+  blog: {
+    title: 'blog',
+    type: 'page',
+  },
   upgrade: {
     title: (
       <span className="flex items-center leading-[1]">

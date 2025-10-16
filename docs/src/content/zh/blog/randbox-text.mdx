@@ -1,0 +1,44 @@
+---
+title: "RandBox 模块导览（9/12）：text - 文本生成"
+description: "RandBox 文本模块：音节、单词、句子与段落，以及 emoji；含示例与 FAQ、参考链接，适合占位内容与排版测试的 SEO 文案。"
+date: "2025-10-16"
+tags: ["RandBox", "文本", "单词", "句子", "段落", "emoji"]
+keywords: ["RandBox", "syllable", "word", "sentence", "paragraph", "emoji"]
+---
+
+# RandBox 模块导览（9/12）：text - 文本生成
+
+文本模块生成词、句与段落等自然语言片段。更多函数参见 `/zh/docs/index` 与 `/zh/docs/text/`。
+
+**模块概览**
+- 基本单位：`syllable/word`
+- 组合结构：`sentence/paragraph`
+- 表情与符号：`emoji`
+
+**示例**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const words = rb.word?.({ length: 5 })
+const para = rb.paragraph?.({ sentences: 3 })
+```
+
+**文档与链接**
+- 中文索引：`/zh/docs/index`
+- 模块索引：`/zh/docs/text/`
+- 条目示例：`/zh/docs/text/word`、`/zh/docs/text/paragraph`、`/zh/docs/text/emoji`
+
+## Q&A 常见问题（FAQ）
+
+- 段落是否能控制句子数量？
+  - 可通过 `sentences` 选项指定数量。
+- 单词能否限定长度或字符集？
+  - 通过选项控制长度与字符源（视实现）。
+
+## 参考与出处（References）
+
+- RandBox 中文文档索引：`/zh/docs/index`
+- Text 模块文档：`/zh/docs/text/index.mdx`
+- 相关 API 页：`/zh/docs/text/word`、`/zh/docs/text/sentence`、`/zh/docs/text/paragraph`
+
+

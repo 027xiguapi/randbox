@@ -1,0 +1,58 @@
+---
+title: "Building RandBox from Scratch (1/5): Project Origin and Planning"
+description: "Why build RandBox? Pain points of existing random data libraries, the goals, scope, and roadmap for creating a modern, ergonomic JavaScript randomization toolkit with strong TypeScript support."
+date: 2025-10-16
+tags: [RandBox, planning, roadmap, goals, JavaScript, TypeScript]
+keywords: [RandBox, random data, planning, goals, design principles, roadmap]
+---
+
+# Building RandBox from Scratch (1/5): Project Origin and Planning
+
+## Preface
+
+We frequently need high‑quality random data for unit tests, demos, prototypes, and load testing. Existing libraries are often either narrow in scope, hard to configure, or lack modern TypeScript ergonomics. RandBox sets out to be comprehensive, consistent, and easy to use.
+
+## Why RandBox
+
+- Limited scope: Many libraries cover only a small slice of data types.
+- Complex usage: Configuration is inconsistent and often verbose.
+- Weak typing: Missing or incomplete TypeScript support increases friction.
+- Heavy bundles: Monolithic APIs without tree‑shaking friendly design.
+
+## Goals
+
+- Comprehensive coverage: 10+ categories, 100+ APIs, from basics to finance, person, location, text, time, and web.
+- Consistent API style: Options first, sensible defaults, predictable return types.
+- Strong typing: First‑class TypeScript definitions and DX.
+- Modular design: ESM, tree‑shaking, and on‑demand imports.
+
+## Quick Glance
+
+```ts
+import RandBox from 'randbox'
+const r = new RandBox()
+
+console.log(r.name())      // "Zhang Wei" (or localized)
+console.log(r.email())     // "john.smith@example.com"
+console.log(r.phone())     // Locale-aware phone number
+```
+
+## Architecture Outline (Preview)
+
+- Core RNG abstraction with seedability and deterministic outputs.
+- Option parsing utilities, range checks, and input validation.
+- Modules by domain: basics, person, location, finance, text, time, web, etc.
+- Extensibility via helpers like `mixin`, `set`, `pickone/pickset`.
+
+## Roadmap
+
+1) MVP with basics + person + text
+2) Add time, web, location
+3) Add finance and miscellaneous distributions
+4) Build documentation, CLI, and examples
+5) Harden with tests, fixtures, and CI
+
+## Closing
+
+This series documents the journey from idea to a reliable random data library, covering design, implementation, testing, docs, and ecosystem.
+

@@ -1,0 +1,44 @@
+---
+title: "RandBox 模块导览（11/12）：time - 时间日期"
+description: "RandBox 时间日期模块：日期、时间、时间戳与时区；含示例、FAQ 与参考出处，适合前后端集成测试的 SEO 文案。"
+date: "2025-10-16"
+tags: ["RandBox", "时间", "日期", "时间戳", "时区"]
+keywords: ["RandBox", "date", "timestamp", "timezone", "hour", "minute", "second"]
+---
+
+# RandBox 模块导览（11/12）：time - 时间日期
+
+时间模块覆盖日期、时间、时间戳与时区。更多函数参见 `/zh/docs/index` 与 `/zh/docs/time/`。
+
+**模块概览**
+- 基本单位：`year/month/weekday/hour/minute/second/millisecond`
+- 复合结构：`date/hammertime/timestamp`
+- 时区与上午下午：`timezone/ampm`
+
+**示例**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const when = rb.date?.({ year: { min: 1990, max: 2025 } })
+const tz = rb.timezone?.()
+```
+
+**文档与链接**
+- 中文索引：`/zh/docs/index`
+- 模块索引：`/zh/docs/time/`
+- 条目示例：`/zh/docs/time/date`、`/zh/docs/time/timezone`、`/zh/docs/time/timestamp`
+
+## Q&A 常见问题（FAQ）
+
+- `date` 是否支持范围约束？
+  - 支持按年/月/日范围控制；详见文档。
+- `timestamp` 与 `hammertime` 有何区别？
+  - 不同时间戳表示或单位（视实现）；请参考具体条目。
+
+## 参考与出处（References）
+
+- RandBox 中文文档索引：`/zh/docs/index`
+- Time 模块文档：`/zh/docs/time/index.mdx`
+- 相关 API 页：`/zh/docs/time/date`、`/zh/docs/time/timestamp`、`/zh/docs/time/timezone`
+
+

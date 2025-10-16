@@ -1,0 +1,47 @@
+---
+title: "RandBox 模块导览（5/12）：miscellaneous - 杂项工具"
+description: "RandBox 杂项模块速览：概率选择、权重、统计分布与唯一标识（guid/hash/unique）等；含示例、FAQ 与参考，覆盖广泛随机工具的 SEO 内容。"
+date: "2025-10-16"
+tags: ["RandBox", "概率", "权重", "正态分布", "唯一标识"]
+keywords: ["RandBox", "coin", "weighted", "normal", "guid", "hash", "unique"]
+---
+
+# RandBox 模块导览（5/12）：miscellaneous - 杂项工具
+
+杂项模块集合概率策略、统计分布与标识符生成。更多函数参见 `/zh/docs/index` 与 `/zh/docs/miscellaneous/`。
+
+**模块概览**
+- 概率与权重：`coin/weighted/radio`
+- 分布生成：`normal`、以及 `dice/rpg/tv` 等规则类生成。
+- 标识与唯一性：`guid/hash/unique`、`fileWithContent`
+
+**示例**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const side = rb.coin?.()
+const val = rb.normal?.({ mean: 0, stdev: 1 })
+const uid = rb.guid?.()
+```
+
+**文档与链接**
+- 中文索引：`/zh/docs/index`
+- 模块索引：`/zh/docs/miscellaneous/`
+- 条目示例：`/zh/docs/miscellaneous/weighted`、`/zh/docs/miscellaneous/unique`
+
+## Q&A 常见问题（FAQ）
+
+- `weighted` 如何归一化权重？
+  - 传入的权重会转换为概率分布，总和归一化为 1（视实现）。
+- `normal` 是否使用 Box-Muller？
+  - 常见实现采用 Box-Muller 或 Ziggurat；具体见模块文档说明。
+- `unique` 如何保证不重复？
+  - 通过内部集合或哈希检查；当空间耗尽需考虑冲突策略。
+
+## 参考与出处（References）
+
+- RandBox 中文文档索引：`/zh/docs/index`
+- Misc 模块文档：`/zh/docs/miscellaneous/index.mdx`
+- 相关 API 页：`/zh/docs/miscellaneous/weighted`、`/zh/docs/miscellaneous/unique`、`/zh/docs/miscellaneous/normal`
+
+

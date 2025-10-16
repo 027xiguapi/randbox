@@ -1,0 +1,45 @@
+---
+title: "RandBox 模块导览（7/12）：music - 音乐"
+description: "RandBox 音乐模块：音乐风格、音符、节奏生成；含示例与 FAQ、参考出处，适合多媒体演示与音乐教育的 SEO 内容。"
+date: "2025-10-16"
+tags: ["RandBox", "音乐", "音符", "节奏", "音乐风格"]
+keywords: ["RandBox", "music_genre", "note", "tempo"]
+---
+
+# RandBox 模块导览（7/12）：music - 音乐
+
+音乐模块可产生音符、速度与风格等。更多函数参见 `/zh/docs/index` 与 `/zh/docs/music/`。
+
+**模块概览**
+- 风格：`music_genre`
+- 音符：`note`
+- 速度：`tempo`
+
+**示例**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const genre = rb.music_genre?.()
+const bpm = rb.tempo?.({ min: 60, max: 180 })
+```
+
+**文档与链接**
+- 中文索引：`/zh/docs/index`
+- 模块索引：`/zh/docs/music/`
+- 条目示例：`/zh/docs/music/music_genre`、`/zh/docs/music/tempo`
+
+## Q&A 常见问题（FAQ）
+
+- `tempo` 的范围如何设定？
+  - 通过选项传入最小与最大 BPM；范围应符合音乐常识。
+- 风格是否可本地化？
+  - 可通过数据源或 locale 扩展（视实现）。
+
+## 参考与出处（References）
+
+- RandBox 中文文档索引：`/zh/docs/index`
+- Music 模块文档：`/zh/docs/music/index.mdx`
+- 相关 API 页：`/zh/docs/music/music_genre`、`/zh/docs/music/note`、`/zh/docs/music/tempo`
+
+
+

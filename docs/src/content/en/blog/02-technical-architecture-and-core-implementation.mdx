@@ -1,0 +1,52 @@
+---
+title: "Building RandBox from Scratch (2/5): Technical Architecture and Core Implementation"
+description: "A deep dive into RandBox’s architecture: RNG abstraction, option parsing, validation, module structure, and how consistent API design delivers ergonomic randomness across domains."
+date: 2025-10-16
+tags: [RandBox, architecture, implementation, RNG, TypeScript, modules]
+keywords: [RandBox, random data, architecture, implementation, design patterns, TypeScript]
+---
+
+# Building RandBox from Scratch (2/5): Technical Architecture and Core Implementation
+
+## Design Principles
+
+- Progressive complexity: Simple → advanced options.
+- Sensible defaults: Useable out of the box.
+- Consistency: One API style across modules.
+
+## Core API
+
+```ts
+export function integer(this: RandBox): number
+export function integer(this: RandBox, max: number): number
+export function integer(this: RandBox, min: number, max: number): number
+export function integer(this: RandBox, options: IntegerOptions): number
+```
+
+Internally, options are normalized, ranges validated, and exclusions applied to produce robust outputs.
+
+## Modules
+
+- basics: integers/floats/strings/booleans
+- person: names, gender, birthday, documents (SSN/CPF/CF/Aadhar)
+- location: coordinates, lat/long, address, phone, zip/postal
+- finance: credit card (Luhn), expiry, currencies, currency pairs
+- text: syllable/word/sentence/paragraph, emoji
+- time: date/time/timestamp/timezone/ampm
+- web: domain/url/email/ip/mac/tld/social
+
+## Helpers
+
+- pickone/pickset/shuffle
+- capitalize/pad
+- set/mixin for data and behavior extensibility
+
+## Testing & Validation
+
+- Range tests, locale constraints, format checks (e.g., Luhn for cc)
+- Deterministic seeds for reproducible test cases
+
+## Conclusion
+
+The architecture balances flexibility and consistency, yielding a library that is easy to adopt while remaining powerful for complex scenarios.
+

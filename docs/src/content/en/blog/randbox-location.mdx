@@ -1,0 +1,38 @@
+---
+title: "RandBox Module Tour (4/12): location – Geospatial and Address"
+description: "Lat/long, coordinates, address, phone, and postal/zip by locale. Examples, FAQs, and references for mapping, logistics, and geo-tagging tests."
+date: 2025-10-16
+tags: [RandBox, location, coordinates, address, phone, postal]
+keywords: [RandBox, latitude, longitude, coordinates, random address, phone number]
+slug: randbox-location
+---
+
+# RandBox Module Tour (4/12): location – Geospatial and Address
+
+**Overview**
+- Coordinates: `coordinates/latitude/longitude`
+- Address & region: `address/city/state/country`
+- Phone and postal: `phone/postal/postcode/zip`
+
+**Examples**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const gps = rb.coordinates?.({ precision: 6 })
+const addr = rb.address?.()
+const tel = rb.phone?.({ locale: 'us' })
+```
+
+**Links**
+- Index: `/en/docs/location/`
+- Pages: `/en/docs/location/coordinates`, `/en/docs/location/address`, `/en/docs/location/phone`
+
+## FAQ
+
+- Valid ranges for lat/long?
+  - Latitude `[-90, 90]`, longitude `[-180, 180]`.
+- How to control coordinate precision?
+  - Use the `precision` option; mind rounding/formatting.
+- Are phone numbers locale-aware?
+  - Yes, use `locale` such as `us/uk/fr`.
+

@@ -1,0 +1,52 @@
+---
+title: "RandBox Module Tour (1/12): basics – Primitive Data Types"
+description: "From booleans to strings: the foundational random generation utilities in RandBox, with examples, Q&A, and references for testing and prototyping."
+date: 2025-10-16
+tags: [RandBox, random data, JavaScript, basics, float, integer, string]
+keywords: [RandBox, random, JS random library, random string, random integer, float, template]
+slug: randbox-basics
+---
+
+# RandBox Module Tour (1/12): basics – Primitive Data Types
+
+The basics module provides the atomic capabilities for numbers and text: booleans, integers/naturals, floats, letters/characters, strings, primes, falsy values, and template-based strings.
+
+**Module Overview**
+- Core role: common numeric and text randomization.
+- Design: unified API, sensible defaults, input validation.
+- Use cases: test data, placeholders, rule checks, complex object composition.
+
+**Key APIs**
+- `bool`, `integer`, `natural`, `floating`
+- `letter` / `character`, `string`
+- `prime`, `falsy`, `template`
+See `/en/docs/basics/` for full entries.
+
+**Examples**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const id = rb.integer?.(1000, 9999)
+const price = rb.floating?.({ min: 0, max: 99, precision: 2 })
+const token = rb.string?.({ length: 16 })
+```
+
+**Links**
+- Module index: `/en/docs/basics/`
+- Entries: `/en/docs/basics/integer`, `/en/docs/basics/string`
+
+## Q&A (FAQ)
+
+- How to avoid floating precision issues?
+  - Use `precision` to control decimals; round or stringify if needed.
+- Does `integer(min, max)` include boundaries?
+  - Typically yes. Use `exclude` to remove specific values (if supported).
+- How to restrict charset for strings?
+  - Use `string({ charset })` or `character/letter` options, e.g., `alpha`, `alnum`, or custom sets.
+
+## References
+
+- RandBox English docs index: `/en/docs/index`
+- Basics module docs: `/en/docs/basics/index.mdx`
+- Related pages: `/en/docs/basics/integer`, `/en/docs/basics/string`, `/en/docs/basics/template`
+

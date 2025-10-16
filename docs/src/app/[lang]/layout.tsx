@@ -13,12 +13,78 @@ import { getDictionary, getDirection } from '../_dictionaries/get-dictionary'
 import { ThemeProvider } from './_components/ThemeProvider'
 import './styles/index.css'
 
-export const metadata = {
-  // Define your metadata here
-  // For more information on metadata API, see: https://nextjs.org/docs/app/building-your-application/optimizing/metadata
-  metadataBase: new URL('https://randbox.top'),
-  icons: { icon: '/favicon.ico' },
-} satisfies Metadata
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: I18nLangKeys }>
+}): Promise<Metadata> {
+  const { lang } = await params
+  const dictionary = await getDictionary(lang)
+  const { metadata } = dictionary
+
+  const keywordsArray = metadata.keywords.split(', ')
+
+  return {
+    icons: { icon: '/favicon.ico' },
+    description: metadata.description,
+    metadataBase: new URL('https://randbox.top'),
+    keywords: keywordsArray,
+    generator: metadata.generator,
+    applicationName: 'RandBox',
+    appleWebApp: {
+      title: metadata.appTitle,
+    },
+    title: {
+      default: metadata.title,
+      template: metadata.titleTemplate,
+    },
+    openGraph: {
+      url: './',
+      siteName: metadata.siteName,
+      locale: lang === 'zh' ? 'zh_CN' : 'en_US',
+      type: 'website',
+      title: metadata.ogTitle,
+      description: metadata.ogDescription,
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: metadata.ogImageAlt,
+        },
+      ],
+    },
+    other: {
+      'msapplication-TileColor': '#fff',
+    },
+    twitter: {
+      site: '@randbox_dev',
+      card: 'summary_large_image',
+      title: metadata.twitterTitle,
+      description: metadata.twitterDescription,
+      images: ['/twitter-card.png'],
+    },
+    alternates: {
+      canonical: './',
+      languages: {
+        en: '/en',
+        zh: '/zh',
+        'x-default': '/en',
+      },
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+  }
+}
 
 const repo = 'https://github.com/027xiguapi/randbox'
 
@@ -57,11 +123,6 @@ const CustomNavbar = async ({ lang }: I18nLangAsyncProps) => {
   )
 }
 
-// interface Props {
-//   children: ReactNode
-//   params: Promise<{ lang: I18nLangKeys }>
-// }
-
 export default async function RootLayout({
   children,
   params,
@@ -73,8 +134,10 @@ export default async function RootLayout({
   const dictionary = await getDictionary(lang)
   const pageMap = await getPageMap(lang)
 
-  const title = 'RandBox - JavaScript Random Data Generation Library'
-  const description = 'RandBox is a powerful JavaScript random data generation library that provides rich APIs for generating various types of random data. It supports basic data types, personal information, financial data, geographic locations, time/dates, network data, and more.'
+  // 使用国际化的 metadata
+  const { metadata } = dictionary
+  const title = metadata.title
+  const description = metadata.description
 
   const { t } = await useServerLocale(lang)
 
@@ -85,17 +148,17 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <Head>
-        <meta property="og:title" content={title} />
-        <meta name="description" content={description} />
-        <meta property="og:description" content={description} />
+        <meta property="og:title" content={metadata.ogTitle} />
+        <meta name="description" content={metadata.description} />
+        <meta property="og:description" content={metadata.ogDescription} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://randbox.top" />
-        <meta property="og:site_name" content="RandBox" />
-        <meta name="keywords" content="javascript, random data, data generation, testing, faker, mock data, random numbers, random strings, random names, random addresses" />
-        <meta name="author" content="RandBox Team" />
+        <meta property="og:site_name" content={metadata.siteName} />
+        <meta name="keywords" content={metadata.keywords} />
+        <meta name="author" content={metadata.author} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
+        <meta name="twitter:title" content={metadata.twitterTitle} />
+        <meta name="twitter:description" content={metadata.twitterDescription} />
         <link rel="canonical" href="https://randbox.top" />
         <script
           async
@@ -117,8 +180,8 @@ export default async function RootLayout({
             banner={<CustomBanner lang={lang} />}
             navbar={<CustomNavbar lang={lang} />}
             lastUpdated={<LastUpdated>{t('lastUpdated')}</LastUpdated>}
-            editLink={null}
-            docsRepositoryBase="https://github.com/027xiguapi/randbox"
+            editLink="Edit this page on GitHub"
+            docsRepositoryBase="https://github.com/027xiguapi/randbox/tree/master/docs"
             footer={(
               <Footer className="bg-background py-5!">
                 <CustomFooter />
@@ -141,7 +204,7 @@ export default async function RootLayout({
               title: t('pageTitle'),
             }}
             pageMap={pageMap}
-            feedback={{ content: '' }}
+            feedback={{ content: 'Question? Give us feedback' }}
           >
             {children}
           </Layout>

@@ -1,0 +1,35 @@
+---
+title: "RandBox Module Tour (6/12): mobile – Device Identifiers"
+description: "Android ID, Apple token, and Windows Phone ANID/ANID2 generation for client testing and event pipelines. Examples, FAQs, and references."
+date: 2025-10-16
+tags: [RandBox, mobile, Android ID, Apple token, Windows Phone]
+keywords: [RandBox, android_id, apple_token, wp7_anid, wp8_anid2]
+slug: randbox-mobile
+---
+
+# RandBox Module Tour (6/12): mobile – Device Identifiers
+
+**Overview**
+- Android: `android_id`
+- iOS: `apple_token`
+- Windows Phone: `wp7_anid`, `wp8_anid2`
+
+**Examples**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const aid = rb.android_id?.()
+const ios = rb.apple_token?.()
+```
+
+**Links**
+- Index: `/en/docs/mobile/`
+- Pages: `/en/docs/mobile/android_id`, `/en/docs/mobile/wp8_anid2`
+
+## FAQ
+
+- Do these match real devices?
+  - No. They are synthetic for testing only.
+- Can I control length/prefix?
+  - Depending on implementation, options may allow format adjustment.
+

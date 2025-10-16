@@ -1,0 +1,47 @@
+---
+title: "RandBox 模块导览（4/12）：location - 地理位置"
+description: "RandBox 地理位置模块详解：经纬度、坐标、地址与电话、邮编等；含示例、常见问题与参考链接，适合地图、物流与地理标注测试的 SEO 内容。"
+date: "2025-10-16"
+tags: ["RandBox", "地理位置", "坐标", "地址", "电话", "邮编"]
+keywords: ["RandBox", "经纬度", "坐标生成", "随机地址", "电话号码"]
+---
+
+# RandBox 模块导览（4/12）：location - 地理位置
+
+位置模块涵盖经纬度、坐标、地址与电话等。更多函数参见 `/zh/docs/index` 与 `/zh/docs/location/`。
+
+**模块概览**
+- 坐标与经纬：`coordinates/latitude/longitude`
+- 地址与区域：`address/city/state/country`
+- 通讯与邮编：`phone/postal/postcode/zip`
+
+**示例**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const gps = rb.coordinates?.({ precision: 6 })
+const addr = rb.address?.()
+const tel = rb.phone?.({ locale: 'us' })
+```
+
+**文档与链接**
+- 中文索引：`/zh/docs/index`
+- 模块索引：`/zh/docs/location/`
+- 条目示例：`/zh/docs/location/coordinates`、`/zh/docs/location/address`、`/zh/docs/location/phone`
+
+## Q&A 常见问题（FAQ）
+
+- 经纬度取值范围是什么？
+  - `latitude` 通常在 `[-90, 90]`，`longitude` 在 `[-180, 180]`，可配合精度选项。
+- `coordinates` 的精度如何设置？
+  - 通过 `precision` 指定小数位数，如 6 位精度；注意四舍五入与格式化。
+- 电话号码是否支持多地区？
+  - 支持如 `us/uk/fr` 等地区格式；更多见 `phone` 文档。
+
+## 参考与出处（References）
+
+- RandBox 中文文档索引：`/zh/docs/index`
+- Location 模块文档：`/zh/docs/location/index.mdx`
+- 相关 API 页：`/zh/docs/location/coordinates`、`/zh/docs/location/latitude`、`/zh/docs/location/phone`
+
+

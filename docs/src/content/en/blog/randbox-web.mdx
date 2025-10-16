@@ -1,0 +1,36 @@
+---
+title: "RandBox Module Tour (12/12): web – Network and Social"
+description: "Domains, URLs, email, IP/MAC, and social/analytics helpers for integration testing. Examples, FAQs, and references."
+date: 2025-10-16
+tags: [RandBox, web, URL, email, IP, MAC, social]
+keywords: [RandBox, domain, url, email, ip, ipv6, mac, twitter, hashtag]
+slug: randbox-web
+---
+
+# RandBox Module Tour (12/12): web – Network and Social
+
+**Overview**
+- Identifiers and addresses: `domain/url/email/ip/ipv6/mac/tld`
+- Brand/company: `company/avatar/profession`
+- Social and analytics: `twitter/hashtag/fbid/google_analytics/klout`
+
+**Examples**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const link = rb.url?.({ protocol: 'https' })
+const mail = rb.email?.({ domain: 'example.com' })
+const ip4 = rb.ip?.()
+```
+
+**Links**
+- Index: `/en/docs/web/`
+- Pages: `/en/docs/web/url`, `/en/docs/web/email`, `/en/docs/web/ip`
+
+## FAQ
+
+- Control protocol and path in `url`?
+  - Use options for protocol and path structure.
+- Bind custom domain in `email`?
+  - Pass `domain` in options.
+

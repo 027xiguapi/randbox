@@ -1,0 +1,35 @@
+---
+title: "RandBox Module Tour (11/12): time – Dates and Timezones"
+description: "Dates, times, timestamps, and timezones with common formats and ranges. Examples, FAQs, and references for frontend and backend tests."
+date: 2025-10-16
+tags: [RandBox, time, date, timestamp, timezone]
+keywords: [RandBox, date, timestamp, timezone, hour, minute, second]
+slug: randbox-time
+---
+
+# RandBox Module Tour (11/12): time – Dates and Timezones
+
+**Overview**
+- Units: `year/month/weekday/hour/minute/second/millisecond`
+- Structures: `date/hammertime/timestamp`
+- Timezone and AM/PM: `timezone/ampm`
+
+**Examples**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const when = rb.date?.({ year: { min: 1990, max: 2025 } })
+const tz = rb.timezone?.()
+```
+
+**Links**
+- Index: `/en/docs/time/`
+- Pages: `/en/docs/time/date`, `/en/docs/time/timezone`, `/en/docs/time/timestamp`
+
+## FAQ
+
+- Range constraints for `date`?
+  - Constrain by year/month/day as needed.
+- Difference between `timestamp` and `hammertime`?
+  - Different representations/units depending on implementation.
+

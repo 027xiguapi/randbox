@@ -1,0 +1,36 @@
+---
+title: "RandBox Module Tour (8/12): person – Identity and Documents"
+description: "Names, gender, age and birthday, and document numbers (SSN/CPF/CF/Aadhar). Examples, FAQs, and references with locale-aware options."
+date: 2025-10-16
+tags: [RandBox, person, name, birthday, documents]
+keywords: [RandBox, name, birthday, ssn, cpf, cf, aadhar]
+slug: randbox-person
+---
+
+# RandBox Module Tour (8/12): person – Identity and Documents
+
+**Overview**
+- Names: `first/last/name`, `prefix/suffix`
+- Age and birthday: `age/birthday/zodiac`
+- Documents: `ssn/cpf/cf/aadhar`
+
+**Examples**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const full = rb.name?.({ nationality: 'en' })
+const born = rb.birthday?.({ year: { min: 1980, max: 2010 } })
+const ssn = rb.ssn?.()
+```
+
+**Links**
+- Index: `/en/docs/person/`
+- Pages: `/en/docs/person/name`, `/en/docs/person/birthday`, `/en/docs/person/ssn`
+
+## FAQ
+
+- Are documents real?
+  - No. They are synthetic for testing only.
+- Different languages for names?
+  - Use `nationality/locale` where available.
+

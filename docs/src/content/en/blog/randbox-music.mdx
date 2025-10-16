@@ -1,0 +1,35 @@
+---
+title: "RandBox Module Tour (7/12): music – Notes, Tempo, Genres"
+description: "Generate musical genres, notes, and tempos for education and multimedia demos. Examples, FAQs, and references."
+date: 2025-10-16
+tags: [RandBox, music, note, tempo, genre]
+keywords: [RandBox, music_genre, note, tempo]
+slug: randbox-music
+---
+
+# RandBox Module Tour (7/12): music – Notes, Tempo, Genres
+
+**Overview**
+- Genres: `music_genre`
+- Notes: `note`
+- Tempo: `tempo`
+
+**Examples**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const genre = rb.music_genre?.()
+const bpm = rb.tempo?.({ min: 60, max: 180 })
+```
+
+**Links**
+- Index: `/en/docs/music/`
+- Pages: `/en/docs/music/music_genre`, `/en/docs/music/tempo`
+
+## FAQ
+
+- Tempo range?
+  - Set min/max BPM via options.
+- Localized genres?
+  - Extend data source or locale if supported.
+

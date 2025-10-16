@@ -1,0 +1,36 @@
+---
+title: "RandBox Module Tour (5/12): miscellaneous – Probability and IDs"
+description: "Probability choices, weighted selection, distributions, and identifiers (guid/hash/unique). Examples, FAQs, and references."
+date: 2025-10-16
+tags: [RandBox, probability, weights, normal, guid, hash, unique]
+keywords: [RandBox, coin, weighted, normal, guid, hash, unique]
+slug: randbox-miscellaneous
+---
+
+# RandBox Module Tour (5/12): miscellaneous – Probability and IDs
+
+**Overview**
+- Probability & weights: `coin/weighted/radio`
+- Distributions & rules: `normal`, `dice/rpg/tv`
+- IDs & uniqueness: `guid/hash/unique`, `fileWithContent`
+
+**Examples**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const side = rb.coin?.()
+const val = rb.normal?.({ mean: 0, stdev: 1 })
+const uid = rb.guid?.()
+```
+
+**Links**
+- Index: `/en/docs/miscellaneous/`
+- Pages: `/en/docs/miscellaneous/weighted`, `/en/docs/miscellaneous/unique`
+
+## FAQ
+
+- How are weights normalized?
+  - Converted to probabilities summing to 1.
+- Which method for normal distribution?
+  - Commonly Box–Muller or Ziggurat.
+

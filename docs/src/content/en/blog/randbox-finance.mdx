@@ -1,0 +1,45 @@
+---
+title: "RandBox Module Tour (2/12): finance – Financial Data"
+description: "Credit cards (Luhn), expiry, currencies and amounts, and currency pairs. Examples, FAQs, and references tailored for payments and billing testing."
+date: 2025-10-16
+tags: [RandBox, finance, credit card, Luhn, currency, amount]
+keywords: [RandBox, finance, random credit card, Luhn algorithm, random amount, currency pair]
+slug: randbox-finance
+---
+
+# RandBox Module Tour (2/12): finance – Financial Data
+
+The finance module supports Luhn-validated credit cards, expiry, and currencies. See `/en/docs/index` and `/en/docs/finance/` for the full list.
+
+**Overview**
+- Cards: `cc` (type), `cc_type` (metadata), `exp/exp_month/exp_year` (expiry)
+- Money & FX: `dollar/euro`, `currency`, `currency_pair`
+
+**Examples**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const card = rb.cc?.({ type: 'visa' })
+const exp = rb.exp?.()
+const amount = rb.dollar?.({ max: 999 })
+```
+
+**Links**
+- Index: `/en/docs/finance/`
+- Entries: `/en/docs/finance/cc`, `/en/docs/finance/exp`, `/en/docs/finance/currency`
+
+## FAQ
+
+- Are generated cards usable for real payments?
+  - No. They are for testing only. Luhn passes, but accounts are fake.
+- How to specify card type?
+  - Use `cc({ type })` with `visa/mastercard/amex`. See `cc_type` for supported types.
+- Do money helpers support decimals?
+  - Constrain ranges and formatting via options (implementation-specific).
+
+## References
+
+- RandBox docs index: `/en/docs/index`
+- Finance docs: `/en/docs/finance/index.mdx`
+- Pages: `/en/docs/finance/cc`, `/en/docs/finance/currency`, `/en/docs/finance/exp`
+

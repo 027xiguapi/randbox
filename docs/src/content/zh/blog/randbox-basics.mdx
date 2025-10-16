@@ -1,0 +1,76 @@
+---
+title: "RandBox 模块导览（1/12）：basics - 基础数据类型"
+description: "RandBox 随机化 JS 库基础模块详解，涵盖布尔、整数、浮点、字符串、模板等常用随机数据生成；含示例、Q&A 与参考出处，适配测试与原型开发的 SEO 友好内容。"
+date: "2025-10-16"
+tags: ["RandBox", "随机数据", "JavaScript", "基础数据类型", "浮点", "整数", "字符串"]
+keywords: ["RandBox", "随机", "JavaScript 随机库", "随机字符串", "随机整数", "随机浮点", "模板生成"]
+---
+
+# RandBox 模块导览（1/12）：basics - 基础数据类型
+
+RandBox 的基础数据类型模块提供布尔、整数/自然数、浮点、字符/字符串、质数与模板等原子能力，是所有随机生成的核心。更多函数清单参见 `/zh/docs/index` 与 `/zh/docs/basics/`。
+
+**模块概览**
+- 核心职责：提供最常用的数值与文本随机化能力。
+- 设计原则：统一 API、智能默认值、边界检查、可读的参数命名。
+- 典型用途：测试造数、占位符填充、规则校验、组合生成复杂对象。
+
+**重点 API**
+- `bool`、`integer`、`natural`、`floating`
+- `letter` / `character`、`string`
+- `prime`、`falsy`、`template`
+完整条目参见 `/zh/docs/basics/`（如：`/zh/docs/basics/integer`、`/zh/docs/basics/string`）。
+
+**示例**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+
+// 整数与自然数
+const id = rb.integer?.(1000, 9999)
+const count = rb.natural?.()
+
+// 浮点与精度
+const price = rb.floating?.({ min: 0, max: 99, precision: 2 })
+
+// 字符与字符串
+const ch = rb.letter?.({ casing: 'lower' })
+const token = rb.string?.({ length: 16 })
+
+// 模板占位
+const orderNo = rb.template?.('ORD-{{integer}}-{{string}}')
+
+// 随机布尔与 falsy
+const flag = rb.bool?.({ pTrue: 0.6 })
+const maybeEmpty = rb.falsy?.()
+```
+
+**参数与边界**
+- 数值范围：`min <= max`；整数/浮点需进行类型校验。
+- 精度控制：`precision` 建议设为有限位数，避免浮点误差聚积。
+- 字符池：为 `string/character` 指定字符集时，确保不为空且可读。
+- 模板键：`template` 的占位符应与基础 API 对齐（如 `{{integer}}`）。
+
+**文档与链接**
+- 中文索引：`/zh/docs/index`
+- 模块索引：`/zh/docs/basics/`
+- 条目示例：`/zh/docs/basics/integer`、`/zh/docs/basics/string`、`/zh/docs/basics/floating`
+
+## Q&A 常见问题（FAQ）
+
+- 如何避免浮点误差？
+  - 使用 `precision` 控制小数位，并在需要时进行四舍五入或字符串化存储。
+- `integer(min, max)` 会包含边界吗？
+  - 一般包含最小值与最大值。若需排除某些值，使用 `exclude`（视实现支持）。
+- 随机字符串如何限定字符集？
+  - 通过 `string({ charset })` 或 `character/letter` 指定，如 `alpha`、`alnum` 或自定义集合。
+- 模板生成支持哪些占位符？
+  - 典型占位符如 `{{integer}}`、`{{string}}`、`{{letter}}`，可组合生成复杂文本。
+
+## 参考与出处（References）
+
+- RandBox 中文文档索引：`/zh/docs/index`
+- Basics 模块文档：`/zh/docs/basics/index.mdx`
+- 相关 API 页：`/zh/docs/basics/integer`、`/zh/docs/basics/string`、`/zh/docs/basics/template`
+
+

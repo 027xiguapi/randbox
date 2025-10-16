@@ -1,0 +1,768 @@
+---
+title: "从零开始打造 RandBox：一个强大的 JavaScript 随机数据生成库（3/5）- 功能模块深度实现"
+description: "RandBox 页面：从零开始打造 RandBox：一个强大的 JavaScript 随机数据生成库（3/5）- 功能模块深度实现，包含示例与说明。"
+date: "2025-10-16"
+tags: ["RandBox", "blog", "03-feature-modules-deep-implementation"]
+keywords: ["RandBox", "blog", "03-feature-modules-deep-implementation", "随机", "JavaScript", "MDX"]
+---
+
+# 从零开始打造 RandBox：一个强大的 JavaScript 随机数据生成库（3/5）- 功能模块深度实现
+
+## 前言
+
+在前两篇文章中，我们探讨了 RandBox 的项目规划和核心架构。今天，我将深入各个功能模块的实现细节，分享如何构建丰富多样的随机数据生成功能。从基础的数字字符串生成到复杂的地理坐标计算，每个模块都有其独特的挑战和巧妙的解决方案。
+
+## 模块设计哲学
+
+在开始具体实现之前，我想先分享 RandBox 模块设计的核心哲学：
+
+### 1. **渐进式复杂度**
+每个功能都支持从简单到复杂的多种调用方式：
+
+```javascript
+// 简单调用
+randBox.name();                    // "张伟"
+
+// 中等复杂度
+randBox.name({ nationality: 'en' }); // "John Smith"
+
+// 完全自定义
+randBox.name({
+  nationality: 'zh',
+  gender: 'female',
+  prefix: true,
+  suffix: false
+});                               // "王女士"
+```
+
+### 2. **智能默认值**
+每个功能都有合理的默认行为，无需配置即可使用：
+
+```javascript
+// 这些都会产生合理的默认结果
+randBox.integer();    // 0-100之间的整数
+randBox.email();      // 合理格式的邮箱
+randBox.phone();      // 当前地区格式的电话
+```
+
+### 3. **一致性原则**
+所有模块遵循相同的 API 设计模式，降低学习成本。
+
+## 基础数据类型模块（basics.ts）
+
+基础模块是整个 RandBox 的基石，实现了最核心的随机数据生成功能。
+
+### 1. **整数生成的多种实现方式**
+
+```typescript
+export function integer(this: RandBox): number;
+export function integer(this: RandBox, max: number): number;
+export function integer(this: RandBox, min: number, max: number): number;
+export function integer(this: RandBox, options: IntegerOptions): number;
+export function integer(
+  this: RandBox,
+  minOrOptions?: number | IntegerOptions,
+  max?: number
+): number {
+  // 参数解析逻辑
+  let min: number, maxVal: number, exclude: number[] = [];
+
+  if (typeof minOrOptions === 'object') {
+    // 对象形式的参数
+    const opts = this.initOptions(minOrOptions, {
+      min: -9007199254740991, // Number.MIN_SAFE_INTEGER
+      max: 9007199254740991,  // Number.MAX_SAFE_INTEGER
+      exclude: []
+    });
+    min = opts.min;
+    maxVal = opts.max;
+    exclude = opts.exclude;
+  } else if (typeof minOrOptions === 'number') {
+    if (max === undefined) {
+      // integer(max) 形式
+      min = 0;
+      maxVal = minOrOptions;
+    } else {
+      // integer(min, max) 形式
+      min = minOrOptions;
+      maxVal = max;
+    }
+  } else {
+    // integer() 形式，使用默认值
+    min = 0;
+    maxVal = 100;
+  }
+
+  // 参数验证
+  this.testRange(
+    !Number.isInteger(min) || !Number.isInteger(maxVal),
+    'Min and max must be integers'
+  );
+
+  this.testRange(min > maxVal, 'Min cannot be greater than max');
+
+  // 生成随机整数
+  let result: number;
+  const range = maxVal - min + 1;
+
+  do {
+    result = Math.floor(this.random() * range) + min;
+  } while (exclude.includes(result) && exclude.length < range);
+
+  if (exclude.includes(result) && exclude.length >= range) {
+    throw new Error('All possible values are excluded');
+  }
+
+  return result;
+}
+```
+
+### 2. **高质量字符串生成**
+
+字符串生成是一个看似简单实则复杂的功能，需要考虑多种字符集和编码：
+
+```typescript
+interface StringOptions {
+  length?: number;
+  pool?: string;
+  alpha?: boolean;
+  numeric?: boolean;
+  symbols?: boolean;
+  casing?: 'lower' | 'upper' | 'mixed';
+  exclude?: string[];
+}
+
+export function string(this: RandBox, options?: StringOptions): string {
+  const opts = this.initOptions(options, {
+    length: 10,
+    pool: null,
+    alpha: true,
+    numeric: false,
+    symbols: false,
+    casing: 'mixed',
+    exclude: []
+  });
+
+  // 构建字符池
+  let pool = opts.pool;
+  if (!pool) {
+    pool = '';
+
+    if (opts.alpha) {
+      pool += 'abcdefghijklmnopqrstuvwxyz';
+      if (opts.casing === 'upper' || opts.casing === 'mixed') {
+        pool += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      }
+    }
+
+    if (opts.numeric) {
+      pool += '0123456789';
+    }
+
+    if (opts.symbols) {
+      pool += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    }
+  }
+
+  // 移除排除字符
+  if (opts.exclude.length > 0) {
+    for (const char of opts.exclude) {
+      pool = pool.replace(new RegExp(char, 'g'), '');
+    }
+  }
+
+  this.testRange(pool.length === 0, 'Character pool cannot be empty');
+
+  // 生成字符串
+  let result = '';
+  for (let i = 0; i < opts.length; i++) {
+    result += pool.charAt(Math.floor(this.random() * pool.length));
+  }
+
+  // 大小写处理
+  if (opts.casing === 'lower') {
+    result = result.toLowerCase();
+  } else if (opts.casing === 'upper') {
+    result = result.toUpperCase();
+  }
+
+  return result;
+}
+```
+
+### 3. **浮点数精度控制**
+
+浮点数生成需要特别注意精度控制：
+
+```typescript
+export function floating(
+  this: RandBox,
+  min = 0,
+  max = 1,
+  fixed?: number
+): number {
+  this.testRange(min > max, 'Min cannot be greater than max');
+
+  const result = this.random() * (max - min) + min;
+
+  if (fixed !== undefined) {
+    this.testRange(
+      !Number.isInteger(fixed) || fixed < 0,
+      'Fixed must be a non-negative integer'
+    );
+    return Number(result.toFixed(fixed));
+  }
+
+  return result;
+}
+```
+
+## 个人信息模块（person.ts）
+
+个人信息模块是 RandBox 中最复杂的模块之一，需要处理多种文化背景下的人名、性别等数据。
+
+### 1. **智能姓名生成**
+
+```typescript
+interface PersonOptions {
+  nationality?: 'zh' | 'en' | 'fr' | 'de' | 'jp';
+  gender?: 'male' | 'female' | 'mixed';
+  middle_initial?: boolean;
+  prefix?: boolean;
+  suffix?: boolean;
+}
+
+export function name(this: RandBox, options?: PersonOptions): string {
+  const opts = this.initOptions(options, {
+    nationality: 'zh',
+    gender: 'mixed',
+    middle_initial: false,
+    prefix: false,
+    suffix: false
+  });
+
+  // 选择性别
+  const selectedGender = opts.gender === 'mixed'
+    ? this.pickone(['male', 'female'])
+    : opts.gender;
+
+  // 获取对应数据集
+  const firstNames = DATASETS.firstNames[opts.nationality][selectedGender];
+  const lastNames = DATASETS.lastNames[opts.nationality];
+
+  let result = '';
+
+  // 添加前缀
+  if (opts.prefix) {
+    const prefixes = DATASETS.prefixes[opts.nationality][selectedGender];
+    result += this.pickone(prefixes) + ' ';
+  }
+
+  // 生成姓名
+  const firstName = this.pickone(firstNames);
+  const lastName = this.pickone(lastNames);
+
+  if (opts.nationality === 'zh') {
+    // 中文：姓+名
+    result += lastName + firstName;
+  } else {
+    // 西方：名+姓
+    result += firstName;
+
+    // 添加中间名首字母
+    if (opts.middle_initial) {
+      result += ' ' + this.character({ alpha: true, casing: 'upper' }) + '.';
+    }
+
+    result += ' ' + lastName;
+  }
+
+  // 添加后缀
+  if (opts.suffix) {
+    const suffixes = DATASETS.suffixes[opts.nationality];
+    result += ' ' + this.pickone(suffixes);
+  }
+
+  return result.trim();
+}
+```
+
+### 2. **年龄与生日关联生成**
+
+```typescript
+interface AgeOptions {
+  type?: 'child' | 'teen' | 'adult' | 'senior' | 'any';
+  min?: number;
+  max?: number;
+}
+
+export function age(this: RandBox, options?: AgeOptions): number {
+  const opts = this.initOptions(options, {
+    type: 'any',
+    min: null,
+    max: null
+  });
+
+  let min: number, max: number;
+
+  if (opts.min !== null && opts.max !== null) {
+    min = opts.min;
+    max = opts.max;
+  } else {
+    // 根据类型确定范围
+    switch (opts.type) {
+      case 'child':
+        min = 1; max = 12;
+        break;
+      case 'teen':
+        min = 13; max = 19;
+        break;
+      case 'adult':
+        min = 20; max = 64;
+        break;
+      case 'senior':
+        min = 65; max = 100;
+        break;
+      default:
+        min = 1; max = 100;
+    }
+  }
+
+  return this.integer(min, max);
+}
+
+export function birthday(this: RandBox, options?: {
+  type?: 'child' | 'teen' | 'adult' | 'senior';
+  format?: 'date' | 'string' | 'iso';
+}): Date | string {
+  const opts = this.initOptions(options, {
+    type: 'any',
+    format: 'date'
+  });
+
+  const ageValue = this.age({ type: opts.type });
+  const currentYear = new Date().getFullYear();
+  const birthYear = currentYear - ageValue;
+
+  const birthDate = new Date(
+    birthYear,
+    this.integer(0, 11), // 月份 0-11
+    this.integer(1, 28)  // 日期 1-28（避免月份天数问题）
+  );
+
+  switch (opts.format) {
+    case 'string':
+      return birthDate.toLocaleDateString();
+    case 'iso':
+      return birthDate.toISOString();
+    default:
+      return birthDate;
+  }
+}
+```
+
+## 地理位置模块（location.ts）
+
+地理位置模块涉及复杂的地理计算和多种坐标系统。
+
+### 1. **精确坐标生成**
+
+```typescript
+interface CoordinatesOptions {
+  min_lat?: number;
+  max_lat?: number;
+  min_lng?: number;
+  max_lng?: number;
+  precision?: number;
+}
+
+export function coordinates(
+  this: RandBox,
+  options?: CoordinatesOptions
+): { lat: number; lng: number } {
+  const opts = this.initOptions(options, {
+    min_lat: -90,
+    max_lat: 90,
+    min_lng: -180,
+    max_lng: 180,
+    precision: 6
+  });
+
+  // 验证坐标范围
+  this.testRange(
+    opts.min_lat < -90 || opts.max_lat > 90,
+    'Latitude must be between -90 and 90'
+  );
+
+  this.testRange(
+    opts.min_lng < -180 || opts.max_lng > 180,
+    'Longitude must be between -180 and 180'
+  );
+
+  const lat = Number(
+    this.floating(opts.min_lat, opts.max_lat).toFixed(opts.precision)
+  );
+
+  const lng = Number(
+    this.floating(opts.min_lng, opts.max_lng).toFixed(opts.precision)
+  );
+
+  return { lat, lng };
+}
+
+// 根据国家生成真实的坐标范围
+export function coordinatesInCountry(
+  this: RandBox,
+  country: string
+): { lat: number; lng: number } {
+  const countryBounds = COUNTRY_BOUNDS[country.toUpperCase()];
+
+  if (!countryBounds) {
+    throw new Error(`Country bounds not found for: ${country}`);
+  }
+
+  return this.coordinates({
+    min_lat: countryBounds.minLat,
+    max_lat: countryBounds.maxLat,
+    min_lng: countryBounds.minLng,
+    max_lng: countryBounds.maxLng
+  });
+}
+```
+
+### 2. **地址生成系统**
+
+```typescript
+export function address(this: RandBox, options?: {
+  country?: string;
+  full?: boolean;
+}): string {
+  const opts = this.initOptions(options, {
+    country: 'CN',
+    full: true
+  });
+
+  const countryData = ADDRESS_DATA[opts.country];
+
+  if (!countryData) {
+    throw new Error(`Address data not available for country: ${opts.country}`);
+  }
+
+  let result = '';
+
+  if (opts.country === 'CN') {
+    // 中国地址格式
+    const province = this.pickone(countryData.provinces);
+    const city = this.pickone(countryData.cities[province]);
+    const district = this.pickone(countryData.districts[city]);
+    const street = this.pickone(countryData.streets);
+    const number = this.integer(1, 999);
+
+    if (opts.full) {
+      result = `${province}${city}${district}${street}${number}号`;
+    } else {
+      result = `${street}${number}号`;
+    }
+  } else {
+    // 西方地址格式
+    const number = this.integer(1, 9999);
+    const street = this.pickone(countryData.streets);
+    const streetType = this.pickone(countryData.streetTypes);
+
+    result = `${number} ${street} ${streetType}`;
+  }
+
+  return result;
+}
+```
+
+## 金融模块（finance.ts）
+
+金融模块需要生成符合真实标准的金融数据，特别是信用卡号的 Luhn 算法验证。
+
+### 1. **Luhn 算法实现**
+
+```typescript
+function luhnChecksum(number: string): number {
+  let sum = 0;
+  let alternate = false;
+
+  // 从右到左处理每一位
+  for (let i = number.length - 1; i >= 0; i--) {
+    let digit = parseInt(number.charAt(i), 10);
+
+    if (alternate) {
+      digit *= 2;
+      if (digit > 9) {
+        digit = (digit % 10) + 1;
+      }
+    }
+
+    sum += digit;
+    alternate = !alternate;
+  }
+
+  return sum % 10;
+}
+
+function luhnValid(number: string): boolean {
+  return luhnChecksum(number) === 0;
+}
+
+function generateLuhnValid(prefix: string, length: number): string {
+  // 生成除最后一位外的所有数字
+  let number = prefix;
+  while (number.length < length - 1) {
+    number += Math.floor(Math.random() * 10).toString();
+  }
+
+  // 计算校验位
+  const checksum = luhnChecksum(number + '0');
+  const checkDigit = checksum === 0 ? 0 : 10 - checksum;
+
+  return number + checkDigit.toString();
+}
+```
+
+### 2. **信用卡号生成**
+
+```typescript
+interface CreditCardOptions {
+  type?: 'visa' | 'mastercard' | 'amex' | 'discover' | 'any';
+  formatted?: boolean;
+}
+
+export function cc(this: RandBox, options?: CreditCardOptions): string {
+  const opts = this.initOptions(options, {
+    type: 'any',
+    formatted: false
+  });
+
+  // 信用卡类型配置
+  const cardTypes = {
+    visa: { prefix: ['4'], length: [16] },
+    mastercard: { prefix: ['51', '52', '53', '54', '55'], length: [16] },
+    amex: { prefix: ['34', '37'], length: [15] },
+    discover: { prefix: ['6011'], length: [16] }
+  };
+
+  let selectedType: string;
+  if (opts.type === 'any') {
+    selectedType = this.pickone(Object.keys(cardTypes));
+  } else {
+    selectedType = opts.type;
+  }
+
+  const typeConfig = cardTypes[selectedType];
+  const prefix = this.pickone(typeConfig.prefix);
+  const length = this.pickone(typeConfig.length);
+
+  // 生成符合 Luhn 算法的卡号
+  let cardNumber = generateLuhnValid(prefix, length);
+
+  // 格式化输出
+  if (opts.formatted) {
+    if (selectedType === 'amex') {
+      // American Express: 4-6-5 格式
+      cardNumber = cardNumber.replace(/(\d{4})(\d{6})(\d{5})/, '$1 $2 $3');
+    } else {
+      // 其他: 4-4-4-4 格式
+      cardNumber = cardNumber.replace(/(\d{4})/g, '$1 ').trim();
+    }
+  }
+
+  return cardNumber;
+}
+```
+
+## 网络模块（web.ts）
+
+网络模块生成各种互联网相关的数据，需要符合相关的 RFC 标准。
+
+### 1. **智能邮箱生成**
+
+```typescript
+export function email(this: RandBox, options?: {
+  domain?: string;
+  username?: string;
+  length?: number;
+}): string {
+  const opts = this.initOptions(options, {
+    domain: null,
+    username: null,
+    length: null
+  });
+
+  // 生成用户名
+  let username = opts.username;
+  if (!username) {
+    if (opts.length) {
+      username = this.string({
+        length: opts.length,
+        alpha: true,
+        numeric: true,
+        casing: 'lower'
+      });
+    } else {
+      // 基于真实姓名生成
+      const firstName = this.first().toLowerCase();
+      const lastName = this.last().toLowerCase();
+
+      // 多种组合方式
+      const patterns = [
+        `${firstName}.${lastName}`,
+        `${firstName}${lastName}`,
+        `${firstName.charAt(0)}${lastName}`,
+        `${firstName}${this.integer(10, 99)}`
+      ];
+
+      username = this.pickone(patterns);
+    }
+  }
+
+  // 清理用户名（移除非法字符）
+  username = username.replace(/[^a-z0-9.-]/g, '');
+
+  // 生成域名
+  let domain = opts.domain;
+  if (!domain) {
+    const commonDomains = [
+      'gmail.com', 'outlook.com', 'yahoo.com', 'hotmail.com',
+      '163.com', 'qq.com', '126.com', 'sina.com'
+    ];
+    domain = this.pickone(commonDomains);
+  }
+
+  return `${username}@${domain}`;
+}
+```
+
+### 2. **IP 地址生成**
+
+```typescript
+export function ip(this: RandBox, options?: {
+  version?: 4 | 6;
+  private?: boolean;
+}): string {
+  const opts = this.initOptions(options, {
+    version: 4,
+    private: false
+  });
+
+  if (opts.version === 4) {
+    if (opts.private) {
+      // 生成私有 IP 地址
+      const privateRanges = [
+        { start: [10, 0, 0, 0], end: [10, 255, 255, 255] },
+        { start: [172, 16, 0, 0], end: [172, 31, 255, 255] },
+        { start: [192, 168, 0, 0], end: [192, 168, 255, 255] }
+      ];
+
+      const range = this.pickone(privateRanges);
+      return [
+        this.integer(range.start[0], range.end[0]),
+        this.integer(range.start[1], range.end[1]),
+        this.integer(range.start[2], range.end[2]),
+        this.integer(range.start[3], range.end[3])
+      ].join('.');
+    } else {
+      // 生成公共 IP 地址（避免私有和保留地址段）
+      let octets: number[];
+      do {
+        octets = [
+          this.integer(1, 255),
+          this.integer(0, 255),
+          this.integer(0, 255),
+          this.integer(1, 255)
+        ];
+      } while (isPrivateIP(octets) || isReservedIP(octets));
+
+      return octets.join('.');
+    }
+  } else {
+    // IPv6 地址生成
+    const groups = [];
+    for (let i = 0; i < 8; i++) {
+      groups.push(this.string({ length: 4, pool: '0123456789abcdef' }));
+    }
+    return groups.join(':');
+  }
+}
+
+function isPrivateIP(octets: number[]): boolean {
+  return (
+    octets[0] === 10 ||
+    (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
+    (octets[0] === 192 && octets[1] === 168)
+  );
+}
+
+function isReservedIP(octets: number[]): boolean {
+  return (
+    octets[0] === 0 ||       // 当前网络
+    octets[0] === 127 ||     // 回环地址
+    octets[0] === 224 ||     // 多播地址
+    octets[0] >= 240         // 保留地址
+  );
+}
+```
+
+## 性能优化技巧
+
+### 1. **数据预处理**
+
+```typescript
+// 预计算常用数据
+const COMMON_PATTERNS = {
+  chinesePhoneFormats: [
+    '13#########',
+    '15#########',
+    '18#########'
+  ].map(pattern => pattern.replace(/#/g, () =>
+    Math.floor(Math.random() * 10).toString()
+  ))
+};
+```
+
+### 2. **缓存机制**
+
+```typescript
+class ModuleCache {
+  private static cache = new Map<string, any>();
+
+  static get<T>(key: string, generator: () => T): T {
+    if (!this.cache.has(key)) {
+      this.cache.set(key, generator());
+    }
+    return this.cache.get(key);
+  }
+}
+
+// 使用示例
+export function getCountryData(country: string) {
+  return ModuleCache.get(`country_${country}`, () =>
+    loadCountryData(country)
+  );
+}
+```
+
+## 下期预告
+
+在下一篇文章中，我将深入探讨 RandBox 的测试体系和质量保证，包括：
+
+- 完整的单元测试设计
+- 性能测试与基准比较
+- 多环境兼容性测试
+- 持续集成流程搭建
+
+敬请期待《从零开始打造 RandBox（4/5）- 测试体系与质量保证》！
+
+---
+
+## 关于 RandBox
+
+**🏠 官网**: [https://randbox.top](https://randbox.top)
+**📦 GitHub**: [https://github.com/027xiguapi/randbox](https://github.com/027xiguapi/randbox)
+**📚 文档**: [https://randbox.top/zh/docs](https://randbox.top/zh/docs)
+
+如果这个项目对你有帮助，欢迎给我们一个 ⭐ Star！

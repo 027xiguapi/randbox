@@ -1,0 +1,45 @@
+---
+title: "RandBox 模块导览（12/12）：web - 网络相关"
+description: "RandBox 网络模块：域名、URL、邮件、IP/MAC、社交与分析等；含示例、FAQ 与参考出处，适用于前后端集成测试的 SEO 内容。"
+date: "2025-10-16"
+tags: ["RandBox", "网络", "URL", "Email", "IP", "MAC", "社交"]
+keywords: ["RandBox", "domain", "url", "email", "ip", "ipv6", "mac", "twitter", "hashtag"]
+---
+
+# RandBox 模块导览（12/12）：web - 网络相关
+
+网络模块提供域名、URL、邮件、社交与网络地址等。更多函数参见 `/zh/docs/index` 与 `/zh/docs/web/`。
+
+**模块概览**
+- 标识与地址：`domain/url/email/ip/ipv6/mac/tld`
+- 品牌与公司：`company/avatar/profession`
+- 社交与分析：`twitter/hashtag/fbid/google_analytics/klout`
+
+**示例**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const link = rb.url?.({ protocol: 'https' })
+const mail = rb.email?.({ domain: 'example.com' })
+const ip4 = rb.ip?.()
+```
+
+**文档与链接**
+- 中文索引：`/zh/docs/index`
+- 模块索引：`/zh/docs/web/`
+- 条目示例：`/zh/docs/web/url`、`/zh/docs/web/email`、`/zh/docs/web/ip`
+
+## Q&A 常见问题（FAQ）
+
+- `url` 是否可控制协议与路径？
+  - 支持通过选项指定协议与路径结构（视实现）。
+- `email` 是否可绑定自定义域？
+  - 可通过选项指定 `domain`；请参考条目示例。
+
+## 参考与出处（References）
+
+- RandBox 中文文档索引：`/zh/docs/index`
+- Web 模块文档：`/zh/docs/web/index.mdx`
+- 相关 API 页：`/zh/docs/web/url`、`/zh/docs/web/email`、`/zh/docs/web/ip`
+
+

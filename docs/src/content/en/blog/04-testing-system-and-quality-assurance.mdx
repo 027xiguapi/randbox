@@ -1,0 +1,35 @@
+---
+title: "Building RandBox from Scratch (4/5): Testing System and Quality Assurance"
+description: "The testing strategy behind RandBox: unit tests, fixtures, deterministic seeds, range and format validations (e.g., Luhn), CI integration, and how quality stays high across modules."
+date: 2025-10-16
+tags: [RandBox, testing, QA, CI, validation]
+keywords: [RandBox, tests, QA, CI, fixtures, seeds]
+---
+
+# Building RandBox from Scratch (4/5): Testing System and Quality Assurance
+
+## Test Philosophy
+
+- Start specific, then go broader.
+- Validate ranges, formats, and locale constraints.
+- Use deterministic seeds for reproducibility.
+
+## Coverage
+
+- Basics: numeric ranges, string charsets, template placeholders
+- Person: name locales, gender matching, birthday ranges
+- Location: coordinate precision, phone formats, postal/zip
+- Finance: Luhn validation, expiry bounds, currency codes
+- Text: lengths and composition, emoji sets
+- Time: bounds and rollovers, timezone correctness
+- Web: protocol/domain/email rules, IP formats
+
+## CI and Tooling
+
+- Integrate tests into CI pipelines with reporting.
+- Use lightweight fixtures and snapshot tests where helpful.
+
+## Outcome
+
+Confidence in correctness and stability lets RandBox be used for serious prototyping and testing workflows.
+

@@ -1,0 +1,45 @@
+---
+title: "RandBox 模块导览（8/12）：person - 个人信息"
+description: "RandBox 个人信息模块：姓名、年龄、生日与证件（SSN/CPF/CF/Aadhar）等；含示例、FAQ 与参考出处，兼顾地域与格式规则的 SEO 内容。"
+date: "2025-10-16"
+tags: ["RandBox", "人物信息", "姓名", "生日", "证件"]
+keywords: ["RandBox", "name", "birthday", "ssn", "cpf", "cf", "aadhar"]
+---
+
+# RandBox 模块导览（8/12）：person - 个人信息
+
+个人模块覆盖姓名、性别、年龄、生日与证件号码等。更多函数参见 `/zh/docs/index` 与 `/zh/docs/person/`。
+
+**模块概览**
+- 姓名：`first/last/name`、`prefix/suffix`
+- 年龄与生日：`age/birthday/zodiac`
+- 证件：`ssn/cpf/cf/aadhar`
+
+**示例**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const full = rb.name?.({ nationality: 'zh' })
+const born = rb.birthday?.({ year: { min: 1980, max: 2010 } })
+const ssn = rb.ssn?.()
+```
+
+**文档与链接**
+- 中文索引：`/zh/docs/index`
+- 模块索引：`/zh/docs/person/`
+- 条目示例：`/zh/docs/person/name`、`/zh/docs/person/birthday`、`/zh/docs/person/ssn`
+
+## Q&A 常见问题（FAQ）
+
+- 随机证件是否真实可用？
+  - 仅用于测试与演示，不可用于任何真实注册或验证场景。
+- 姓名是否支持不同语言？
+  - 可通过 `nationality/locale` 扩展（视实现）；详见文档说明。
+
+## 参考与出处（References）
+
+- RandBox 中文文档索引：`/zh/docs/index`
+- Person 模块文档：`/zh/docs/person/index.mdx`
+- 相关 API 页：`/zh/docs/person/name`、`/zh/docs/person/birthday`、`/zh/docs/person/ssn`
+
+

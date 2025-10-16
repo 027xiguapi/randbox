@@ -1,0 +1,35 @@
+---
+title: "RandBox Module Tour (9/12): text – Natural Language Snippets"
+description: "Words, sentences, paragraphs, and emoji for placeholder content and layout tests. Examples, FAQs, and references."
+date: 2025-10-16
+tags: [RandBox, text, word, sentence, paragraph, emoji]
+keywords: [RandBox, syllable, word, sentence, paragraph, emoji]
+slug: randbox-text
+---
+
+# RandBox Module Tour (9/12): text – Natural Language Snippets
+
+**Overview**
+- Units: `syllable/word`
+- Structures: `sentence/paragraph`
+- Emoji: `emoji`
+
+**Examples**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const words = rb.word?.({ length: 5 })
+const para = rb.paragraph?.({ sentences: 3 })
+```
+
+**Links**
+- Index: `/en/docs/text/`
+- Pages: `/en/docs/text/word`, `/en/docs/text/paragraph`, `/en/docs/text/emoji`
+
+## FAQ
+
+- Control sentence count in paragraph?
+  - Use the `sentences` option.
+- Restrict word length or charset?
+  - Configure options accordingly.
+
