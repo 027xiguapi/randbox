@@ -1,0 +1,26 @@
+# Changesets 配置
+packages:
+  - 'packages/*'
+
+# 发版策略
+changelog:
+  - '@changesets/changelog-github'
+  - repo: '027xiguapi/randbox'
+
+# 忽略规则
+ignore:
+  - '@randbox/monorepo'
+
+# 基础分支
+baseBranch: master
+
+# 快照发布
+snapshot:
+  useCalculatedVersion: true
+  prereleaseTemplate: null
+
+# 访问权限
+access: public
+
+# 提交消息
+commit: false

@@ -1,0 +1,344 @@
+/* Component Preview Styles */
+.component-preview {
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.component-preview--animating {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.component-preview__header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.component-preview__title {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.component-preview__description {
+  margin: 0 0 12px 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.component-preview__theme-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.component-preview__theme-label {
+  font-size: 0.875rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.component-preview__theme-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+}
+
+.component-preview__content {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.component-preview__component {
+  flex: 1;
+  min-width: 0;
+  transition: all 0.3s ease;
+}
+
+.component-preview__controls {
+  flex: 0 0 320px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 16px;
+  border: 1px solid #e9ecef;
+}
+
+.component-preview__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.component-preview__button {
+  padding: 10px 16px;
+  border: 1px solid #007bff;
+  background: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.component-preview__button:hover:not(:disabled) {
+  background: #0056b3;
+  border-color: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.component-preview__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.component-preview__button--secondary {
+  background: #6c757d;
+  border-color: #6c757d;
+}
+
+.component-preview__button--secondary:hover:not(:disabled) {
+  background: #545b62;
+  border-color: #545b62;
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.component-preview__variations {
+  margin-bottom: 16px;
+}
+
+.component-preview__label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.component-preview__variation-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.component-preview__variation-button {
+  padding: 6px 10px;
+  border: 1px solid #dee2e6;
+  background: #ffffff;
+  color: #495057;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.component-preview__variation-button:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+  transform: translateY(-1px);
+}
+
+.component-preview__variation-button--active {
+  background: #007bff;
+  border-color: #007bff;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+.component-preview__results {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.component-preview__result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.component-preview__result-item {
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+  animation: slideInResult 0.3s ease-out;
+}
+
+.component-preview__result-item:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+}
+
+.component-preview__result-item pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: #495057;
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+.component-preview__result-item span {
+  color: #495057;
+}
+
+.component-preview__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #dee2e6;
+}
+
+.component-preview__stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+}
+
+.component-preview__stat-label {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.component-preview__stat-value {
+  color: #495057;
+  font-weight: 600;
+  background: #e9ecef;
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+/* 主题样式 */
+.component-preview.theme-blue {
+  border-color: #007bff;
+}
+
+.component-preview.theme-blue .component-preview__theme-badge {
+  background: linear-gradient(45deg, #007bff, #0056b3);
+}
+
+.component-preview.theme-green {
+  border-color: #28a745;
+}
+
+.component-preview.theme-green .component-preview__theme-badge {
+  background: linear-gradient(45deg, #28a745, #20c997);
+}
+
+.component-preview.theme-purple {
+  border-color: #6f42c1;
+}
+
+.component-preview.theme-purple .component-preview__theme-badge {
+  background: linear-gradient(45deg, #6f42c1, #e83e8c);
+}
+
+.component-preview.theme-orange {
+  border-color: #fd7e14;
+}
+
+.component-preview.theme-orange .component-preview__theme-badge {
+  background: linear-gradient(45deg, #fd7e14, #ffc107);
+}
+
+.component-preview.theme-pink {
+  border-color: #e83e8c;
+}
+
+.component-preview.theme-pink .component-preview__theme-badge {
+  background: linear-gradient(45deg, #e83e8c, #fd7e14);
+}
+
+.component-preview.theme-teal {
+  border-color: #20c997;
+}
+
+.component-preview.theme-teal .component-preview__theme-badge {
+  background: linear-gradient(45deg, #20c997, #17a2b8);
+}
+
+.component-preview.theme-indigo {
+  border-color: #6610f2;
+}
+
+.component-preview.theme-indigo .component-preview__theme-badge {
+  background: linear-gradient(45deg, #6610f2, #6f42c1);
+}
+
+.component-preview.theme-red {
+  border-color: #dc3545;
+}
+
+.component-preview.theme-red .component-preview__theme-badge {
+  background: linear-gradient(45deg, #dc3545, #e83e8c);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .component-preview__content {
+    flex-direction: column;
+  }
+
+  .component-preview__controls {
+    flex: none;
+    width: 100%;
+  }
+}
+
+/* 组件特定的适配 */
+.component-preview .dice-game,
+.component-preview .grid-lottery,
+.component-preview .slot-machine,
+.component-preview .scratch-card,
+.component-preview .rock-paper-scissors {
+  max-width: 100%;
+}
+
+/* 动画效果 */
+@keyframes slideInResult {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.component-preview__component {
+  transition: all 0.3s ease;
+}
+
+.component-preview__button {
+  transition: all 0.2s ease;
+}
+
+.component-preview__variation-button {
+  transition: all 0.2s ease;
+}

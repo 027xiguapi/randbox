@@ -1,0 +1,74 @@
+{
+  "name": "@randbox/react",
+  "version": "1.0.0",
+  "description": "Lightweight Canvas-based React game components: GridLottery, SlotMachine, ScratchCard, DiceGame, and RockPaperScissors powered by RandBox",
+  "main": "dist/react.umd.js",
+  "module": "dist/react.es.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/react.es.js",
+      "require": "./dist/react.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite examples --port 3300 --host 0.0.0.0",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "build": "vite build",
+    "build:dev": "vite build --watch",
+    "analyze": "vite build --mode analyze",
+    "prepublishOnly": "pnpm build"
+  },
+  "keywords": [
+    "react",
+    "components",
+    "canvas",
+    "games",
+    "lottery",
+    "slot-machine",
+    "scratch-card",
+    "dice-game",
+    "rock-paper-scissors",
+    "randbox",
+    "ui",
+    "lightweight",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "homepage": "https://randbox.js.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/randbox.git",
+    "directory": "packages/react"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "eslint": "^8.0.0",
+    "eslint-plugin-react": "^7.32.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "jest": "^29.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "typescript": "^5.0.0",
+    "vite-plugin-dts": "^3.7.2"
+  },
+  "dependencies": {
+    "randbox": "workspace:*"
+  },
+  "sideEffects": false
+}

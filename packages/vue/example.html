@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue Canvas 游戏组件库示例</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .components-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    .component-demo {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .component-title {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .description {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script type="module">
+    import { createApp } from 'vue'
+    import {
+      GridLottery,
+      ScrollLottery,
+      ScratchCard,
+      RockPaperScissors,
+      DiceGame,
+      SlotMachine
+    } from './src/index.ts'
+
+    const App = {
+      template: `
+        <div class="container">
+          <h1>🎮 Vue Canvas 游戏组件库</h1>
+
+          <div class="description">
+            <h3>✨ 全新 Canvas 版本</h3>
+            <p>所有游戏组件现已完全使用 Canvas 技术重构，提供更流畅的动画效果、更好的性能表现和更丰富的视觉体验。支持高DPI屏幕、触摸操作，并具备完整的事件系统。</p>
+          </div>
+
+          <div class="components-grid">
+            <div class="component-demo">
+              <div class="component-title">🎯 九宫格抽奖</div>
+              <GridLottery
+                :prizes="['一等奖', '二等奖', '三等奖', '四等奖', '五等奖', '六等奖', '七等奖', '八等奖', '谢谢参与']"
+                @result="onGridLotteryResult"
+              />
+            </div>
+
+            <div class="component-demo">
+              <div class="component-title">🎰 滚动抽奖</div>
+              <ScrollLottery
+                :prizes="['iPhone 15', 'iPad', 'MacBook', 'AirPods', 'Apple Watch', '谢谢参与']"
+                @result="onScrollLotteryResult"
+              />
+            </div>
+
+            <div class="component-demo">
+              <div class="component-title">🎫 刮刮卡</div>
+              <ScratchCard
+                :prizes="['1000元', '500元', '100元', '50元', '谢谢参与']"
+                :card-width="280"
+                :card-height="180"
+                @reveal="onScratchCardReveal"
+              />
+            </div>
+
+            <div class="component-demo">
+              <div class="component-title">✂️ 石头剪刀布</div>
+              <RockPaperScissors
+                :show-stats="true"
+                @result="onRPSResult"
+              />
+            </div>
+
+            <div class="component-demo">
+              <div class="component-title">🎲 骰子游戏</div>
+              <DiceGame
+                :default-dice-count="2"
+                :show-stats="true"
+                @result="onDiceResult"
+              />
+            </div>
+
+            <div class="component-demo">
+              <div class="component-title">🎰 老虎机</div>
+              <SlotMachine
+                :initial-credits="200"
+                :show-pay-table="true"
+                @spin="onSlotMachineResult"
+              />
+            </div>
+          </div>
+        </div>
+      `,
+      methods: {
+        onGridLotteryResult(result) {
+          console.log('九宫格抽奖结果:', result)
+        },
+        onScrollLotteryResult(result) {
+          console.log('滚动抽奖结果:', result)
+        },
+        onScratchCardReveal(prize) {
+          console.log('刮刮卡结果:', prize)
+        },
+        onRPSResult(result) {
+          console.log('石头剪刀布结果:', result)
+        },
+        onDiceResult(result) {
+          console.log('骰子游戏结果:', result)
+        },
+        onSlotMachineResult(result) {
+          console.log('老虎机结果:', result)
+        }
+      }
+    }
+
+    const app = createApp(App)
+    app.component('GridLottery', GridLottery)
+    app.component('ScrollLottery', ScrollLottery)
+    app.component('ScratchCard', ScratchCard)
+    app.component('RockPaperScissors', RockPaperScissors)
+    app.component('DiceGame', DiceGame)
+    app.component('SlotMachine', SlotMachine)
+    app.mount('#app')
+  </script>
+</body>
+</html>
