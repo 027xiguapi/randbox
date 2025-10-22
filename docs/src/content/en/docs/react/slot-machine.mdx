@@ -1,0 +1,549 @@
+---
+title: 'SlotMachine - Slot Machine Game'
+description: 'Canvas-based slot machine style spinning lottery component with support for multiple reels, custom symbols and winning rule configuration'
+---
+
+# SlotMachine - Slot Machine Game
+
+`SlotMachine` is a Canvas-based slot machine style spinning lottery component that provides multi-reel synchronous or asynchronous spinning, supporting custom symbols, weight configuration and winning rules.
+
+## 📦 Import
+
+```typescript
+import { SlotMachine } from '@randbox/react';
+import type { SlotMachineProps, SlotMachineResult } from '@randbox/react';
+```
+
+## 🚀 Basic Usage
+
+```typescript
+import React from 'react';
+import { SlotMachine } from '@randbox/react';
+
+function BasicSlotMachine() {
+  const reels = [
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣']
+  ];
+
+  const handleResult = (result) => {
+    console.log('Slot machine result:', result);
+    if (result.isJackpot) {
+      alert('🎉 Congratulations! Jackpot!');
+    }
+  };
+
+  return (
+    <SlotMachine
+      reels={reels}
+      onResult={handleResult}
+    />
+  );
+}
+```
+
+## 🎯 Advanced Usage
+
+### Weighted Slot Machine
+
+```typescript
+function WeightedSlotMachine() {
+  const reels = [
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣']
+  ];
+
+  // Set different weights for each reel
+  const weights = [
+    [20, 18, 15, 12, 10, 8, 5, 2],  // First reel weights
+    [20, 18, 15, 12, 10, 8, 5, 2],  // Second reel weights
+    [20, 18, 15, 12, 10, 8, 5, 2]   // Third reel weights
+  ];
+
+  return (
+    <SlotMachine
+      reels={reels}
+      weights={weights}
+      animationDuration={4000}
+      onResult={(result) => {
+        console.log('Weighted lottery result:', result);
+        if (result.combination === '💎💎💎') {
+          alert('💎 Diamond Jackpot!');
+        }
+      }}
+    />
+  );
+}
+```
+
+### Number Slot Machine
+
+```typescript
+function NumberSlotMachine() {
+  const numberReels = [
+    ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+  ];
+
+  const checkJackpot = (results) => {
+    // Check for consecutive numbers or three identical numbers
+    const [a, b, c] = results.map(r => parseInt(r));
+    return a === b && b === c; // Three identical numbers
+  };
+
+  return (
+    <SlotMachine
+      reels={numberReels}
+      animationDuration={3000}
+      onResult={(result) => {
+        const isWin = checkJackpot(result.results);
+        console.log('Number slot machine:', { ...result, isWin });
+      }}
+    />
+  );
+}
+```
+
+### Five Reel Slot Machine
+
+```typescript
+function FiveReelSlotMachine() {
+  const symbols = ['A', 'K', 'Q', 'J', '10', '9', '8', '7'];
+  const reels = Array(5).fill(symbols);
+
+  // Set different weight distributions for five reels
+  const weights = reels.map((_, index) => {
+    // Middle reel has better chances for good symbols
+    const bonus = index === 2 ? 1.2 : 1.0;
+    return symbols.map((_, i) => (symbols.length - i) * bonus);
+  });
+
+  const checkWinningLines = (results) => {
+    const lines = [
+      results, // Middle line
+      // Can add more payline logic
+    ];
+
+    return lines.some(line => {
+      const first = line[0];
+      return line.every(symbol => symbol === first);
+    });
+  };
+
+  return (
+    <SlotMachine
+      reels={reels}
+      weights={weights}
+      animationDuration={5000}
+      onResult={(result) => {
+        const hasWin = checkWinningLines(result.results);
+        console.log('Five reel result:', { ...result, hasWin });
+      }}
+    />
+  );
+}
+```
+
+### Complete Configuration Example
+
+```typescript
+function FullConfigSlotMachine() {
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [totalSpins, setTotalSpins] = useState(0);
+  const [wins, setWins] = useState(0);
+  const [history, setHistory] = useState([]);
+
+  const reels = [
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐']
+  ];
+
+  const weights = [
+    [25, 20, 15, 12, 10, 8, 5, 5],
+    [25, 20, 15, 12, 10, 8, 5, 5],
+    [25, 20, 15, 12, 10, 8, 5, 5]
+  ];
+
+  const handleGameStart = () => {
+    setIsSpinning(true);
+    console.log('Starting spin...');
+  };
+
+  const handleGameEnd = (result) => {
+    setIsSpinning(false);
+    setTotalSpins(prev => prev + 1);
+
+    if (result.isJackpot) {
+      setWins(prev => prev + 1);
+    }
+
+    setHistory(prev => [result, ...prev.slice(0, 9)]);
+    console.log('Spin ended:', result);
+  };
+
+  const winRate = totalSpins > 0 ? ((wins / totalSpins) * 100).toFixed(1) : '0.0';
+
+  return (
+    <div style={{ padding: '20px' }}>
+      {/* Statistics */}
+      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+        <div>Total Spins: {totalSpins} | Wins: {wins} | Win Rate: {winRate}%</div>
+      </div>
+
+      <SlotMachine
+        reels={reels}
+        weights={weights}
+        animationDuration={3500}
+        buttonText={isSpinning ? 'Spinning...' : '🎰 Start Spin'}
+        className="casino-slot"
+        style={{ border: '3px solid gold', borderRadius: '15px' }}
+        disabled={isSpinning}
+        onGameStart={handleGameStart}
+        onGameEnd={handleGameEnd}
+        onResult={(result) => {
+          console.log('Real-time result:', result);
+        }}
+      />
+
+      {/* History */}
+      {history.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <h3>Recent Spin History:</h3>
+          {history.map((result, index) => (
+            <div
+              key={index}
+              style={{
+                padding: '8px',
+                backgroundColor: result.isJackpot ? '#fff3cd' : '#f8f9fa',
+                margin: '5px 0',
+                borderRadius: '5px',
+                border: result.isJackpot ? '2px solid #ffc107' : '1px solid #dee2e6'
+              }}
+            >
+              <strong>{result.combination}</strong>
+              {result.isJackpot && <span style={{ color: '#d4a853', marginLeft: '10px' }}>🎉 Win!</span>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## 📋 API Reference
+
+### SlotMachineProps
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `reels` | `string[][]` | **Required** | Reel configuration, each sub-array represents symbols for one reel |
+| `weights` | `number[][]` | `undefined` | Weight configuration to control symbol appearance probability for each reel |
+| `animationDuration` | `number` | `3000` | Animation duration (milliseconds) |
+| `buttonText` | `string` | `'Start Spin'` | Action button text |
+| `onResult` | `(result: SlotMachineResult) => void` | `undefined` | Result callback |
+
+### Inherited BaseGameProps
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `className` | `string` | `''` | CSS class name |
+| `style` | `React.CSSProperties` | `{}` | Inline styles |
+| `disabled` | `boolean` | `false` | Whether disabled |
+| `onGameStart` | `() => void` | `undefined` | Game start callback |
+| `onGameEnd` | `(result: SlotMachineResult) => void` | `undefined` | Game end callback |
+
+### SlotMachineResult
+
+```typescript
+interface SlotMachineResult {
+  results: string[];      // Result for each reel
+  isJackpot: boolean;     // Whether it's a jackpot
+  combination: string;    // Combination string (e.g., "🍎🍎🍎")
+}
+```
+
+## 🎨 Style Customization
+
+### Container Styles
+
+```css
+.casino-slot {
+  background: linear-gradient(145deg, #2c3e50, #34495e);
+  border: 3px solid #f39c12;
+  border-radius: 20px;
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.3),
+    inset 0 2px 10px rgba(255,255,255,0.1);
+}
+
+.casino-slot:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+```
+
+### Neon Effects
+
+```css
+.neon-slot {
+  border: 2px solid #ff6b6b;
+  border-radius: 15px;
+  box-shadow:
+    0 0 20px #ff6b6b,
+    inset 0 0 20px rgba(255, 107, 107, 0.1);
+  animation: neonGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes neonGlow {
+  from {
+    box-shadow:
+      0 0 20px #ff6b6b,
+      inset 0 0 20px rgba(255, 107, 107, 0.1);
+  }
+  to {
+    box-shadow:
+      0 0 30px #ff6b6b,
+      0 0 40px #ff6b6b,
+      inset 0 0 30px rgba(255, 107, 107, 0.2);
+  }
+}
+```
+
+## 🔧 Advanced Features
+
+### Custom Winning Rules
+
+```typescript
+function CustomWinRulesSlotMachine() {
+  const symbols = ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐'];
+  const reels = [symbols, symbols, symbols];
+
+  // Custom winning rules
+  const checkWinning = (results) => {
+    const [a, b, c] = results;
+
+    // Rule 1: Three of a kind
+    if (a === b && b === c) return { type: 'triple', multiplier: 10 };
+
+    // Rule 2: Two of a kind
+    if (a === b || b === c || a === c) return { type: 'double', multiplier: 2 };
+
+    // Rule 3: Special combinations
+    if (results.includes('💎') && results.includes('⭐')) {
+      return { type: 'special', multiplier: 5 };
+    }
+
+    return { type: 'none', multiplier: 0 };
+  };
+
+  return (
+    <SlotMachine
+      reels={reels}
+      onResult={(result) => {
+        const winInfo = checkWinning(result.results);
+        console.log('Winning info:', winInfo);
+
+        if (winInfo.multiplier > 0) {
+          alert(`Win type: ${winInfo.type}, Multiplier: ${winInfo.multiplier}x`);
+        }
+      }}
+    />
+  );
+}
+```
+
+### Progressive Jackpot
+
+```typescript
+function ProgressiveSlotMachine() {
+  const [jackpotAmount, setJackpotAmount] = useState(1000);
+  const [lastWin, setLastWin] = useState(null);
+
+  const reels = [
+    ['💎', '⭐', '🔔', '🍒', '🍇', '🍊', '🍎'],
+    ['💎', '⭐', '🔔', '🍒', '🍇', '🍊', '🍎'],
+    ['💎', '⭐', '🔔', '🍒', '🍇', '🍊', '🍎']
+  ];
+
+  const handleResult = (result) => {
+    // Increase jackpot each game
+    setJackpotAmount(prev => prev + 10);
+
+    if (result.combination === '💎💎💎') {
+      // Super jackpot hit
+      setLastWin({ type: 'jackpot', amount: jackpotAmount });
+      setJackpotAmount(1000); // Reset jackpot
+      alert(`🎉 Super Jackpot! Prize: $${jackpotAmount}`);
+    } else if (result.isJackpot) {
+      const amount = 100;
+      setLastWin({ type: 'normal', amount });
+      alert(`🎉 Win! Prize: $${amount}`);
+    }
+  };
+
+  return (
+    <div>
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <h2>Progressive Jackpot: ${jackpotAmount.toLocaleString()}</h2>
+        {lastWin && (
+          <div style={{ color: 'green' }}>
+            Last Win: {lastWin.type} - ${lastWin.amount}
+          </div>
+        )}
+      </div>
+
+      <SlotMachine
+        reels={reels}
+        onResult={handleResult}
+      />
+    </div>
+  );
+}
+```
+
+### Multi-Line Slot Machine
+
+```typescript
+function MultiLineSlotMachine() {
+  const symbols = ['A', 'K', 'Q', 'J', '10', '9'];
+  const reels = Array(5).fill(symbols);
+
+  // Define paylines
+  const paylines = [
+    [1, 1, 1, 1, 1], // Middle line
+    [0, 0, 0, 0, 0], // Top line
+    [2, 2, 2, 2, 2], // Bottom line
+    [0, 1, 2, 1, 0], // V shape
+    [2, 1, 0, 1, 2], // Inverted V
+  ];
+
+  const checkPaylines = (results) => {
+    const wins = [];
+
+    paylines.forEach((line, lineIndex) => {
+      const lineSymbols = line.map((row, col) => {
+        // Get symbols based on actual reel result matrix
+        return results[col]; // Simplified version
+      });
+
+      // Check if payline wins
+      const firstSymbol = lineSymbols[0];
+      let matchCount = 1;
+
+      for (let i = 1; i < lineSymbols.length; i++) {
+        if (lineSymbols[i] === firstSymbol) {
+          matchCount++;
+        } else {
+          break;
+        }
+      }
+
+      if (matchCount >= 3) {
+        wins.push({
+          line: lineIndex + 1,
+          symbol: firstSymbol,
+          count: matchCount,
+          payout: calculatePayout(firstSymbol, matchCount)
+        });
+      }
+    });
+
+    return wins;
+  };
+
+  const calculatePayout = (symbol, count) => {
+    const payouts = {
+      'A': [0, 0, 50, 200, 1000],
+      'K': [0, 0, 25, 100, 500],
+      'Q': [0, 0, 20, 80, 400],
+      'J': [0, 0, 15, 60, 300],
+      '10': [0, 0, 10, 40, 200],
+      '9': [0, 0, 5, 20, 100],
+    };
+
+    return payouts[symbol]?.[count] || 0;
+  };
+
+  return (
+    <SlotMachine
+      reels={reels}
+      onResult={(result) => {
+        const wins = checkPaylines(result.results);
+        const totalPayout = wins.reduce((sum, win) => sum + win.payout, 0);
+
+        console.log('Payline wins:', wins);
+        if (totalPayout > 0) {
+          alert(`Win! Total payout: ${totalPayout}`);
+        }
+      }}
+    />
+  );
+}
+```
+
+## 🎯 Best Practices
+
+### 1. Symbol Design Recommendations
+
+```typescript
+// Use easily distinguishable symbols
+const goodSymbols = ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐'];
+
+// Avoid similar symbols
+const badSymbols = ['😀', '😃', '😄', '😁']; // Too similar, hard to distinguish
+```
+
+### 2. Weight Balance
+
+```typescript
+// Balanced weight distribution
+const balancedWeights = [
+  [30, 25, 20, 15, 5, 3, 1, 1], // Common symbols high weight, rare symbols low weight
+  [30, 25, 20, 15, 5, 3, 1, 1],
+  [30, 25, 20, 15, 5, 3, 1, 1]
+];
+```
+
+### 3. Performance Optimization
+
+```typescript
+// Use React.memo to optimize re-renders
+const OptimizedSlotMachine = React.memo(({ reels, ...props }) => {
+  return <SlotMachine reels={reels} {...props} />;
+});
+
+// Use useMemo to cache complex calculations
+function CachedSlotMachine() {
+  const reels = useMemo(() =>
+    generateReels(complexity), [complexity]
+  );
+
+  return <SlotMachine reels={reels} />;
+}
+```
+
+## 🐛 Common Issues
+
+### Q: How to implement true randomness?
+A: The component uses RandBox's Mersenne Twister algorithm, providing high-quality random number generation.
+
+### Q: Is there a limit to the number of reels?
+A: Theoretically no limit, but recommend no more than 7 reels to ensure performance and user experience.
+
+### Q: Can asynchronous spinning be implemented?
+A: Yes, the component internally implements asynchronous spinning effects, where each reel stops at different times.
+
+### Q: How to adjust winning probability?
+A: Use the weights property to adjust the weight of each symbol - higher weight means higher appearance probability.
+
+## 🔗 Related Links
+
+- [GridLottery - Grid Lottery Game](/en/docs/react/grid-lottery)
+- [ScratchCard - Scratch Card Game](/en/docs/react/scratch-card)
+- [DiceGame - Dice Game](/en/docs/react/dice-game)
+- [RandBox Weight Methods](/en/docs/miscellaneous/weighted)

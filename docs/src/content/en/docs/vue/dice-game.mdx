@@ -1,0 +1,999 @@
+---
+title: "DiceGame - Dice Game"
+description: "3D dice game component based on Canvas and Vue 3, supporting multiple game modes, custom dice count, and rolling animation effects"
+---
+
+# DiceGame - Dice Game
+
+`DiceGame` is a 3D dice game component based on Canvas and Vue 3, providing realistic rolling experience and multiple game modes. It supports custom dice count, number of sides, and rich game rule configurations.
+
+## 📦 Import
+
+```vue
+<script setup>
+import { DiceGame } from '@randbox/vue'
+// Or import types
+import type { DiceGameProps, DiceGameResult } from '@randbox/vue'
+</script>
+```
+
+## 🚀 Basic Usage
+
+```vue
+<template>
+  <DiceGame
+    :dice-count="2"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { DiceGame } from '@randbox/vue'
+
+const handleResult = (result) => {
+  console.log('Roll result:', result)
+  alert(`Roll result: ${result.results.join(', ')}, Total: ${result.total}`)
+}
+</script>
+```
+
+## 🎯 Advanced Usage
+
+### Multiple Game Modes
+
+```vue
+<template>
+  <div class="dice-game-modes">
+    <div class="mode-controls">
+      <label>Game Mode: </label>
+      <select v-model="gameMode">
+        <option value="simple">Simple Mode</option>
+        <option value="sum">Sum Mode</option>
+        <option value="bigSmall">Big/Small Mode</option>
+        <option value="even_odd">Even/Odd Mode</option>
+        <option value="guess">Guess Mode</option>
+        <option value="specific">Specific Value Mode</option>
+      </select>
+
+      <div v-if="gameMode === 'sum'" class="target-sum">
+        <label>Target Sum: </label>
+        <input
+          v-model.number="targetSum"
+          type="number"
+          min="2"
+          max="12"
+        />
+      </div>
+    </div>
+
+    <DiceGame
+      :dice-count="2"
+      :game-mode="gameMode"
+      :target-sum="targetSum"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const gameMode = ref('simple')
+const targetSum = ref(7)
+
+const handleResult = (result) => {
+  console.log(`${result.gameMode} mode result:`, result)
+
+  switch (result.gameMode) {
+    case 'sum':
+      alert(`Target sum: ${targetSum.value}, Actual sum: ${result.sum}, ${result.isWin ? 'Success' : 'Failed'}!`)
+      break
+    case 'bigSmall':
+      alert(`Roll result: ${result.sum > 7 ? 'Big' : 'Small'} (${result.sum}), ${result.description}`)
+      break
+    case 'even_odd':
+      alert(`Roll result: ${result.sum % 2 === 0 ? 'Even' : 'Odd'} (${result.sum}), ${result.description}`)
+      break
+    default:
+      alert(result.message)
+  }
+}
+</script>
+
+<style scoped>
+.dice-game-modes {
+  padding: 20px;
+}
+
+.mode-controls {
+  margin-bottom: 20px;
+}
+
+.target-sum {
+  margin-top: 10px;
+}
+</style>
+```
+
+### Multi-Dice Game
+
+```vue
+<template>
+  <div class="multi-dice-game">
+    <div class="controls">
+      <div class="control-group">
+        <label>Dice Count: </label>
+        <select v-model.number="diceCount">
+          <option v-for="n in 6" :key="n" :value="n">{{ n }} dice</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>Dice Sides: </label>
+        <select v-model.number="sides">
+          <option :value="4">4-sided</option>
+          <option :value="6">6-sided</option>
+          <option :value="8">8-sided</option>
+          <option :value="10">10-sided</option>
+          <option :value="12">12-sided</option>
+          <option :value="20">20-sided</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="game-info">
+      <div>Configuration: {{ diceCount }} {{ sides }}-sided dice</div>
+      <div>Possible sum range: {{ diceCount }} - {{ totalPossibleSum }}</div>
+      <div>Expected average: {{ averageSum.toFixed(1) }}</div>
+    </div>
+
+    <DiceGame
+      :dice-count="diceCount"
+      :sides="sides"
+      game-mode="simple"
+      @result="handleResult"
+    />
+
+    <!-- History -->
+    <div v-if="results.length > 0" class="history">
+      <h3>Roll History:</h3>
+      <div class="history-list">
+        <div
+          v-for="(result, index) in results"
+          :key="index"
+          class="history-item"
+        >
+          <span>{{ result.results.join(' + ') }} = {{ result.sum }}</span>
+          <span class="timestamp">{{ result.timestamp }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const diceCount = ref(3)
+const sides = ref(6)
+const results = ref([])
+
+const totalPossibleSum = computed(() => diceCount.value * sides.value)
+const averageSum = computed(() => diceCount.value * (sides.value + 1) / 2)
+
+const handleResult = (result) => {
+  const newResult = {
+    ...result,
+    timestamp: new Date().toLocaleTimeString()
+  }
+  results.value = [newResult, ...results.value.slice(0, 9)]
+}
+</script>
+
+<style scoped>
+.multi-dice-game {
+  padding: 20px;
+}
+
+.controls {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.game-info {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f0f8ff;
+  border-radius: 8px;
+}
+
+.history {
+  margin-top: 20px;
+}
+
+.history-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  margin: 5px 0;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+}
+
+.timestamp {
+  color: #666;
+  font-size: 0.9em;
+}
+</style>
+```
+
+### Competitive Dice Game
+
+```vue
+<template>
+  <div class="competitive-dice">
+    <!-- Tournament Status -->
+    <div class="tournament-status">
+      <h2>Tournament Mode</h2>
+      <div v-if="!isGameOver" class="current-round">
+        <div class="round-info">Round {{ tournament.currentRound }} / {{ tournament.maxRounds }}</div>
+        <div class="score-display">
+          <div class="player-score">
+            <div>Player</div>
+            <div class="score">{{ tournament.playerScore }}</div>
+          </div>
+          <div class="vs">VS</div>
+          <div class="computer-score">
+            <div>Computer</div>
+            <div class="score">{{ tournament.computerScore }}</div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="game-over">
+        <h3>Tournament Over!</h3>
+        <div class="winner">
+          {{ winner === 'player' ? '🎉 Congratulations!' :
+             winner === 'computer' ? '😢 Better luck next time!' : '🤝 It\'s a tie!' }}
+        </div>
+        <div class="final-score">Final Score: {{ tournament.playerScore }} - {{ tournament.computerScore }}</div>
+        <button @click="resetTournament" class="reset-btn">
+          Start New Tournament
+        </button>
+      </div>
+    </div>
+
+    <!-- Game Area -->
+    <div v-if="!isGameOver" class="game-area">
+      <h4>Roll your dice</h4>
+      <DiceGame
+        :dice-count="2"
+        game-mode="simple"
+        :disabled="isGameOver"
+        @result="handleResult"
+      />
+    </div>
+
+    <!-- Match Records -->
+    <div v-if="tournament.rounds.length > 0" class="tournament-history">
+      <h3>Match Records:</h3>
+      <div
+        v-for="round in tournament.rounds"
+        :key="round.round"
+        class="round-record"
+        :class="round.winner"
+      >
+        <span>Round {{ round.round }}</span>
+        <span class="round-result">
+          Player: {{ round.player.dice.join('+') }}={{ round.player.sum }} vs
+          Computer: {{ round.computer.dice.join('+') }}={{ round.computer.sum }}
+        </span>
+        <span class="round-winner">
+          {{ round.winner === 'tie' ? 'Tie' :
+             round.winner === 'player' ? 'Player Wins' : 'Computer Wins' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const tournament = ref({
+  currentRound: 1,
+  maxRounds: 5,
+  playerScore: 0,
+  computerScore: 0,
+  rounds: []
+})
+
+const isGameOver = ref(false)
+
+const winner = computed(() => {
+  if (tournament.value.playerScore > tournament.value.computerScore) return 'player'
+  if (tournament.value.computerScore > tournament.value.playerScore) return 'computer'
+  return 'tie'
+})
+
+const handleResult = (result) => {
+  const playerSum = result.sum
+
+  // Computer roll
+  const computerDice = Array.from({ length: 2 }, () => Math.floor(Math.random() * 6) + 1)
+  const computerSum = computerDice.reduce((a, b) => a + b, 0)
+
+  const roundResult = {
+    round: tournament.value.currentRound,
+    player: { dice: result.results, sum: playerSum },
+    computer: { dice: computerDice, sum: computerSum },
+    winner: playerSum > computerSum ? 'player' : computerSum > playerSum ? 'computer' : 'tie'
+  }
+
+  tournament.value.rounds.push(roundResult)
+
+  // Update scores
+  if (roundResult.winner === 'player') {
+    tournament.value.playerScore++
+  } else if (roundResult.winner === 'computer') {
+    tournament.value.computerScore++
+  }
+
+  // Check game end conditions
+  const winningScore = 3
+  if (tournament.value.playerScore >= winningScore ||
+      tournament.value.computerScore >= winningScore ||
+      tournament.value.currentRound >= tournament.value.maxRounds) {
+    isGameOver.value = true
+  } else {
+    tournament.value.currentRound++
+  }
+
+  // Show result
+  setTimeout(() => {
+    alert(
+      `Round ${tournament.value.currentRound} result:\n` +
+      `Player: ${playerSum} vs Computer: ${computerSum}\n` +
+      `${roundResult.winner === 'tie' ? 'It\'s a tie!' : `${roundResult.winner === 'player' ? 'Player' : 'Computer'} wins!`}`
+    )
+  }, 1000)
+}
+
+const resetTournament = () => {
+  tournament.value = {
+    currentRound: 1,
+    maxRounds: 5,
+    playerScore: 0,
+    computerScore: 0,
+    rounds: []
+  }
+  isGameOver.value = false
+}
+</script>
+
+<style scoped>
+.competitive-dice {
+  padding: 20px;
+}
+
+.tournament-status {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.score-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-top: 15px;
+}
+
+.player-score, .computer-score {
+  text-align: center;
+}
+
+.score {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.player-score .score {
+  color: #007bff;
+}
+
+.computer-score .score {
+  color: #dc3545;
+}
+
+.game-area {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.reset-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tournament-history {
+  margin-top: 20px;
+}
+
+.round-record {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+.round-record.player {
+  background-color: #d4edda;
+}
+
+.round-record.computer {
+  background-color: #f8d7da;
+}
+
+.round-record.tie {
+  background-color: #fff3cd;
+}
+
+.round-winner {
+  font-weight: bold;
+}
+</style>
+```
+
+### Statistical Analysis Dice Game
+
+```vue
+<template>
+  <div class="statistical-dice">
+    <!-- Game Control Panel -->
+    <div class="control-panel">
+      <div class="controls-row">
+        <div class="control-item">
+          <label>Dice Count: </label>
+          <select v-model.number="diceCount">
+            <option v-for="n in 4" :key="n" :value="n">{{ n }}</option>
+          </select>
+        </div>
+
+        <label class="auto-play">
+          <input
+            v-model="autoRoll"
+            type="checkbox"
+            :disabled="rolls.length >= 100"
+          />
+          Auto Roll ({{ rolls.length }}/100)
+        </label>
+
+        <button @click="clearStats" class="clear-btn">
+          Clear Stats
+        </button>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <!-- Dice Game Area -->
+      <div class="game-section">
+        <DiceGame
+          :dice-count="diceCount"
+          game-mode="simple"
+          :disabled="autoRoll"
+          @result="handleResult"
+        />
+      </div>
+
+      <!-- Statistics Panel -->
+      <div v-if="stats" class="stats-section">
+        <h3>Statistics</h3>
+        <div class="stats-grid">
+          <div class="stat-item">Total Rolls: {{ stats.totalRolls }}</div>
+          <div class="stat-item">Average: {{ stats.average }}</div>
+          <div class="stat-item">Minimum: {{ stats.min }}</div>
+          <div class="stat-item">Maximum: {{ stats.max }}</div>
+          <div class="stat-item">Most Common: {{ stats.mostCommon }}</div>
+        </div>
+
+        <h4 class="frequency-title">Frequency Distribution:</h4>
+        <div class="frequency-chart">
+          <div
+            v-for="[sum, count] in frequencyEntries"
+            :key="sum"
+            class="frequency-item"
+          >
+            <div class="frequency-label">
+              <span>{{ sum }}:</span>
+              <span>{{ count }} times ({{ ((count / stats.totalRolls) * 100).toFixed(1) }}%)</span>
+            </div>
+            <div class="frequency-bar">
+              <div
+                class="frequency-fill"
+                :style="{ width: `${(count / stats.totalRolls) * 100}%` }"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, watch, onUnmounted } from 'vue'
+
+const diceCount = ref(2)
+const autoRoll = ref(false)
+const rolls = ref([])
+
+let autoRollInterval = null
+
+// Calculate statistics
+const stats = computed(() => {
+  if (rolls.value.length === 0) return null
+
+  const sums = rolls.value.map(r => r.sum)
+  const average = sums.reduce((a, b) => a + b, 0) / sums.length
+  const frequency = {}
+
+  sums.forEach(sum => {
+    frequency[sum] = (frequency[sum] || 0) + 1
+  })
+
+  const mostCommon = Object.entries(frequency)
+    .sort(([,a], [,b]) => b - a)[0]
+
+  return {
+    totalRolls: rolls.value.length,
+    average: average.toFixed(2),
+    min: Math.min(...sums),
+    max: Math.max(...sums),
+    mostCommon: mostCommon ? `${mostCommon[0]} (${mostCommon[1]} times)` : 'None',
+    frequency
+  }
+})
+
+const frequencyEntries = computed(() => {
+  if (!stats.value) return []
+  return Object.entries(stats.value.frequency)
+    .sort(([a], [b]) => parseInt(a) - parseInt(b))
+})
+
+// Auto roll
+watch(autoRoll, (newValue) => {
+  if (newValue && rolls.value.length < 100) {
+    autoRollInterval = setInterval(() => {
+      if (rolls.value.length >= 100) {
+        autoRoll.value = false
+        return
+      }
+      // Simulate roll
+      const simulatedResult = {
+        results: Array.from({ length: diceCount.value }, () => Math.floor(Math.random() * 6) + 1),
+        sum: 0,
+        gameMode: 'simple',
+        message: 'Auto roll'
+      }
+      simulatedResult.sum = simulatedResult.results.reduce((a, b) => a + b, 0)
+      rolls.value.push(simulatedResult)
+    }, 500)
+  } else {
+    clearInterval(autoRollInterval)
+  }
+})
+
+onUnmounted(() => {
+  clearInterval(autoRollInterval)
+})
+
+const handleResult = (result) => {
+  rolls.value.push(result)
+}
+
+const clearStats = () => {
+  rolls.value = []
+  autoRoll.value = false
+}
+</script>
+
+<style scoped>
+.statistical-dice {
+  padding: 20px;
+}
+
+.control-panel {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.controls-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.stats-section {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.stats-grid {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  padding: 8px;
+  background: white;
+  border-radius: 4px;
+}
+
+.frequency-title {
+  margin-bottom: 10px;
+}
+
+.frequency-chart {
+  font-size: 0.9em;
+}
+
+.frequency-item {
+  margin-bottom: 8px;
+}
+
+.frequency-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.frequency-bar {
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.frequency-fill {
+  height: 100%;
+  background-color: #007bff;
+  transition: width 0.3s ease;
+}
+
+.clear-btn {
+  padding: 8px 16px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+</style>
+```
+
+## 📋 API Reference
+
+### Props
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `diceCount` | `number` | `2` | Number of dice |
+| `sides` | `number` | `6` | Number of sides per die |
+| `gameMode` | `'simple' \| 'sum' \| 'bigSmall' \| 'guess' \| 'even_odd' \| 'specific'` | `'simple'` | Game mode |
+| `targetSum` | `number` | `7` | Target sum (used in sum mode) |
+| `class` | `string` | `''` | CSS class name |
+| `style` | `Record<string, any>` | `{}` | Inline styles |
+| `disabled` | `boolean` | `false` | Whether disabled |
+
+### Events
+
+| Event | Parameters | Description |
+|-------|------------|-------------|
+| `result` | `(result: DiceGameResult)` | Roll result callback |
+| `game-start` | `()` | Game start callback |
+| `game-end` | `(result: DiceGameResult)` | Game end callback |
+
+### DiceGameResult
+
+```typescript
+interface DiceGameResult {
+  results: number[]      // Value of each die
+  total: number          // Total sum (same as sum)
+  gameMode: string       // Game mode
+  isWin?: boolean        // Whether won (in certain modes)
+  message: string        // Result description message
+  values: number[]       // Dice values array (same as results)
+  sum: number           // Sum of values
+  description: string    // Detailed description
+}
+```
+
+### Game Mode Descriptions
+
+| Mode | Description | Win Condition |
+|------|-------------|---------------|
+| `simple` | Simple mode | No specific condition, just shows result |
+| `sum` | Sum mode | Roll total equals target value |
+| `bigSmall` | Big/Small mode | Total > 7 is "Big", < 7 is "Small" |
+| `guess` | Guess mode | Player must predict result beforehand |
+| `even_odd` | Even/Odd mode | Total is even or odd |
+| `specific` | Specific value mode | Roll specific combination |
+
+## 🎨 Style Customization
+
+### Container Styles
+
+```vue
+<style scoped>
+.dice-game-container {
+  border: 2px solid #28a745;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.2);
+  background: linear-gradient(145deg, #f8fff8, #e8f5e8);
+}
+
+.dice-game-container:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+</style>
+```
+
+### Rolling Animation
+
+```vue
+<style scoped>
+.dice-rolling {
+  animation: diceRoll 1s ease-in-out;
+}
+
+@keyframes diceRoll {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  75% { transform: rotate(270deg) scale(1.1); }
+}
+</style>
+```
+
+## 🔧 Advanced Features
+
+### Custom Rolling Rules
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const checkSpecialCombinations = (results) => {
+  const sorted = [...results].sort()
+
+  // Straight check
+  const isStraight = sorted.every((val, i) => i === 0 || val === sorted[i-1] + 1)
+
+  // Pairs check
+  const pairs = {}
+  results.forEach(val => pairs[val] = (pairs[val] || 0) + 1)
+  const pairCounts = Object.values(pairs)
+
+  if (isStraight) return { type: 'straight', message: 'Straight!', bonus: 50 }
+  if (pairCounts.includes(3)) return { type: 'triple', message: 'Three of a kind!', bonus: 30 }
+  if (pairCounts.includes(2)) return { type: 'pair', message: 'Pair!', bonus: 10 }
+
+  return { type: 'normal', message: 'Normal roll', bonus: 0 }
+}
+
+const handleResult = (result) => {
+  const special = checkSpecialCombinations(result.results)
+  alert(`${result.message}\n${special.message}\nBonus points: ${special.bonus}`)
+}
+</script>
+```
+
+### Multiplayer Game Mode
+
+```vue
+<template>
+  <div class="multiplayer-dice">
+    <div class="game-status">
+      <h3>Round {{ round }} - {{ players[currentPlayer] }}'s turn</h3>
+      <div class="player-scores">
+        <div
+          v-for="player in players"
+          :key="player"
+          class="player-score"
+          :class="{ active: player === players[currentPlayer] }"
+        >
+          {{ player }}: {{ scores[player] || 0 }} points
+        </div>
+      </div>
+    </div>
+
+    <DiceGame
+      :dice-count="2"
+      game-mode="simple"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const players = ref(['Player 1', 'Player 2', 'Player 3'])
+const currentPlayer = ref(0)
+const scores = ref({})
+const round = ref(1)
+
+const handleResult = (result) => {
+  const player = players.value[currentPlayer.value]
+  scores.value[player] = (scores.value[player] || 0) + result.sum
+
+  // Switch to next player
+  const nextPlayer = (currentPlayer.value + 1) % players.value.length
+  if (nextPlayer === 0) {
+    round.value++
+  }
+  currentPlayer.value = nextPlayer
+}
+</script>
+
+<style scoped>
+.multiplayer-dice {
+  padding: 20px;
+}
+
+.game-status {
+  margin-bottom: 20px;
+}
+
+.player-scores {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.player-score {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+}
+
+.player-score.active {
+  background-color: #fff3cd;
+  border: 2px solid #ffc107;
+}
+</style>
+```
+
+## 🎯 Best Practices
+
+### 1. Game Mode Selection
+
+```vue
+<script setup>
+// Choose appropriate game mode based on user group
+const gameModeConfig = {
+  children: { mode: 'simple', diceCount: 1 },
+  casual: { mode: 'bigSmall', diceCount: 2 },
+  competitive: { mode: 'sum', diceCount: 3, targetSum: 10 }
+}
+</script>
+```
+
+### 2. Performance Optimization
+
+```vue
+<script setup>
+import { ref, computed, shallowRef } from 'vue'
+
+// Use shallowRef for large data sets
+const gameHistory = shallowRef([])
+
+// Cache complex calculations
+const gameConfig = computed(() => ({
+  diceCount: 3,
+  sides: 6,
+  gameMode: 'sum'
+}))
+</script>
+```
+
+### 3. Error Handling
+
+```vue
+<template>
+  <div>
+    <div v-if="error" class="error-message">
+      Error: {{ error }}
+    </div>
+
+    <DiceGame
+      :dice-count="2"
+      @result="handleResult"
+      @error="handleError"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const error = ref('')
+
+const handleResult = (result) => {
+  error.value = ''
+  console.log('Roll success:', result)
+}
+
+const handleError = (err) => {
+  error.value = err.message
+  console.error('Dice game error:', err)
+}
+</script>
+
+<style scoped>
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #ffe6e6;
+  border-radius: 4px;
+}
+</style>
+```
+
+## 🐛 Common Issues
+
+### Q: Are dice rolls truly random?
+A: Yes, the component uses RandBox's Mersenne Twister algorithm, providing high-quality random number generation.
+
+### Q: Can I customize the number of sides on dice?
+A: Yes, the `sides` property supports 4-sided, 6-sided, 8-sided, 10-sided, 12-sided, 20-sided, and other types of dice.
+
+### Q: How to implement special rolling rules?
+A: You can customize logic in the `result` event callback to check roll results and implement special rules.
+
+### Q: How many dice can be rolled simultaneously?
+A: Theoretically no limit, but recommend no more than 6 to ensure good user experience and performance.
+
+### Q: How to integrate with Vue Router?
+A: Can be used normally in route components, or dynamically configure game mode through route parameters.
+
+## 🔗 Related Links
+
+- [GridLottery - Grid Lottery](/en/docs/vue/grid-lottery)
+- [SlotMachine - Slot Machine](/en/docs/vue/slot-machine)
+- [ScratchCard - Scratch Card](/en/docs/vue/scratch-card)
+- [RandBox Core Algorithms](/en/docs/basics)

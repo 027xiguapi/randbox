@@ -10,6 +10,12 @@ export default {
   usage: {
     title: '使用方法',
   },
+  react: {
+    title: 'react',
+  },
+  vue: {
+    title: 'vue',
+  },
   basics: {
     title: '基础数据类型',
   },

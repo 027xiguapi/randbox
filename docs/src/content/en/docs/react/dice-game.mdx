@@ -1,0 +1,766 @@
+---
+title: 'DiceGame - Dice Game'
+description: 'Canvas-based 3D dice game component with support for multiple game modes, custom dice count and throwing animation effects'
+---
+
+# DiceGame - Dice Game
+
+`DiceGame` is a Canvas-based 3D dice game component that provides a realistic throwing experience and multiple game modes. It supports custom dice count, number of sides, and rich game rule configuration.
+
+## 📦 Import
+
+```typescript
+import { DiceGame } from '@randbox/react';
+import type { DiceGameProps, DiceGameResult } from '@randbox/react';
+```
+
+## 🚀 Basic Usage
+
+```typescript
+import React from 'react';
+import { DiceGame } from '@randbox/react';
+
+function BasicDiceGame() {
+  const handleResult = (result) => {
+    console.log('Dice result:', result);
+    alert(`Dice result: ${result.results.join(', ')}, Total: ${result.total}`);
+  };
+
+  return (
+    <DiceGame
+      diceCount={2}
+      onResult={handleResult}
+    />
+  );
+}
+```
+
+## 🎯 Advanced Usage
+
+### Multiple Game Modes
+
+```typescript
+function MultiModeDiceGame() {
+  const [gameMode, setGameMode] = useState('simple');
+  const [targetSum, setTargetSum] = useState(7);
+
+  const handleResult = (result) => {
+    console.log(`${result.gameMode} mode result:`, result);
+
+    switch (result.gameMode) {
+      case 'sum':
+        alert(`Target sum: ${targetSum}, Actual sum: ${result.sum}, ${result.isWin ? 'Success' : 'Failed'}!`);
+        break;
+      case 'bigSmall':
+        alert(`Roll result: ${result.sum > 7 ? 'Big' : 'Small'} (${result.sum}), ${result.description}`);
+        break;
+      case 'even_odd':
+        alert(`Roll result: ${result.sum % 2 === 0 ? 'Even' : 'Odd'} (${result.sum}), ${result.description}`);
+        break;
+      default:
+        alert(result.message);
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <label>Game Mode: </label>
+        <select value={gameMode} onChange={(e) => setGameMode(e.target.value)}>
+          <option value="simple">Simple Mode</option>
+          <option value="sum">Sum Mode</option>
+          <option value="bigSmall">Big/Small Mode</option>
+          <option value="even_odd">Even/Odd Mode</option>
+          <option value="guess">Guess Mode</option>
+          <option value="specific">Specific Value Mode</option>
+        </select>
+
+        {gameMode === 'sum' && (
+          <div style={{ marginTop: '10px' }}>
+            <label>Target Sum: </label>
+            <input
+              type="number"
+              value={targetSum}
+              min="2"
+              max="12"
+              onChange={(e) => setTargetSum(parseInt(e.target.value))}
+            />
+          </div>
+        )}
+      </div>
+
+      <DiceGame
+        diceCount={2}
+        gameMode={gameMode}
+        targetSum={targetSum}
+        onResult={handleResult}
+      />
+    </div>
+  );
+}
+```
+
+### Multi-Dice Game
+
+```typescript
+function MultiDiceGame() {
+  const [diceCount, setDiceCount] = useState(3);
+  const [sides, setSides] = useState(6);
+  const [results, setResults] = useState([]);
+
+  const handleResult = (result) => {
+    const newResult = {
+      ...result,
+      timestamp: new Date().toLocaleTimeString()
+    };
+    setResults(prev => [newResult, ...prev.slice(0, 9)]);
+  };
+
+  const totalPossibleSum = diceCount * sides;
+  const averageSum = diceCount * (sides + 1) / 2;
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', gap: '20px' }}>
+        <div>
+          <label>Dice Count: </label>
+          <select value={diceCount} onChange={(e) => setDiceCount(parseInt(e.target.value))}>
+            {[1, 2, 3, 4, 5, 6].map(n => (
+              <option key={n} value={n}>{n} dice</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label>Dice Sides: </label>
+          <select value={sides} onChange={(e) => setSides(parseInt(e.target.value))}>
+            <option value={4}>4-sided</option>
+            <option value={6}>6-sided</option>
+            <option value={8}>8-sided</option>
+            <option value={10}>10-sided</option>
+            <option value={12}>12-sided</option>
+            <option value={20}>20-sided</option>
+          </select>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#f0f8ff' }}>
+        <div>Configuration: {diceCount} {sides}-sided dice</div>
+        <div>Possible sum range: {diceCount} - {totalPossibleSum}</div>
+        <div>Expected average: {averageSum.toFixed(1)}</div>
+      </div>
+
+      <DiceGame
+        diceCount={diceCount}
+        sides={sides}
+        gameMode="simple"
+        onResult={handleResult}
+      />
+
+      {/* History */}
+      {results.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <h3>Roll History:</h3>
+          <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+            {results.map((result, index) => (
+              <div
+                key={index}
+                style={{
+                  padding: '8px',
+                  margin: '5px 0',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '5px',
+                  display: 'flex',
+                  justifyContent: 'space-between'
+                }}
+              >
+                <span>{result.results.join(' + ')} = {result.sum}</span>
+                <span style={{ color: '#666', fontSize: '0.9em' }}>{result.timestamp}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### Competitive Dice Game
+
+```typescript
+function CompetitiveDiceGame() {
+  const [playerScore, setPlayerScore] = useState(0);
+  const [computerScore, setComputerScore] = useState(0);
+  const [round, setRound] = useState(1);
+  const [gameHistory, setGameHistory] = useState([]);
+  const [isGameOver, setIsGameOver] = useState(false);
+
+  const maxRounds = 5;
+  const winningScore = 3;
+
+  const handleResult = (result) => {
+    const playerSum = result.sum;
+
+    // Computer roll
+    const computerDice = Array.from({ length: 2 }, () => Math.floor(Math.random() * 6) + 1);
+    const computerSum = computerDice.reduce((a, b) => a + b, 0);
+
+    const roundResult = {
+      round,
+      player: { dice: result.results, sum: playerSum },
+      computer: { dice: computerDice, sum: computerSum },
+      winner: playerSum > computerSum ? 'player' : computerSum > playerSum ? 'computer' : 'tie'
+    };
+
+    setGameHistory(prev => [...prev, roundResult]);
+
+    // Update scores
+    if (roundResult.winner === 'player') {
+      setPlayerScore(prev => prev + 1);
+    } else if (roundResult.winner === 'computer') {
+      setComputerScore(prev => prev + 1);
+    }
+
+    // Check game end conditions
+    const newPlayerScore = roundResult.winner === 'player' ? playerScore + 1 : playerScore;
+    const newComputerScore = roundResult.winner === 'computer' ? computerScore + 1 : computerScore;
+
+    if (newPlayerScore >= winningScore || newComputerScore >= winningScore || round >= maxRounds) {
+      setIsGameOver(true);
+    } else {
+      setRound(prev => prev + 1);
+    }
+
+    // Show result
+    setTimeout(() => {
+      alert(
+        `Round ${round} result:\n` +
+        `Player: ${playerSum} vs Computer: ${computerSum}\n` +
+        `${roundResult.winner === 'tie' ? 'Tie!' : `${roundResult.winner === 'player' ? 'Player' : 'Computer'} wins!`}`
+      );
+    }, 1000);
+  };
+
+  const resetGame = () => {
+    setPlayerScore(0);
+    setComputerScore(0);
+    setRound(1);
+    setGameHistory([]);
+    setIsGameOver(false);
+  };
+
+  const gameWinner = playerScore >= winningScore ? 'player' :
+                   computerScore >= winningScore ? 'computer' :
+                   'ongoing';
+
+  return (
+    <div style={{ padding: '20px' }}>
+      {/* Score Panel */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-around',
+        marginBottom: '20px',
+        padding: '20px',
+        backgroundColor: '#f8f9fa',
+        borderRadius: '10px'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <h3>Player</h3>
+          <div style={{ fontSize: '2em', color: '#007bff' }}>{playerScore}</div>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <h3>Round {round}</h3>
+          <div style={{ fontSize: '1.2em' }}>
+            {isGameOver ? 'Game Over' : `In Progress (Best of ${maxRounds})`}
+          </div>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <h3>Computer</h3>
+          <div style={{ fontSize: '2em', color: '#dc3545' }}>{computerScore}</div>
+        </div>
+      </div>
+
+      {/* Game Result */}
+      {isGameOver && (
+        <div style={{
+          textAlign: 'center',
+          padding: '20px',
+          backgroundColor: gameWinner === 'player' ? '#d4edda' : '#f8d7da',
+          borderRadius: '10px',
+          marginBottom: '20px'
+        }}>
+          <h2>
+            {gameWinner === 'player' ? '🎉 Congratulations! You Win!' : '😢 Sorry! You Lose!'}
+          </h2>
+          <button
+            onClick={resetGame}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              marginTop: '10px'
+            }}
+          >
+            Play Again
+          </button>
+        </div>
+      )}
+
+      {/* Dice Game Area */}
+      {!isGameOver && (
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <h4>Please roll your dice</h4>
+          <DiceGame
+            diceCount={2}
+            gameMode="simple"
+            onResult={handleResult}
+            disabled={isGameOver}
+          />
+        </div>
+      )}
+
+      {/* Battle History */}
+      {gameHistory.length > 0 && (
+        <div>
+          <h3>Battle History:</h3>
+          {gameHistory.map((record, index) => (
+            <div
+              key={index}
+              style={{
+                padding: '10px',
+                margin: '5px 0',
+                backgroundColor: record.winner === 'player' ? '#d4edda' :
+                               record.winner === 'computer' ? '#f8d7da' : '#fff3cd',
+                borderRadius: '5px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <span>Round {record.round}</span>
+              <span>
+                Player: {record.player.dice.join('+')}={record.player.sum} vs
+                Computer: {record.computer.dice.join('+')}={record.computer.sum}
+              </span>
+              <span style={{ fontWeight: 'bold' }}>
+                {record.winner === 'tie' ? 'Tie' :
+                 record.winner === 'player' ? 'Player Wins' : 'Computer Wins'}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### Statistical Analysis Dice Game
+
+```typescript
+function StatisticalDiceGame() {
+  const [rolls, setRolls] = useState([]);
+  const [diceCount, setDiceCount] = useState(2);
+  const [autoRoll, setAutoRoll] = useState(false);
+
+  const handleResult = (result) => {
+    setRolls(prev => [...prev, result]);
+  };
+
+  // Calculate statistics
+  const stats = useMemo(() => {
+    if (rolls.length === 0) return null;
+
+    const sums = rolls.map(r => r.sum);
+    const average = sums.reduce((a, b) => a + b, 0) / sums.length;
+    const frequency = {};
+
+    sums.forEach(sum => {
+      frequency[sum] = (frequency[sum] || 0) + 1;
+    });
+
+    const mostCommon = Object.entries(frequency)
+      .sort(([,a], [,b]) => b - a)[0];
+
+    return {
+      totalRolls: rolls.length,
+      average: average.toFixed(2),
+      min: Math.min(...sums),
+      max: Math.max(...sums),
+      mostCommon: mostCommon ? `${mostCommon[0]} (${mostCommon[1]} times)` : 'None',
+      frequency
+    };
+  }, [rolls]);
+
+  // Auto roll
+  useEffect(() => {
+    let interval;
+    if (autoRoll && rolls.length < 100) {
+      interval = setInterval(() => {
+        // Trigger roll... this needs to simulate rolling
+        const simulatedResult = {
+          results: Array.from({ length: diceCount }, () => Math.floor(Math.random() * 6) + 1),
+          sum: 0,
+          gameMode: 'simple',
+          message: 'Auto roll'
+        };
+        simulatedResult.sum = simulatedResult.results.reduce((a, b) => a + b, 0);
+        setRolls(prev => [...prev, simulatedResult]);
+      }, 500);
+    }
+    return () => clearInterval(interval);
+  }, [autoRoll, rolls.length, diceCount]);
+
+  const clearStats = () => setRolls([]);
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', gap: '20px', alignItems: 'center' }}>
+        <div>
+          <label>Dice Count: </label>
+          <select value={diceCount} onChange={(e) => setDiceCount(parseInt(e.target.value))}>
+            {[1, 2, 3, 4].map(n => (
+              <option key={n} value={n}>{n} dice</option>
+            ))}
+          </select>
+        </div>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={autoRoll}
+            onChange={(e) => setAutoRoll(e.target.checked)}
+            disabled={rolls.length >= 100}
+          />
+          Auto Roll ({rolls.length}/100)
+        </label>
+
+        <button
+          onClick={clearStats}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#dc3545',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px'
+          }}
+        >
+          Clear Stats
+        </button>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        {/* Dice Game Area */}
+        <div>
+          <DiceGame
+            diceCount={diceCount}
+            gameMode="simple"
+            onResult={handleResult}
+            disabled={autoRoll}
+          />
+        </div>
+
+        {/* Statistics Panel */}
+        {stats && (
+          <div style={{ padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '10px' }}>
+            <h3>Statistics</h3>
+            <div style={{ display: 'grid', gap: '10px' }}>
+              <div>Total Rolls: {stats.totalRolls}</div>
+              <div>Average: {stats.average}</div>
+              <div>Minimum: {stats.min}</div>
+              <div>Maximum: {stats.max}</div>
+              <div>Most Common: {stats.mostCommon}</div>
+            </div>
+
+            <h4 style={{ marginTop: '20px' }}>Frequency Distribution:</h4>
+            <div style={{ fontSize: '0.9em' }}>
+              {Object.entries(stats.frequency)
+                .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                .map(([sum, count]) => (
+                  <div key={sum} style={{ marginBottom: '5px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>{sum}:</span>
+                      <span>{count} times ({((count / stats.totalRolls) * 100).toFixed(1)}%)</span>
+                    </div>
+                    <div style={{
+                      height: '8px',
+                      backgroundColor: '#e9ecef',
+                      borderRadius: '4px',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        height: '100%',
+                        width: `${(count / stats.totalRolls) * 100}%`,
+                        backgroundColor: '#007bff'
+                      }} />
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+## 📋 API Reference
+
+### DiceGameProps
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `diceCount` | `number` | `2` | Number of dice |
+| `sides` | `number` | `6` | Number of sides per die |
+| `gameMode` | `'simple' \| 'sum' \| 'bigSmall' \| 'guess' \| 'even_odd' \| 'specific'` | `'simple'` | Game mode |
+| `targetSum` | `number` | `7` | Target sum (used in sum mode) |
+| `onResult` | `(result: DiceGameResult) => void` | `undefined` | Roll result callback |
+
+### Inherited BaseGameProps
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `className` | `string` | `''` | CSS class name |
+| `style` | `React.CSSProperties` | `{}` | Inline styles |
+| `disabled` | `boolean` | `false` | Whether disabled |
+| `onGameStart` | `() => void` | `undefined` | Game start callback |
+| `onGameEnd` | `(result: DiceGameResult) => void` | `undefined` | Game end callback |
+
+### DiceGameResult
+
+```typescript
+interface DiceGameResult {
+  results: number[];      // Each die's value
+  total: number;          // Total sum (same as sum)
+  gameMode: string;       // Game mode
+  isWin?: boolean;        // Whether won (in certain modes)
+  message: string;        // Result description message
+  values: number[];       // Die values array (same as results)
+  sum: number;           // Sum of values
+  description: string;    // Detailed description
+}
+```
+
+### Game Mode Descriptions
+
+| Mode | Description | Win Condition |
+|------|-------------|---------------|
+| `simple` | Simple mode | No specific condition, just display result |
+| `sum` | Sum mode | Roll total equals target value |
+| `bigSmall` | Big/Small mode | Total > 7 is "Big", ≤ 7 is "Small" |
+| `guess` | Guess mode | Player must predict result beforehand |
+| `even_odd` | Even/Odd mode | Total is even or odd |
+| `specific` | Specific value mode | Roll specific combination |
+
+## 🎨 Style Customization
+
+### Container Styles
+
+```css
+.dice-game-container {
+  border: 2px solid #28a745;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.2);
+  background: linear-gradient(145deg, #f8fff8, #e8f5e8);
+}
+
+.dice-game-container:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+```
+
+### Rolling Animation
+
+```css
+.dice-rolling {
+  animation: diceRoll 1s ease-in-out;
+}
+
+@keyframes diceRoll {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  75% { transform: rotate(270deg) scale(1.1); }
+}
+```
+
+## 🔧 Advanced Features
+
+### Custom Rolling Rules
+
+```typescript
+function CustomRulesDiceGame() {
+  const checkSpecialCombinations = (results) => {
+    const sorted = [...results].sort();
+
+    // Straight check
+    const isStraight = sorted.every((val, i) => i === 0 || val === sorted[i-1] + 1);
+
+    // Pairs check
+    const pairs = {};
+    results.forEach(val => pairs[val] = (pairs[val] || 0) + 1);
+    const pairCounts = Object.values(pairs);
+
+    if (isStraight) return { type: 'straight', message: 'Straight!', bonus: 50 };
+    if (pairCounts.includes(3)) return { type: 'triple', message: 'Three of a kind!', bonus: 30 };
+    if (pairCounts.includes(2)) return { type: 'pair', message: 'Pair!', bonus: 10 };
+
+    return { type: 'normal', message: 'Normal roll', bonus: 0 };
+  };
+
+  return (
+    <DiceGame
+      diceCount={3}
+      gameMode="simple"
+      onResult={(result) => {
+        const special = checkSpecialCombinations(result.results);
+        alert(`${result.message}\n${special.message}\nBonus Score: ${special.bonus}`);
+      }}
+    />
+  );
+}
+```
+
+### Multiplayer Game Mode
+
+```typescript
+function MultiPlayerDiceGame() {
+  const [players] = useState(['Player 1', 'Player 2', 'Player 3']);
+  const [currentPlayer, setCurrentPlayer] = useState(0);
+  const [scores, setScores] = useState({});
+  const [round, setRound] = useState(1);
+
+  const handleResult = (result) => {
+    const player = players[currentPlayer];
+    setScores(prev => ({
+      ...prev,
+      [player]: (prev[player] || 0) + result.sum
+    }));
+
+    // Switch to next player
+    const nextPlayer = (currentPlayer + 1) % players.length;
+    if (nextPlayer === 0) {
+      setRound(prev => prev + 1);
+    }
+    setCurrentPlayer(nextPlayer);
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <h3>Round {round} - {players[currentPlayer]}'s Turn</h3>
+        <div style={{ display: 'flex', gap: '20px' }}>
+          {players.map(player => (
+            <div
+              key={player}
+              style={{
+                padding: '10px',
+                backgroundColor: player === players[currentPlayer] ? '#fff3cd' : '#f8f9fa',
+                borderRadius: '5px'
+              }}
+            >
+              {player}: {scores[player] || 0} points
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <DiceGame
+        diceCount={2}
+        gameMode="simple"
+        onResult={handleResult}
+      />
+    </div>
+  );
+}
+```
+
+## 🎯 Best Practices
+
+### 1. Game Mode Selection
+
+```typescript
+// Choose appropriate game mode based on user group
+const gameModeConfig = {
+  children: { mode: 'simple', diceCount: 1 },
+  casual: { mode: 'bigSmall', diceCount: 2 },
+  competitive: { mode: 'sum', diceCount: 3, targetSum: 10 }
+};
+```
+
+### 2. Performance Optimization
+
+```typescript
+// Use React.memo to optimize re-renders
+const OptimizedDiceGame = React.memo(({ diceCount, ...props }) => {
+  return <DiceGame diceCount={diceCount} {...props} />;
+});
+
+// Cache complex calculations
+const MemoizedDiceGame = () => {
+  const gameConfig = useMemo(() => ({
+    diceCount: 3,
+    sides: 6,
+    gameMode: 'sum'
+  }), []);
+
+  return <DiceGame {...gameConfig} />;
+};
+```
+
+### 3. Error Handling
+
+```typescript
+function SafeDiceGame() {
+  const [error, setError] = useState(null);
+
+  const handleError = (error) => {
+    setError(error.message);
+    console.error('Dice game error:', error);
+  };
+
+  return (
+    <div>
+      {error && (
+        <div style={{ color: 'red', marginBottom: '10px' }}>
+          Error: {error}
+        </div>
+      )}
+      <DiceGame
+        diceCount={2}
+        onResult={(result) => {
+          setError(null);
+          console.log('Roll successful:', result);
+        }}
+      />
+    </div>
+  );
+}
+```
+
+## 🐛 Common Issues
+
+### Q: Are dice rolls truly random?
+A: Yes, the component uses RandBox's Mersenne Twister algorithm, providing high-quality random number generation.
+
+### Q: Can I customize the number of dice sides?
+A: Yes, through the `sides` property you can set 4-sided, 6-sided, 8-sided, 10-sided, 12-sided, 20-sided and other types of dice.
+
+### Q: How to implement special rolling rules?
+A: You can implement custom logic in the `onResult` callback to check roll results and implement special rules.
+
+### Q: How many dice can be rolled simultaneously?
+A: Theoretically no limit, but recommend no more than 6 to ensure good user experience and performance.
+
+## 🔗 Related Links
+
+- [GridLottery - Grid Lottery Game](/en/docs/react/grid-lottery)
+- [SlotMachine - Slot Machine Game](/en/docs/react/slot-machine)
+- [ScratchCard - Scratch Card Game](/en/docs/react/scratch-card)
+- [RandBox Core Algorithms](/en/docs/basics)

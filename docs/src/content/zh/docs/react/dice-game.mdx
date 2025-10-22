@@ -1,0 +1,766 @@
+---
+title: 'DiceGame - 骰子游戏'
+description: '基于Canvas的3D骰子游戏组件，支持多种游戏模式、自定义骰子数量和投掷动画效果'
+---
+
+# DiceGame - 骰子游戏
+
+`DiceGame` 是一个基于Canvas的3D骰子游戏组件，提供真实的投掷体验和多种游戏模式。支持自定义骰子数量、面数以及丰富的游戏规则配置。
+
+## 📦 导入
+
+```typescript
+import { DiceGame } from '@randbox/react';
+import type { DiceGameProps, DiceGameResult } from '@randbox/react';
+```
+
+## 🚀 基础用法
+
+```typescript
+import React from 'react';
+import { DiceGame } from '@randbox/react';
+
+function BasicDiceGame() {
+  const handleResult = (result) => {
+    console.log('投掷结果:', result);
+    alert(`投掷结果: ${result.results.join(', ')}, 总和: ${result.total}`);
+  };
+
+  return (
+    <DiceGame
+      diceCount={2}
+      onResult={handleResult}
+    />
+  );
+}
+```
+
+## 🎯 高级用法
+
+### 多种游戏模式
+
+```typescript
+function MultiModeDiceGame() {
+  const [gameMode, setGameMode] = useState('simple');
+  const [targetSum, setTargetSum] = useState(7);
+
+  const handleResult = (result) => {
+    console.log(`${result.gameMode}模式结果:`, result);
+
+    switch (result.gameMode) {
+      case 'sum':
+        alert(`目标和值: ${targetSum}, 实际和值: ${result.sum}, ${result.isWin ? '成功' : '失败'}!`);
+        break;
+      case 'bigSmall':
+        alert(`投掷结果: ${result.sum > 7 ? '大' : '小'} (${result.sum}), ${result.description}`);
+        break;
+      case 'even_odd':
+        alert(`投掷结果: ${result.sum % 2 === 0 ? '偶数' : '奇数'} (${result.sum}), ${result.description}`);
+        break;
+      default:
+        alert(result.message);
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <label>游戏模式: </label>
+        <select value={gameMode} onChange={(e) => setGameMode(e.target.value)}>
+          <option value="simple">简单模式</option>
+          <option value="sum">和值模式</option>
+          <option value="bigSmall">大小模式</option>
+          <option value="even_odd">奇偶模式</option>
+          <option value="guess">猜测模式</option>
+          <option value="specific">特定值模式</option>
+        </select>
+
+        {gameMode === 'sum' && (
+          <div style={{ marginTop: '10px' }}>
+            <label>目标和值: </label>
+            <input
+              type="number"
+              value={targetSum}
+              min="2"
+              max="12"
+              onChange={(e) => setTargetSum(parseInt(e.target.value))}
+            />
+          </div>
+        )}
+      </div>
+
+      <DiceGame
+        diceCount={2}
+        gameMode={gameMode}
+        targetSum={targetSum}
+        onResult={handleResult}
+      />
+    </div>
+  );
+}
+```
+
+### 多骰子游戏
+
+```typescript
+function MultiDiceGame() {
+  const [diceCount, setDiceCount] = useState(3);
+  const [sides, setSides] = useState(6);
+  const [results, setResults] = useState([]);
+
+  const handleResult = (result) => {
+    const newResult = {
+      ...result,
+      timestamp: new Date().toLocaleTimeString()
+    };
+    setResults(prev => [newResult, ...prev.slice(0, 9)]);
+  };
+
+  const totalPossibleSum = diceCount * sides;
+  const averageSum = diceCount * (sides + 1) / 2;
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', gap: '20px' }}>
+        <div>
+          <label>骰子数量: </label>
+          <select value={diceCount} onChange={(e) => setDiceCount(parseInt(e.target.value))}>
+            {[1, 2, 3, 4, 5, 6].map(n => (
+              <option key={n} value={n}>{n}个骰子</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label>骰子面数: </label>
+          <select value={sides} onChange={(e) => setSides(parseInt(e.target.value))}>
+            <option value={4}>4面</option>
+            <option value={6}>6面</option>
+            <option value={8}>8面</option>
+            <option value={10}>10面</option>
+            <option value={12}>12面</option>
+            <option value={20}>20面</option>
+          </select>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#f0f8ff' }}>
+        <div>配置信息: {diceCount}个{sides}面骰子</div>
+        <div>可能和值范围: {diceCount} - {totalPossibleSum}</div>
+        <div>平均期望值: {averageSum.toFixed(1)}</div>
+      </div>
+
+      <DiceGame
+        diceCount={diceCount}
+        sides={sides}
+        gameMode="simple"
+        onResult={handleResult}
+      />
+
+      {/* 历史记录 */}
+      {results.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <h3>投掷历史记录:</h3>
+          <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+            {results.map((result, index) => (
+              <div
+                key={index}
+                style={{
+                  padding: '8px',
+                  margin: '5px 0',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '5px',
+                  display: 'flex',
+                  justifyContent: 'space-between'
+                }}
+              >
+                <span>{result.results.join(' + ')} = {result.sum}</span>
+                <span style={{ color: '#666', fontSize: '0.9em' }}>{result.timestamp}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### 竞技模式骰子游戏
+
+```typescript
+function CompetitiveDiceGame() {
+  const [playerScore, setPlayerScore] = useState(0);
+  const [computerScore, setComputerScore] = useState(0);
+  const [round, setRound] = useState(1);
+  const [gameHistory, setGameHistory] = useState([]);
+  const [isGameOver, setIsGameOver] = useState(false);
+
+  const maxRounds = 5;
+  const winningScore = 3;
+
+  const handleResult = (result) => {
+    const playerSum = result.sum;
+
+    // 计算机投掷
+    const computerDice = Array.from({ length: 2 }, () => Math.floor(Math.random() * 6) + 1);
+    const computerSum = computerDice.reduce((a, b) => a + b, 0);
+
+    const roundResult = {
+      round,
+      player: { dice: result.results, sum: playerSum },
+      computer: { dice: computerDice, sum: computerSum },
+      winner: playerSum > computerSum ? 'player' : computerSum > playerSum ? 'computer' : 'tie'
+    };
+
+    setGameHistory(prev => [...prev, roundResult]);
+
+    // 更新分数
+    if (roundResult.winner === 'player') {
+      setPlayerScore(prev => prev + 1);
+    } else if (roundResult.winner === 'computer') {
+      setComputerScore(prev => prev + 1);
+    }
+
+    // 检查游戏结束条件
+    const newPlayerScore = roundResult.winner === 'player' ? playerScore + 1 : playerScore;
+    const newComputerScore = roundResult.winner === 'computer' ? computerScore + 1 : computerScore;
+
+    if (newPlayerScore >= winningScore || newComputerScore >= winningScore || round >= maxRounds) {
+      setIsGameOver(true);
+    } else {
+      setRound(prev => prev + 1);
+    }
+
+    // 显示结果
+    setTimeout(() => {
+      alert(
+        `第${round}轮结果:\n` +
+        `玩家: ${playerSum} vs 电脑: ${computerSum}\n` +
+        `${roundResult.winner === 'tie' ? '平局!' : `${roundResult.winner === 'player' ? '玩家' : '电脑'}获胜!`}`
+      );
+    }, 1000);
+  };
+
+  const resetGame = () => {
+    setPlayerScore(0);
+    setComputerScore(0);
+    setRound(1);
+    setGameHistory([]);
+    setIsGameOver(false);
+  };
+
+  const gameWinner = playerScore >= winningScore ? 'player' :
+                   computerScore >= winningScore ? 'computer' :
+                   'ongoing';
+
+  return (
+    <div style={{ padding: '20px' }}>
+      {/* 比分面板 */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-around',
+        marginBottom: '20px',
+        padding: '20px',
+        backgroundColor: '#f8f9fa',
+        borderRadius: '10px'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <h3>玩家</h3>
+          <div style={{ fontSize: '2em', color: '#007bff' }}>{playerScore}</div>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <h3>第 {round} 轮</h3>
+          <div style={{ fontSize: '1.2em' }}>
+            {isGameOver ? '游戏结束' : `进行中 (${maxRounds}轮制)`}
+          </div>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <h3>电脑</h3>
+          <div style={{ fontSize: '2em', color: '#dc3545' }}>{computerScore}</div>
+        </div>
+      </div>
+
+      {/* 游戏结果 */}
+      {isGameOver && (
+        <div style={{
+          textAlign: 'center',
+          padding: '20px',
+          backgroundColor: gameWinner === 'player' ? '#d4edda' : '#f8d7da',
+          borderRadius: '10px',
+          marginBottom: '20px'
+        }}>
+          <h2>
+            {gameWinner === 'player' ? '🎉 恭喜获胜!' : '😢 很遗憾失败!'}
+          </h2>
+          <button
+            onClick={resetGame}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              marginTop: '10px'
+            }}
+          >
+            重新开始
+          </button>
+        </div>
+      )}
+
+      {/* 骰子游戏区域 */}
+      {!isGameOver && (
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <h4>请投掷您的骰子</h4>
+          <DiceGame
+            diceCount={2}
+            gameMode="simple"
+            onResult={handleResult}
+            disabled={isGameOver}
+          />
+        </div>
+      )}
+
+      {/* 历史记录 */}
+      {gameHistory.length > 0 && (
+        <div>
+          <h3>对战记录:</h3>
+          {gameHistory.map((record, index) => (
+            <div
+              key={index}
+              style={{
+                padding: '10px',
+                margin: '5px 0',
+                backgroundColor: record.winner === 'player' ? '#d4edda' :
+                               record.winner === 'computer' ? '#f8d7da' : '#fff3cd',
+                borderRadius: '5px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <span>第{record.round}轮</span>
+              <span>
+                玩家: {record.player.dice.join('+')}={record.player.sum} vs
+                电脑: {record.computer.dice.join('+')}={record.computer.sum}
+              </span>
+              <span style={{ fontWeight: 'bold' }}>
+                {record.winner === 'tie' ? '平局' :
+                 record.winner === 'player' ? '玩家胜' : '电脑胜'}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### 统计分析骰子游戏
+
+```typescript
+function StatisticalDiceGame() {
+  const [rolls, setRolls] = useState([]);
+  const [diceCount, setDiceCount] = useState(2);
+  const [autoRoll, setAutoRoll] = useState(false);
+
+  const handleResult = (result) => {
+    setRolls(prev => [...prev, result]);
+  };
+
+  // 计算统计数据
+  const stats = useMemo(() => {
+    if (rolls.length === 0) return null;
+
+    const sums = rolls.map(r => r.sum);
+    const average = sums.reduce((a, b) => a + b, 0) / sums.length;
+    const frequency = {};
+
+    sums.forEach(sum => {
+      frequency[sum] = (frequency[sum] || 0) + 1;
+    });
+
+    const mostCommon = Object.entries(frequency)
+      .sort(([,a], [,b]) => b - a)[0];
+
+    return {
+      totalRolls: rolls.length,
+      average: average.toFixed(2),
+      min: Math.min(...sums),
+      max: Math.max(...sums),
+      mostCommon: mostCommon ? `${mostCommon[0]} (${mostCommon[1]}次)` : '无',
+      frequency
+    };
+  }, [rolls]);
+
+  // 自动投掷
+  useEffect(() => {
+    let interval;
+    if (autoRoll && rolls.length < 100) {
+      interval = setInterval(() => {
+        // 触发投掷...这里需要模拟投掷
+        const simulatedResult = {
+          results: Array.from({ length: diceCount }, () => Math.floor(Math.random() * 6) + 1),
+          sum: 0,
+          gameMode: 'simple',
+          message: '自动投掷'
+        };
+        simulatedResult.sum = simulatedResult.results.reduce((a, b) => a + b, 0);
+        setRolls(prev => [...prev, simulatedResult]);
+      }, 500);
+    }
+    return () => clearInterval(interval);
+  }, [autoRoll, rolls.length, diceCount]);
+
+  const clearStats = () => setRolls([]);
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', gap: '20px', alignItems: 'center' }}>
+        <div>
+          <label>骰子数量: </label>
+          <select value={diceCount} onChange={(e) => setDiceCount(parseInt(e.target.value))}>
+            {[1, 2, 3, 4].map(n => (
+              <option key={n} value={n}>{n}个</option>
+            ))}
+          </select>
+        </div>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={autoRoll}
+            onChange={(e) => setAutoRoll(e.target.checked)}
+            disabled={rolls.length >= 100}
+          />
+          自动投掷 ({rolls.length}/100)
+        </label>
+
+        <button
+          onClick={clearStats}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#dc3545',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px'
+          }}
+        >
+          清除统计
+        </button>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        {/* 骰子游戏区域 */}
+        <div>
+          <DiceGame
+            diceCount={diceCount}
+            gameMode="simple"
+            onResult={handleResult}
+            disabled={autoRoll}
+          />
+        </div>
+
+        {/* 统计面板 */}
+        {stats && (
+          <div style={{ padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '10px' }}>
+            <h3>统计数据</h3>
+            <div style={{ display: 'grid', gap: '10px' }}>
+              <div>总投掷次数: {stats.totalRolls}</div>
+              <div>平均值: {stats.average}</div>
+              <div>最小值: {stats.min}</div>
+              <div>最大值: {stats.max}</div>
+              <div>最常见: {stats.mostCommon}</div>
+            </div>
+
+            <h4 style={{ marginTop: '20px' }}>频率分布:</h4>
+            <div style={{ fontSize: '0.9em' }}>
+              {Object.entries(stats.frequency)
+                .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                .map(([sum, count]) => (
+                  <div key={sum} style={{ marginBottom: '5px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>{sum}:</span>
+                      <span>{count}次 ({((count / stats.totalRolls) * 100).toFixed(1)}%)</span>
+                    </div>
+                    <div style={{
+                      height: '8px',
+                      backgroundColor: '#e9ecef',
+                      borderRadius: '4px',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        height: '100%',
+                        width: `${(count / stats.totalRolls) * 100}%`,
+                        backgroundColor: '#007bff'
+                      }} />
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+## 📋 API参考
+
+### DiceGameProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `diceCount` | `number` | `2` | 骰子数量 |
+| `sides` | `number` | `6` | 骰子面数 |
+| `gameMode` | `'simple' \| 'sum' \| 'bigSmall' \| 'guess' \| 'even_odd' \| 'specific'` | `'simple'` | 游戏模式 |
+| `targetSum` | `number` | `7` | 目标和值（sum模式下使用） |
+| `onResult` | `(result: DiceGameResult) => void` | `undefined` | 投掷结果回调 |
+
+### 继承的BaseGameProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `className` | `string` | `''` | CSS类名 |
+| `style` | `React.CSSProperties` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
+| `onGameEnd` | `(result: DiceGameResult) => void` | `undefined` | 游戏结束回调 |
+
+### DiceGameResult
+
+```typescript
+interface DiceGameResult {
+  results: number[];      // 每个骰子的点数
+  total: number;          // 总和（同sum）
+  gameMode: string;       // 游戏模式
+  isWin?: boolean;        // 是否获胜（某些模式下）
+  message: string;        // 结果描述消息
+  values: number[];       // 骰子点数数组（同results）
+  sum: number;           // 点数总和
+  description: string;    // 详细描述
+}
+```
+
+### 游戏模式说明
+
+| 模式 | 描述 | 胜利条件 |
+|------|------|----------|
+| `simple` | 简单模式 | 无特定条件，仅显示结果 |
+| `sum` | 和值模式 | 投掷总和等于目标值 |
+| `bigSmall` | 大小模式 | 总和大于7为"大"，小于等于7为"小" |
+| `guess` | 猜测模式 | 需要玩家预先猜测结果 |
+| `even_odd` | 奇偶模式 | 总和为偶数或奇数 |
+| `specific` | 特定值模式 | 投掷出指定的特定组合 |
+
+## 🎨 样式定制
+
+### 容器样式
+
+```css
+.dice-game-container {
+  border: 2px solid #28a745;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.2);
+  background: linear-gradient(145deg, #f8fff8, #e8f5e8);
+}
+
+.dice-game-container:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+```
+
+### 投掷动画
+
+```css
+.dice-rolling {
+  animation: diceRoll 1s ease-in-out;
+}
+
+@keyframes diceRoll {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  75% { transform: rotate(270deg) scale(1.1); }
+}
+```
+
+## 🔧 高级功能
+
+### 自定义投掷规则
+
+```typescript
+function CustomRulesDiceGame() {
+  const checkSpecialCombinations = (results) => {
+    const sorted = [...results].sort();
+
+    // 顺子检查
+    const isStraight = sorted.every((val, i) => i === 0 || val === sorted[i-1] + 1);
+
+    // 对子检查
+    const pairs = {};
+    results.forEach(val => pairs[val] = (pairs[val] || 0) + 1);
+    const pairCounts = Object.values(pairs);
+
+    if (isStraight) return { type: 'straight', message: '顺子！', bonus: 50 };
+    if (pairCounts.includes(3)) return { type: 'triple', message: '三条！', bonus: 30 };
+    if (pairCounts.includes(2)) return { type: 'pair', message: '对子！', bonus: 10 };
+
+    return { type: 'normal', message: '普通投掷', bonus: 0 };
+  };
+
+  return (
+    <DiceGame
+      diceCount={3}
+      gameMode="simple"
+      onResult={(result) => {
+        const special = checkSpecialCombinations(result.results);
+        alert(`${result.message}\n${special.message}\n奖励分数: ${special.bonus}`);
+      }}
+    />
+  );
+}
+```
+
+### 多人游戏模式
+
+```typescript
+function MultiPlayerDiceGame() {
+  const [players] = useState(['玩家1', '玩家2', '玩家3']);
+  const [currentPlayer, setCurrentPlayer] = useState(0);
+  const [scores, setScores] = useState({});
+  const [round, setRound] = useState(1);
+
+  const handleResult = (result) => {
+    const player = players[currentPlayer];
+    setScores(prev => ({
+      ...prev,
+      [player]: (prev[player] || 0) + result.sum
+    }));
+
+    // 切换到下一个玩家
+    const nextPlayer = (currentPlayer + 1) % players.length;
+    if (nextPlayer === 0) {
+      setRound(prev => prev + 1);
+    }
+    setCurrentPlayer(nextPlayer);
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <h3>第 {round} 轮 - {players[currentPlayer]} 的回合</h3>
+        <div style={{ display: 'flex', gap: '20px' }}>
+          {players.map(player => (
+            <div
+              key={player}
+              style={{
+                padding: '10px',
+                backgroundColor: player === players[currentPlayer] ? '#fff3cd' : '#f8f9fa',
+                borderRadius: '5px'
+              }}
+            >
+              {player}: {scores[player] || 0}分
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <DiceGame
+        diceCount={2}
+        gameMode="simple"
+        onResult={handleResult}
+      />
+    </div>
+  );
+}
+```
+
+## 🎯 最佳实践
+
+### 1. 游戏模式选择
+
+```typescript
+// 根据用户群体选择合适的游戏模式
+const gameModeConfig = {
+  children: { mode: 'simple', diceCount: 1 },
+  casual: { mode: 'bigSmall', diceCount: 2 },
+  competitive: { mode: 'sum', diceCount: 3, targetSum: 10 }
+};
+```
+
+### 2. 性能优化
+
+```typescript
+// 使用React.memo优化重渲染
+const OptimizedDiceGame = React.memo(({ diceCount, ...props }) => {
+  return <DiceGame diceCount={diceCount} {...props} />;
+});
+
+// 缓存复杂计算
+const MemoizedDiceGame = () => {
+  const gameConfig = useMemo(() => ({
+    diceCount: 3,
+    sides: 6,
+    gameMode: 'sum'
+  }), []);
+
+  return <DiceGame {...gameConfig} />;
+};
+```
+
+### 3. 错误处理
+
+```typescript
+function SafeDiceGame() {
+  const [error, setError] = useState(null);
+
+  const handleError = (error) => {
+    setError(error.message);
+    console.error('骰子游戏错误:', error);
+  };
+
+  return (
+    <div>
+      {error && (
+        <div style={{ color: 'red', marginBottom: '10px' }}>
+          错误: {error}
+        </div>
+      )}
+      <DiceGame
+        diceCount={2}
+        onResult={(result) => {
+          setError(null);
+          console.log('投掷成功:', result);
+        }}
+      />
+    </div>
+  );
+}
+```
+
+## 🐛 常见问题
+
+### Q: 骰子投掷是否真正随机？
+A: 是的，组件使用RandBox的Mersenne Twister算法，提供高质量的随机数生成。
+
+### Q: 可以自定义骰子面数吗？
+A: 支持，通过`sides`属性可以设置4面、6面、8面、10面、12面、20面等多种骰子。
+
+### Q: 如何实现特殊的投掷规则？
+A: 可以在`onResult`回调中自定义逻辑，检查投掷结果并实现特殊规则。
+
+### Q: 支持多少个骰子同时投掷？
+A: 理论上没有限制，但建议不超过6个以保证良好的用户体验和性能。
+
+## 🔗 相关链接
+
+- [GridLottery - 九宫格抽奖](/zh/docs/react/grid-lottery)
+- [SlotMachine - 滚动抽奖](/zh/docs/react/slot-machine)
+- [ScratchCard - 刮刮卡](/zh/docs/react/scratch-card)
+- [RandBox 核心算法](/zh/docs/basics)

@@ -1,0 +1,348 @@
+---
+title: '@randbox/vue 组件库'
+description: '基于Vue 3和Canvas的高性能游戏组件库，提供九宫格抽奖、滚动抽奖、刮刮卡、骰子游戏和石头剪刀布组件'
+---
+
+# @randbox/vue 组件库
+
+@randbox/vue 是一个基于Vue 3和Canvas渲染的高性能游戏组件库，提供了5个核心游戏组件。所有组件都使用RandBox作为随机数生成器，确保真正的随机性和公平性。
+
+## ✨ 特性
+
+- 🎮 **5个核心游戏组件**：九宫格抽奖、滚动抽奖、刮刮卡、骰子游戏、石头剪刀布
+- 🚀 **高性能**：基于Canvas渲染，流畅的动画效果
+- 📦 **轻量级**：优化后的打包大小，支持Tree-shaking
+- 🎨 **无需CSS**：所有样式都通过Canvas渲染，无外部依赖
+- 📱 **响应式**：自适应不同屏幕尺寸
+- 🔧 **TypeScript**：完整的类型定义支持
+- 🎲 **真实随机**：基于RandBox的高质量随机数生成
+- ⚡ **Vue 3优化**：利用Composition API和响应式系统
+
+## 📦 安装
+
+```bash
+npm install @randbox/vue randbox
+# 或
+yarn add @randbox/vue randbox
+# 或
+pnpm add @randbox/vue randbox
+```
+
+## 🚀 快速开始
+
+```vue
+<template>
+  <div>
+    <!-- 九宫格抽奖 -->
+    <GridLottery
+      :prizes="['奖品1', '奖品2', '奖品3', '谢谢参与']"
+      @result="handleGridResult"
+    />
+
+    <!-- 骰子游戏 -->
+    <DiceGame
+      :dice-count="2"
+      game-mode="sum"
+      :target-sum="7"
+      @result="handleDiceResult"
+    />
+
+    <!-- 刮刮卡 -->
+    <ScratchCard
+      :rows="3"
+      :cols="3"
+      :symbols="['🍎', '🍌', '🍇']"
+      @scratch="handleScratchResult"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { GridLottery, DiceGame, ScratchCard } from '@randbox/vue'
+
+const handleGridResult = (result) => {
+  console.log('九宫格中奖:', result)
+}
+
+const handleDiceResult = (result) => {
+  console.log('投掷结果:', result)
+}
+
+const handleScratchResult = (result) => {
+  console.log('刮奖结果:', result)
+}
+</script>
+```
+
+## 🎮 组件列表
+
+### [GridLottery - 九宫格抽奖](/zh/docs/vue/grid-lottery)
+经典的九宫格转盘抽奖，支持自定义奖品和权重。
+
+### [SlotMachine - 滚动抽奖](/zh/docs/vue/slot-machine)
+多滚轴老虎机风格的抽奖组件，支持自定义符号和中奖规则。
+
+### [ScratchCard - 刮刮卡](/zh/docs/vue/scratch-card)
+真实的刮除体验，支持多种中奖模式（横排、竖排、对角线）。
+
+### [DiceGame - 骰子游戏](/zh/docs/vue/dice-game)
+3D效果的骰子游戏，支持多种游戏模式（简单、和值、大小、猜测等）。
+
+### [RockPaperScissors - 石头剪刀布](/zh/docs/vue/rock-paper-scissors)
+经典的石头剪刀布游戏，支持多种AI策略和统计功能。
+
+## 🎯 Vue 3特性集成
+
+### Composition API支持
+
+```vue
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { GridLottery } from '@randbox/vue'
+
+const prizes = ref(['一等奖', '二等奖', '三等奖', '谢谢参与'])
+const gameStats = ref({ total: 0, wins: 0 })
+
+const winRate = computed(() => {
+  return gameStats.value.total > 0
+    ? (gameStats.value.wins / gameStats.value.total * 100).toFixed(1)
+    : '0.0'
+})
+
+const handleResult = (result) => {
+  gameStats.value.total++
+  if (result.prize !== '谢谢参与') {
+    gameStats.value.wins++
+  }
+}
+
+onMounted(() => {
+  console.log('组件已挂载')
+})
+</script>
+```
+
+### 响应式数据绑定
+
+```vue
+<template>
+  <div>
+    <GridLottery
+      :prizes="prizes"
+      :weights="weights"
+      :animation-duration="animationDuration"
+      :disabled="isDisabled"
+      @result="handleResult"
+    />
+
+    <div>
+      <label>动画时长: {{ animationDuration }}ms</label>
+      <input v-model.number="animationDuration" type="range" min="1000" max="5000" />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const prizes = ref(['大奖', '小奖', '谢谢参与'])
+const weights = ref([10, 30, 60])
+const animationDuration = ref(3000)
+const isDisabled = ref(false)
+</script>
+```
+
+### 事件处理
+
+```vue
+<template>
+  <DiceGame
+    @game-start="onGameStart"
+    @game-end="onGameEnd"
+    @result="onResult"
+  />
+</template>
+
+<script setup>
+const onGameStart = () => {
+  console.log('游戏开始')
+}
+
+const onGameEnd = (result) => {
+  console.log('游戏结束:', result)
+}
+
+const onResult = (result) => {
+  console.log('投掷结果:', result)
+}
+</script>
+```
+
+## 🔧 技术规格
+
+- **框架版本**: Vue 3.3+
+- **渲染引擎**: HTML5 Canvas
+- **随机数生成**: RandBox (Mersenne Twister算法)
+- **动画**: requestAnimationFrame + 缓动函数
+- **响应式**: 自动适配容器大小
+- **TypeScript**: 完整的类型支持
+- **构建工具**: Vite
+
+## 📚 API参考
+
+所有组件都继承自基础属性接口：
+
+```typescript
+interface BaseGameProps {
+  class?: string
+  style?: Record<string, any>
+  disabled?: boolean
+}
+```
+
+每个组件还有自己特定的属性和类型定义，详见各组件的专门文档。
+
+## 🎨 自定义样式
+
+由于所有组件都基于Canvas渲染，样式定制主要通过组件属性进行：
+
+```vue
+<template>
+  <!-- 通过容器样式控制组件外观 -->
+  <div class="game-container">
+    <GridLottery v-bind="gameProps" />
+  </div>
+
+  <!-- 通过组件属性控制Canvas内容 -->
+  <DiceGame
+    :style="{ border: '1px solid #ddd' }"
+    class="my-dice-game"
+  />
+</template>
+
+<style scoped>
+.game-container {
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.my-dice-game {
+  margin: 20px auto;
+}
+</style>
+```
+
+## 🛠️ 开发环境设置
+
+### 1. 项目初始化
+
+```bash
+# 创建Vue 3项目
+npm create vue@latest my-game-app
+cd my-game-app
+
+# 安装依赖
+npm install @randbox/vue randbox
+```
+
+### 2. 在main.ts中注册组件
+
+```typescript
+import { createApp } from 'vue'
+import App from './App.vue'
+
+// 全局注册（可选）
+import * as RandBoxVue from '@randbox/vue'
+
+const app = createApp(App)
+
+// 注册所有组件
+Object.keys(RandBoxVue).forEach(key => {
+  app.component(key, RandBoxVue[key])
+})
+
+app.mount('#app')
+```
+
+### 3. 按需导入（推荐）
+
+```vue
+<script setup>
+import { GridLottery, DiceGame } from '@randbox/vue'
+</script>
+```
+
+## ⚡ 性能优化
+
+- **Tree-shaking**: 支持按需导入，未使用的组件不会被打包
+- **Canvas渲染**: 利用GPU加速，提供流畅的60fps动画
+- **响应式优化**: 利用Vue 3的响应式系统进行性能优化
+- **代码分割**: 支持异步组件加载
+
+```vue
+<script setup>
+// 异步加载组件
+import { defineAsyncComponent } from 'vue'
+
+const GridLottery = defineAsyncComponent(() =>
+  import('@randbox/vue').then(m => ({ default: m.GridLottery }))
+)
+</script>
+```
+
+## 🧪 与其他Vue生态系统集成
+
+### Pinia状态管理
+
+```typescript
+// stores/game.ts
+import { defineStore } from 'pinia'
+
+export const useGameStore = defineStore('game', {
+  state: () => ({
+    totalGames: 0,
+    totalWins: 0,
+    gameHistory: []
+  }),
+
+  getters: {
+    winRate: (state) =>
+      state.totalGames > 0 ? (state.totalWins / state.totalGames * 100).toFixed(1) : '0.0'
+  },
+
+  actions: {
+    recordGame(result) {
+      this.totalGames++
+      if (result.isWin) this.totalWins++
+      this.gameHistory.unshift(result)
+    }
+  }
+})
+```
+
+### Vue Router集成
+
+```typescript
+// router/index.ts
+import { createRouter, createWebHistory } from 'vue-router'
+
+const routes = [
+  {
+    path: '/games',
+    component: () => import('../views/GamesView.vue'),
+    children: [
+      { path: 'lottery', component: () => import('../components/LotteryGames.vue') },
+      { path: 'dice', component: () => import('../components/DiceGames.vue') },
+    ]
+  }
+]
+```
+
+## 🤝 贡献
+
+欢迎贡献代码！请查看我们的[贡献指南](https://github.com/027xiguapi/randbox/blob/main/CONTRIBUTING.md)。
+
+## 📄 许可证
+
+MIT License - 详见 [LICENSE](https://github.com/027xiguapi/randbox/blob/main/LICENSE) 文件。

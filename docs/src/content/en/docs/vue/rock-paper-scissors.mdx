@@ -1,0 +1,1078 @@
+---
+title: "RockPaperScissors - Rock Paper Scissors"
+description: "Classic rock-paper-scissors game component based on Vue 3, supporting multiple AI strategies, statistics functionality, and custom game rules"
+---
+
+# RockPaperScissors - Rock Paper Scissors
+
+`RockPaperScissors` is a classic rock-paper-scissors game component based on Vue 3, providing multiple AI strategies, game statistics, and custom options. It supports traditional three-choice mode as well as extended five-choice mode.
+
+## 📦 Import
+
+```vue
+<script setup>
+import { RockPaperScissors } from '@randbox/vue'
+// Or import types
+import type { RockPaperScissorsProps, RPSResult, RPSStats } from '@randbox/vue'
+</script>
+```
+
+## 🚀 Basic Usage
+
+```vue
+<template>
+  <RockPaperScissors @result="handleResult" />
+</template>
+
+<script setup>
+import { RockPaperScissors } from '@randbox/vue'
+
+const handleResult = (result) => {
+  console.log('Game result:', result)
+  alert(`You played ${result.emoji.player}, Computer played ${result.emoji.computer}\n${result.message}`)
+}
+</script>
+```
+
+## 🎯 Advanced Usage
+
+### Multiple AI Strategy Modes
+
+```vue
+<template>
+  <div class="strategy-rps">
+    <div class="strategy-selector">
+      <label>AI Strategy: </label>
+      <select v-model="strategy">
+        <option v-for="(name, key) in strategies" :key="key" :value="key">
+          {{ name }}
+        </option>
+      </select>
+    </div>
+
+    <RockPaperScissors
+      :strategy="strategy"
+      :show-stats="true"
+      @result="handleResult"
+    />
+
+    <!-- Recent Game History -->
+    <div v-if="gameHistory.length > 0" class="game-history">
+      <h3>Recent Battle Records:</h3>
+      <div
+        v-for="(result, index) in gameHistory"
+        :key="index"
+        class="history-item"
+        :class="result.result"
+      >
+        <span>Round {{ result.round }}</span>
+        <span>{{ result.emoji.player }} vs {{ result.emoji.computer }}</span>
+        <span class="result-text">
+          {{ result.result === 'win' ? 'Win' :
+             result.result === 'lose' ? 'Loss' : 'Tie' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const strategy = ref('random')
+const gameHistory = ref([])
+
+const strategies = {
+  random: 'Random Strategy',
+  counter: 'Counter Strategy',
+  pattern: 'Pattern Recognition'
+}
+
+const handleResult = (result) => {
+  gameHistory.value = [result, ...gameHistory.value.slice(0, 9)]
+
+  let message = result.message
+  if (strategy.value === 'counter') {
+    message += '\n(AI is analyzing your move patterns)'
+  } else if (strategy.value === 'pattern') {
+    message += '\n(AI predicts based on historical patterns)'
+  }
+
+  setTimeout(() => alert(message), 500)
+}
+</script>
+
+<style scoped>
+.strategy-rps {
+  padding: 20px;
+}
+
+.strategy-selector {
+  margin-bottom: 20px;
+}
+
+.game-history {
+  margin-top: 20px;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+.history-item.win {
+  background-color: #d4edda;
+}
+
+.history-item.lose {
+  background-color: #f8d7da;
+}
+
+.history-item.tie {
+  background-color: #fff3cd;
+}
+
+.result-text {
+  font-weight: bold;
+}
+</style>
+```
+
+### Extended Five-Choice Mode
+
+```vue
+<template>
+  <div class="extended-rps">
+    <div class="game-title">
+      <h3>Big Bang Theory Rock Paper Scissors</h3>
+      <div class="subtitle">
+        Extended version including Lizard 🦎 and Spock 🖖
+      </div>
+    </div>
+
+    <!-- Statistics Panel -->
+    <div class="stats-panel">
+      <div class="stat-item win">
+        <div>Wins</div>
+        <div class="stat-number">{{ wins }}</div>
+      </div>
+      <div class="stat-item lose">
+        <div>Losses</div>
+        <div class="stat-number">{{ losses }}</div>
+      </div>
+      <div class="stat-item tie">
+        <div>Ties</div>
+        <div class="stat-number">{{ ties }}</div>
+      </div>
+      <div class="stat-item rate">
+        <div>Win Rate</div>
+        <div class="stat-number">{{ winRate }}%</div>
+      </div>
+    </div>
+
+    <RockPaperScissors
+      :choices="extendedChoices"
+      :emojis="extendedEmojis"
+      strategy="pattern"
+      @result="handleResult"
+    />
+
+    <!-- Rules Explanation -->
+    <div class="rules">
+      <h4>Game Rules:</h4>
+      <div class="rules-grid">
+        <div>• Rock → Lizard, Scissors</div>
+        <div>• Paper → Rock, Spock</div>
+        <div>• Scissors → Paper, Lizard</div>
+        <div>• Lizard → Spock, Paper</div>
+        <div>• Spock → Scissors, Rock</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+// Extended mode including Lizard and Spock
+const extendedChoices = ['rock', 'paper', 'scissors', 'lizard', 'spock']
+const extendedEmojis = {
+  rock: '🪨',
+  paper: '📄',
+  scissors: '✂️',
+  lizard: '🦎',
+  spock: '🖖'
+}
+
+const wins = ref(0)
+const losses = ref(0)
+const ties = ref(0)
+
+const totalGames = computed(() => wins.value + losses.value + ties.value)
+const winRate = computed(() =>
+  totalGames.value > 0 ? ((wins.value / totalGames.value) * 100).toFixed(1) : '0.0'
+)
+
+const handleResult = (result) => {
+  // Update statistics
+  if (result.result === 'win') wins.value++
+  else if (result.result === 'lose') losses.value++
+  else ties.value++
+
+  // Show extended rule explanations
+  const rules = {
+    'rock-lizard': 'Rock crushes Lizard',
+    'rock-scissors': 'Rock crushes Scissors',
+    'paper-rock': 'Paper covers Rock',
+    'paper-spock': 'Paper disproves Spock',
+    'scissors-paper': 'Scissors cuts Paper',
+    'scissors-lizard': 'Scissors decapitates Lizard',
+    'lizard-spock': 'Lizard poisons Spock',
+    'lizard-paper': 'Lizard eats Paper',
+    'spock-scissors': 'Spock smashes Scissors',
+    'spock-rock': 'Spock vaporizes Rock'
+  }
+
+  const combination = `${result.playerChoice}-${result.computerChoice}`
+  const rule = rules[combination]
+
+  alert(
+    `You: ${extendedEmojis[result.playerChoice]} vs Computer: ${extendedEmojis[result.computerChoice]}\n` +
+    `${result.message}${rule ? `\nRule: ${rule}` : ''}`
+  )
+}
+</script>
+
+<style scoped>
+.extended-rps {
+  padding: 20px;
+}
+
+.game-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.stats-panel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.stat-item {
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.stat-item.win {
+  background-color: #d4edda;
+}
+
+.stat-item.lose {
+  background-color: #f8d7da;
+}
+
+.stat-item.tie {
+  background-color: #fff3cd;
+}
+
+.stat-item.rate {
+  background-color: #d1ecf1;
+}
+
+.stat-number {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.rules {
+  margin-top: 20px;
+  font-size: 0.8em;
+  color: #666;
+}
+
+.rules-grid {
+  columns: 2;
+  column-gap: 20px;
+}
+</style>
+```
+
+### Tournament Mode
+
+```vue
+<template>
+  <div class="tournament-rps">
+    <!-- Tournament Status -->
+    <div class="tournament-status">
+      <h2>Tournament Mode</h2>
+      <div v-if="!isGameOver" class="current-tournament">
+        <div class="round-info">Round {{ tournament.currentRound }} / {{ tournament.maxRounds }}</div>
+        <div class="score-board">
+          <div class="player-section">
+            <div>Player</div>
+            <div class="score">{{ tournament.playerScore }}</div>
+          </div>
+          <div class="vs">VS</div>
+          <div class="computer-section">
+            <div>Computer</div>
+            <div class="score">{{ tournament.computerScore }}</div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="tournament-end">
+        <h3>Tournament Over!</h3>
+        <div class="tournament-winner">
+          {{ winner === 'player' ? '🎉 Congratulations!' :
+             winner === 'computer' ? '😢 Better luck next time!' : '🤝 It\'s a tie!' }}
+        </div>
+        <div class="final-score">Final Score: {{ tournament.playerScore }} - {{ tournament.computerScore }}</div>
+        <button @click="resetTournament" class="reset-btn">
+          Start New Tournament
+        </button>
+      </div>
+    </div>
+
+    <!-- Game Area -->
+    <div v-if="!isGameOver">
+      <RockPaperScissors
+        strategy="counter"
+        @result="handleResult"
+      />
+    </div>
+
+    <!-- Match Records -->
+    <div v-if="tournament.rounds.length > 0" class="tournament-history">
+      <h3>Match Records:</h3>
+      <div class="rounds-container">
+        <div
+          v-for="round in tournament.rounds"
+          :key="round.round"
+          class="round-result"
+          :class="round.result"
+        >
+          <span>Round {{ round.round }}</span>
+          <span class="round-emojis">
+            {{ round.playerEmoji }} vs {{ round.computerEmoji }}
+          </span>
+          <span class="round-winner">
+            {{ round.result === 'win' ? 'Player Wins' :
+               round.result === 'lose' ? 'Computer Wins' : 'Tie' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const tournament = ref({
+  currentRound: 1,
+  maxRounds: 5,
+  playerScore: 0,
+  computerScore: 0,
+  rounds: []
+})
+
+const isGameOver = ref(false)
+
+const winner = computed(() => {
+  const { playerScore, computerScore } = tournament.value
+  if (playerScore > computerScore) return 'player'
+  if (computerScore > playerScore) return 'computer'
+  return 'tie'
+})
+
+const handleResult = (result) => {
+  const newRound = {
+    round: tournament.value.currentRound,
+    player: result.playerChoice,
+    computer: result.computerChoice,
+    result: result.result,
+    playerEmoji: result.emoji.player,
+    computerEmoji: result.emoji.computer
+  }
+
+  tournament.value.rounds.push(newRound)
+  tournament.value.currentRound++
+
+  // Update scores
+  if (result.result === 'win') {
+    tournament.value.playerScore++
+  } else if (result.result === 'lose') {
+    tournament.value.computerScore++
+  }
+
+  // Check if tournament is over
+  const winningScore = 3
+  if (tournament.value.currentRound > tournament.value.maxRounds ||
+      tournament.value.playerScore >= winningScore ||
+      tournament.value.computerScore >= winningScore) {
+    isGameOver.value = true
+  }
+}
+
+const resetTournament = () => {
+  tournament.value = {
+    currentRound: 1,
+    maxRounds: 5,
+    playerScore: 0,
+    computerScore: 0,
+    rounds: []
+  }
+  isGameOver.value = false
+}
+</script>
+
+<style scoped>
+.tournament-rps {
+  padding: 20px;
+}
+
+.tournament-status {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.score-board {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-top: 15px;
+}
+
+.player-section, .computer-section {
+  text-align: center;
+}
+
+.score {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.player-section .score {
+  color: #007bff;
+}
+
+.computer-section .score {
+  color: #dc3545;
+}
+
+.reset-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tournament-history {
+  margin-top: 20px;
+}
+
+.rounds-container {
+  display: grid;
+  gap: 8px;
+}
+
+.round-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.round-result.win {
+  background-color: #d4edda;
+}
+
+.round-result.lose {
+  background-color: #f8d7da;
+}
+
+.round-result.tie {
+  background-color: #fff3cd;
+}
+
+.round-emojis {
+  font-size: 1.2em;
+}
+
+.round-winner {
+  font-weight: bold;
+}
+</style>
+```
+
+### Real-time Battle Mode
+
+```vue
+<template>
+  <div class="realtime-rps">
+    <!-- Game Control Panel -->
+    <div class="control-panel">
+      <div class="controls-row">
+        <div class="control-item">
+          <label>Game Speed: </label>
+          <select v-model="gameSpeed">
+            <option v-for="(config, key) in speeds" :key="key" :value="key">
+              {{ config.label }}
+            </option>
+          </select>
+        </div>
+
+        <label class="auto-play">
+          <input
+            v-model="autoPlay"
+            type="checkbox"
+          />
+          Auto Mode
+        </label>
+
+        <button
+          @click="startCountdown"
+          :disabled="isCountingDown || autoPlay"
+          class="countdown-btn"
+        >
+          Start Countdown
+        </button>
+      </div>
+
+      <!-- Win Streak Statistics -->
+      <div class="streak-stats">
+        <div>Current Streak: <strong>{{ streak.current }}</strong></div>
+        <div>Best Streak: <strong>{{ streak.best }}</strong></div>
+      </div>
+    </div>
+
+    <!-- Countdown Display -->
+    <Transition name="countdown">
+      <div v-if="isCountingDown" class="countdown-display" :class="{ urgent: countdown <= 1 }">
+        {{ countdown > 0 ? countdown : 'GO!' }}
+      </div>
+    </Transition>
+
+    <RockPaperScissors
+      strategy="random"
+      :disabled="isCountingDown"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, watch, onUnmounted } from 'vue'
+
+const countdown = ref(0)
+const isCountingDown = ref(false)
+const gameSpeed = ref('normal')
+const autoPlay = ref(false)
+const streak = ref({ current: 0, best: 0 })
+
+const speeds = {
+  slow: { time: 5, label: 'Slow (5s)' },
+  normal: { time: 3, label: 'Normal (3s)' },
+  fast: { time: 1, label: 'Fast (1s)' }
+}
+
+let countdownInterval = null
+let autoPlayInterval = null
+
+const handleResult = (result) => {
+  // Update win streak
+  if (result.result === 'win') {
+    streak.value.current++
+    streak.value.best = Math.max(streak.value.best, streak.value.current)
+  } else {
+    streak.value.current = 0
+  }
+
+  if (result.result === 'win' && streak.value.current > 3) {
+    alert(`🔥 Win streak of ${streak.value.current}!`)
+  }
+}
+
+const startCountdown = () => {
+  isCountingDown.value = true
+  const time = speeds[gameSpeed.value].time
+  countdown.value = time
+
+  countdownInterval = setInterval(() => {
+    countdown.value--
+    if (countdown.value <= 0) {
+      clearInterval(countdownInterval)
+      isCountingDown.value = false
+    }
+  }, 1000)
+}
+
+// Auto game
+watch(autoPlay, (newValue) => {
+  if (newValue) {
+    autoPlayInterval = setInterval(() => {
+      if (!isCountingDown.value) {
+        startCountdown()
+      }
+    }, (speeds[gameSpeed.value].time + 2) * 1000)
+  } else {
+    clearInterval(autoPlayInterval)
+  }
+})
+
+onUnmounted(() => {
+  clearInterval(countdownInterval)
+  clearInterval(autoPlayInterval)
+})
+</script>
+
+<style scoped>
+.realtime-rps {
+  padding: 20px;
+}
+
+.control-panel {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.controls-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.countdown-btn {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.countdown-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.streak-stats {
+  display: flex;
+  gap: 20px;
+}
+
+.countdown-display {
+  text-align: center;
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: #007bff;
+}
+
+.countdown-display.urgent {
+  color: #dc3545;
+  animation: pulse 0.5s infinite;
+}
+
+.countdown-enter-active, .countdown-leave-active {
+  transition: all 0.3s ease;
+}
+
+.countdown-enter-from, .countdown-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+</style>
+```
+
+## 📋 API Reference
+
+### Props
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `choices` | `string[]` | `['rock', 'paper', 'scissors']` | Available choice options array |
+| `emojis` | `Record<string, string>` | `{rock: '🪨', paper: '📄', scissors: '✂️'}` | Emojis corresponding to choices |
+| `showStats` | `boolean` | `false` | Whether to show statistics |
+| `strategy` | `'random' \| 'counter' \| 'pattern'` | `'random'` | AI strategy mode |
+| `class` | `string` | `''` | CSS class name |
+| `style` | `Record<string, any>` | `{}` | Inline styles |
+| `disabled` | `boolean` | `false` | Whether disabled |
+
+### Events
+
+| Event | Parameters | Description |
+|-------|------------|-------------|
+| `result` | `(result: RPSResult)` | Game result callback |
+| `game-start` | `()` | Game start callback |
+| `game-end` | `(result: RPSResult)` | Game end callback |
+
+### RPSResult
+
+```typescript
+interface RPSResult {
+  playerChoice: string        // Player choice
+  computerChoice: string      // Computer choice
+  result: 'win' | 'lose' | 'tie'  // Game result
+  message: string             // Result message
+  emoji: {                    // Emojis
+    player: string
+    computer: string
+  }
+  round: number               // Round number
+}
+```
+
+### RPSStats
+
+```typescript
+interface RPSStats {
+  totalGames: number    // Total games played
+  wins: number          // Number of wins
+  losses: number        // Number of losses
+  ties: number          // Number of ties
+  winRate: string       // Win rate percentage
+}
+```
+
+## 🎨 Style Customization
+
+### Game Container Styles
+
+```vue
+<style scoped>
+.rps-container {
+  border: 3px solid #6f42c1;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(111, 66, 193, 0.2);
+  background: linear-gradient(145deg, #f8f4ff, #efe8ff);
+}
+
+.rps-container:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+</style>
+```
+
+### Choice Button Styles
+
+```vue
+<style scoped>
+.choice-button {
+  background: linear-gradient(145deg, #ffffff, #e6e6e6);
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  font-size: 2em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.choice-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.choice-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+</style>
+```
+
+## 🔧 Advanced Features
+
+### Custom Game Rules
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+// Implement custom win/lose logic
+const customRules = {
+  rock: ['scissors', 'lizard'],
+  paper: ['rock', 'spock'],
+  scissors: ['paper', 'lizard'],
+  lizard: ['spock', 'paper'],
+  spock: ['scissors', 'rock']
+}
+
+const checkWinner = (player, computer) => {
+  if (player === computer) return 'tie'
+  return customRules[player]?.includes(computer) ? 'win' : 'lose'
+}
+
+const handleResult = (result) => {
+  const customResult = checkWinner(result.playerChoice, result.computerChoice)
+  console.log('Custom rules result:', customResult)
+}
+</script>
+```
+
+### AI Learning Mode
+
+```vue
+<template>
+  <div>
+    <div v-if="aiPrediction" class="ai-prediction">
+      AI predicts you'll play next: {{ aiPrediction }}
+    </div>
+
+    <RockPaperScissors
+      strategy="pattern"
+      @result="handleResult"
+    />
+
+    <div class="player-history">
+      <div>Your move history: {{ playerHistory.join(' → ') }}</div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const playerHistory = ref([])
+const aiPrediction = ref(null)
+
+const predictNextMove = (history) => {
+  if (history.length < 3) return null
+
+  // Simple pattern recognition: find most common choice
+  const frequency = {}
+  history.slice(-5).forEach(choice => {
+    frequency[choice] = (frequency[choice] || 0) + 1
+  })
+
+  const mostCommon = Object.entries(frequency)
+    .sort(([,a], [,b]) => b - a)[0]
+
+  // Predict player's next choice, then choose counter
+  const counters = {
+    rock: 'paper',
+    paper: 'scissors',
+    scissors: 'rock'
+  }
+
+  return mostCommon ? counters[mostCommon[0]] : null
+}
+
+const handleResult = (result) => {
+  playerHistory.value = [...playerHistory.value, result.playerChoice].slice(-10)
+
+  // Update AI prediction
+  const prediction = predictNextMove(playerHistory.value)
+  aiPrediction.value = prediction
+}
+</script>
+
+<style scoped>
+.ai-prediction {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #fff3cd;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.player-history {
+  margin-top: 20px;
+  font-size: 0.9em;
+  color: #666;
+}
+</style>
+```
+
+### Pinia State Management Integration
+
+```vue
+<template>
+  <RockPaperScissors
+    :choices="gameStore.choices"
+    :disabled="gameStore.isLoading"
+    @result="gameStore.recordResult"
+  />
+
+  <div class="game-stats">
+    <div>Total Games: {{ gameStore.totalGames }}</div>
+    <div>Win Rate: {{ gameStore.winRate }}%</div>
+  </div>
+</template>
+
+<script setup>
+import { useGameStore } from '@/stores/game'
+
+const gameStore = useGameStore()
+</script>
+```
+
+```typescript
+// stores/game.ts
+import { defineStore } from 'pinia'
+
+export const useGameStore = defineStore('rpsGame', {
+  state: () => ({
+    choices: ['rock', 'paper', 'scissors'],
+    totalGames: 0,
+    wins: 0,
+    losses: 0,
+    ties: 0,
+    isLoading: false,
+    results: []
+  }),
+
+  getters: {
+    winRate: (state) =>
+      state.totalGames > 0 ? ((state.wins / state.totalGames) * 100).toFixed(1) : '0'
+  },
+
+  actions: {
+    recordResult(result) {
+      this.totalGames++
+
+      if (result.result === 'win') this.wins++
+      else if (result.result === 'lose') this.losses++
+      else this.ties++
+
+      this.results.unshift(result)
+    }
+  }
+})
+```
+
+## 🎯 Best Practices
+
+### 1. Game Balance
+
+```vue
+<script setup>
+// Ensure AI strategy balance
+const balancedStrategies = {
+  beginner: { randomness: 0.8, pattern: 0.1, counter: 0.1 },
+  intermediate: { randomness: 0.5, pattern: 0.3, counter: 0.2 },
+  expert: { randomness: 0.2, pattern: 0.4, counter: 0.4 }
+}
+</script>
+```
+
+### 2. User Experience Optimization
+
+```vue
+<template>
+  <RockPaperScissors
+    :class="{ 'game-animating': isAnimating }"
+    @game-start="handleGameStart"
+    @game-end="handleGameEnd"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const isAnimating = ref(false)
+
+const handleGameStart = () => {
+  isAnimating.value = true
+}
+
+const handleGameEnd = () => {
+  isAnimating.value = false
+}
+</script>
+
+<style scoped>
+.game-animating {
+  animation: gameShake 0.5s ease-in-out;
+}
+
+@keyframes gameShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+</style>
+```
+
+### 3. Data Persistence
+
+```vue
+<script setup>
+import { ref, watch } from 'vue'
+
+// Save game stats to local storage
+const stats = ref(() => {
+  const saved = localStorage.getItem('rps-stats')
+  return saved ? JSON.parse(saved) : { wins: 0, losses: 0, ties: 0 }
+})
+
+watch(stats, (newStats) => {
+  localStorage.setItem('rps-stats', JSON.stringify(newStats))
+}, { deep: true })
+
+const handleResult = (result) => {
+  if (result.result === 'win') stats.value.wins++
+  else if (result.result === 'lose') stats.value.losses++
+  else stats.value.ties++
+}
+</script>
+```
+
+## 🐛 Common Issues
+
+### Q: How do AI strategies work?
+A:
+- **Random Strategy**: Completely random selection
+- **Counter Strategy**: Analyzes player's recent choices and selects counter options
+- **Pattern Recognition**: Identifies player's move patterns and makes predictions
+
+### Q: Can I customize game rules?
+A: Yes, you can implement any rules through `choices` and custom win/lose logic.
+
+### Q: Does it support multiplayer battles?
+A: Current version mainly supports human vs AI, multiplayer features require additional state management.
+
+### Q: How to implement fair gameplay?
+A: The component uses RandBox to ensure randomness, AI strategies can be adjusted to maintain game balance.
+
+### Q: How to integrate with Vue Router?
+A: Can be used normally in route components, or dynamically configure game mode through route parameters.
+
+## 🔗 Related Links
+
+- [GridLottery - Grid Lottery](/en/docs/vue/grid-lottery)
+- [SlotMachine - Slot Machine](/en/docs/vue/slot-machine)
+- [DiceGame - Dice Game](/en/docs/vue/dice-game)
+- [RandBox Core Features](/en/docs/basics)

@@ -1,0 +1,686 @@
+---
+title: "GridLottery - Grid Lottery"
+description: "Grid lottery component based on Canvas and Vue 3, supporting custom prizes, weight configuration, and smooth lottery animations"
+---
+
+# GridLottery - Grid Lottery
+
+`GridLottery` is a grid lottery component based on Canvas and Vue 3, providing a classic spinning lottery experience. It supports custom prizes, weight configuration, animation effects, and other rich features.
+
+## 📦 Import
+
+```vue
+<script setup>
+import { GridLottery } from '@randbox/vue'
+// Or import types
+import type { GridLotteryProps, GridLotteryResult } from '@randbox/vue'
+</script>
+```
+
+## 🚀 Basic Usage
+
+```vue
+<template>
+  <GridLottery
+    :prizes="prizes"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { GridLottery } from '@randbox/vue'
+
+const prizes = ref([
+  'First Prize', 'Second Prize', 'Third Prize',
+  'Fourth Prize', 'Fifth Prize', 'Sixth Prize',
+  'Seventh Prize', 'Eighth Prize', 'Try Again'
+])
+
+const handleResult = (result) => {
+  console.log('Lottery result:', result)
+}
+</script>
+```
+
+## 🎯 Advanced Usage
+
+### Weighted Lottery
+
+```vue
+<template>
+  <GridLottery
+    :prizes="prizes"
+    :weights="weights"
+    :animation-duration="3000"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const prizes = ref([
+  'iPhone 15 Pro', 'iPad', 'AirPods',
+  'Apple Watch', 'Coupon', 'Points',
+  'Voucher', 'Red Packet', 'Try Again'
+])
+
+// Higher weight means higher winning probability
+const weights = ref([1, 3, 5, 8, 15, 20, 25, 20, 3])
+
+const handleResult = (result) => {
+  if (result.prize !== 'Try Again') {
+    alert(`Congratulations! You won: ${result.prize}!`)
+  }
+}
+</script>
+```
+
+### Custom Grid Size
+
+```vue
+<template>
+  <GridLottery
+    :prizes="prizes"
+    :grid-size="16"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+// 4x4 grid with 16 total prizes
+const prizes = computed(() =>
+  Array.from({ length: 16 }, (_, i) => `Prize ${i + 1}`)
+)
+
+const handleResult = (result) => {
+  console.log('4x4 grid lottery result:', result)
+}
+</script>
+```
+
+### Complete Configuration Example
+
+```vue
+<template>
+  <div class="lottery-container">
+    <!-- Statistics Panel -->
+    <div class="stats-panel">
+      <div>Total Spins: {{ totalSpins }} | Wins: {{ wins }} | Win Rate: {{ winRate }}%</div>
+    </div>
+
+    <GridLottery
+      :prizes="prizes"
+      :weights="weights"
+      :grid-size="9"
+      :animation-duration="2500"
+      :button-text="isDrawing ? 'Drawing...' : 'Start Lottery'"
+      class="my-lottery"
+      :style="{ margin: '20px auto' }"
+      :disabled="isDrawing"
+      @game-start="handleGameStart"
+      @game-end="handleGameEnd"
+      @result="handleResult"
+    />
+
+    <!-- History -->
+    <div v-if="results.length > 0" class="history">
+      <h3>Recent Lottery Records:</h3>
+      <div
+        v-for="(result, index) in results"
+        :key="index"
+        class="history-item"
+      >
+        Position {{ result.position + 1 }}: {{ result.prize }}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { GridLottery } from '@randbox/vue'
+
+const isDrawing = ref(false)
+const results = ref([])
+
+const prizes = ref([
+  '🎁 Super Prize', '🏆 First Prize', '💎 Second Prize',
+  '⭐ Third Prize', '🎯 Fourth Prize', '🎪 Fifth Prize',
+  '🎨 Sixth Prize', '🎭 Seventh Prize', '🎊 Try Again'
+])
+
+const weights = ref([1, 2, 5, 10, 15, 20, 25, 20, 2])
+
+// Calculate statistics
+const totalSpins = computed(() => results.value.length)
+const wins = computed(() =>
+  results.value.filter(r => r.prize !== '🎊 Try Again').length
+)
+const winRate = computed(() =>
+  totalSpins.value > 0 ? ((wins.value / totalSpins.value) * 100).toFixed(1) : '0.0'
+)
+
+const handleGameStart = () => {
+  isDrawing.value = true
+  console.log('Starting lottery...')
+}
+
+const handleGameEnd = (result) => {
+  isDrawing.value = false
+  results.value = [result, ...results.value.slice(0, 4)]
+  console.log('Lottery ended:', result)
+}
+
+const handleResult = (result) => {
+  console.log('Real-time result:', result)
+}
+</script>
+
+<style scoped>
+.lottery-container {
+  padding: 20px;
+}
+
+.stats-panel {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #e8f4fd;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.my-lottery {
+  border: 3px solid #ff6b6b;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+}
+
+.history {
+  margin-top: 20px;
+}
+
+.history-item {
+  padding: 5px;
+  background-color: #f5f5f5;
+  margin: 5px 0;
+  border-radius: 4px;
+}
+</style>
+```
+
+### Responsive Design
+
+```vue
+<template>
+  <div :style="containerStyle">
+    <GridLottery
+      :prizes="prizes"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+
+const windowWidth = ref(window.innerWidth)
+
+const containerStyle = computed(() => {
+  const width = Math.min(windowWidth.value - 40, 500)
+  return {
+    width: `${width}px`,
+    height: `${width}px`,
+    margin: '0 auto'
+  }
+})
+
+const prizes = ref([
+  'Prize 1', 'Prize 2', 'Prize 3', 'Prize 4',
+  'Prize 5', 'Prize 6', 'Prize 7', 'Prize 8', 'Try Again'
+])
+
+const updateSize = () => {
+  windowWidth.value = window.innerWidth
+}
+
+onMounted(() => {
+  window.addEventListener('resize', updateSize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateSize)
+})
+
+const handleResult = (result) => {
+  console.log('Responsive lottery result:', result)
+}
+</script>
+```
+
+### Dynamic Prize Updates
+
+```vue
+<template>
+  <div>
+    <button @click="updatePrizes">Update Prizes</button>
+
+    <GridLottery
+      :key="prizeKey"
+      :prizes="prizes"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const prizeKey = ref(0)
+const prizes = ref([
+  'Prize A', 'Prize B', 'Prize C',
+  'Prize D', 'Prize E', 'Prize F',
+  'Prize G', 'Prize H', 'Try Again'
+])
+
+const updatePrizes = () => {
+  prizes.value[0] = `New Prize ${Date.now()}`
+  prizeKey.value++ // Force component re-render
+}
+
+const handleResult = (result) => {
+  console.log('Won:', result.prize)
+}
+</script>
+```
+
+### Lottery Attempt Limits
+
+```vue
+<template>
+  <div>
+    <p>Remaining attempts: {{ remainingTries }}</p>
+
+    <GridLottery
+      :prizes="prizes"
+      :disabled="!canDraw"
+      :button-text="canDraw ? 'Start Lottery' : 'Daily limit reached'"
+      @game-start="handleGameStart"
+      @game-end="handleGameEnd"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const remainingTries = ref(3)
+
+const canDraw = computed(() => remainingTries.value > 0)
+
+const prizes = ref([
+  'Grand Prize', 'Small Prize', 'Try Again', 'One More Try',
+  'Coupon', 'Points', 'Red Packet', 'Gift', 'Empty'
+])
+
+const handleGameStart = () => {
+  if (remainingTries.value <= 0) {
+    return
+  }
+}
+
+const handleGameEnd = (result) => {
+  remainingTries.value--
+  console.log('Remaining tries:', remainingTries.value)
+}
+</script>
+```
+
+## 📋 API Reference
+
+### Props
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `prizes` | `string[]` | **Required** | Prize list, array length should match gridSize |
+| `weights` | `number[]` | `undefined` | Weight array controlling winning probability for each prize |
+| `gridSize` | `number` | `9` | Grid size (number of prizes) |
+| `animationDuration` | `number` | `3000` | Animation duration (milliseconds) |
+| `buttonText` | `string` | `'Start Lottery'` | Lottery button text |
+| `class` | `string` | `''` | CSS class name |
+| `style` | `Record<string, any>` | `{}` | Inline styles |
+| `disabled` | `boolean` | `false` | Whether disabled |
+
+### Events
+
+| Event | Parameters | Description |
+|-------|------------|-------------|
+| `result` | `(result: GridLotteryResult)` | Lottery result callback |
+| `game-start` | `()` | Game start callback |
+| `game-end` | `(result: GridLotteryResult)` | Game end callback |
+
+### GridLotteryResult
+
+```typescript
+interface GridLotteryResult {
+  position: number        // Winning position index (0-8)
+  prize: string          // Winning prize
+  animation: number[]    // Animation path array
+}
+```
+
+## 🎨 Style Customization
+
+### Container Styles
+
+```vue
+<style scoped>
+.my-lottery {
+  border: 3px solid #ff6b6b;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+}
+
+.my-lottery:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+</style>
+```
+
+### Theme Switching
+
+```vue
+<template>
+  <div>
+    <select v-model="currentTheme">
+      <option value="default">Default Theme</option>
+      <option value="dark">Dark Theme</option>
+      <option value="colorful">Colorful Theme</option>
+    </select>
+
+    <GridLottery
+      :prizes="prizes"
+      :class="themeClass"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const currentTheme = ref('default')
+
+const themeClass = computed(() => `theme-${currentTheme.value}`)
+
+const prizes = ref(['Prize 1', 'Prize 2', 'Prize 3', 'Try Again'])
+</script>
+
+<style scoped>
+.theme-default {
+  border: 2px solid #ddd;
+  background: #fff;
+}
+
+.theme-dark {
+  border: 2px solid #555;
+  background: #333;
+  color: #fff;
+}
+
+.theme-colorful {
+  border: 3px solid;
+  border-image: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1) 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+</style>
+```
+
+## 🔧 Advanced Features
+
+### Pinia State Management Integration
+
+```vue
+<template>
+  <GridLottery
+    :prizes="gameStore.prizes"
+    :disabled="gameStore.isLoading"
+    @result="gameStore.recordResult"
+  />
+
+  <div class="stats">
+    <div>Total Draws: {{ gameStore.totalDraws }}</div>
+    <div>Win Rate: {{ gameStore.winRate }}%</div>
+  </div>
+</template>
+
+<script setup>
+import { useGameStore } from '@/stores/game'
+
+const gameStore = useGameStore()
+</script>
+```
+
+```typescript
+// stores/game.ts
+import { defineStore } from 'pinia'
+
+export const useGameStore = defineStore('game', {
+  state: () => ({
+    prizes: ['Grand Prize', 'Small Prize', 'Try Again'],
+    totalDraws: 0,
+    totalWins: 0,
+    isLoading: false,
+    results: []
+  }),
+
+  getters: {
+    winRate: (state) =>
+      state.totalDraws > 0 ? ((state.totalWins / state.totalDraws) * 100).toFixed(1) : '0'
+  },
+
+  actions: {
+    recordResult(result) {
+      this.totalDraws++
+      if (result.prize !== 'Try Again') {
+        this.totalWins++
+      }
+      this.results.unshift(result)
+    }
+  }
+})
+```
+
+### Composable Function Encapsulation
+
+```typescript
+// composables/useLottery.ts
+import { ref, computed } from 'vue'
+
+export function useLottery(initialPrizes = []) {
+  const prizes = ref(initialPrizes)
+  const results = ref([])
+  const isDrawing = ref(false)
+
+  const totalDraws = computed(() => results.value.length)
+  const wins = computed(() =>
+    results.value.filter(r => r.prize !== 'Try Again').length
+  )
+  const winRate = computed(() =>
+    totalDraws.value > 0 ? ((wins.value / totalDraws.value) * 100).toFixed(1) : '0.0'
+  )
+
+  const handleGameStart = () => {
+    isDrawing.value = true
+  }
+
+  const handleGameEnd = (result) => {
+    isDrawing.value = false
+    results.value.unshift(result)
+  }
+
+  const resetStats = () => {
+    results.value = []
+  }
+
+  return {
+    prizes,
+    results,
+    isDrawing,
+    totalDraws,
+    wins,
+    winRate,
+    handleGameStart,
+    handleGameEnd,
+    resetStats
+  }
+}
+```
+
+```vue
+<template>
+  <GridLottery
+    :prizes="prizes"
+    :disabled="isDrawing"
+    @game-start="handleGameStart"
+    @game-end="handleGameEnd"
+  />
+
+  <div class="stats">
+    <div>Draws: {{ totalDraws }}</div>
+    <div>Win Rate: {{ winRate }}%</div>
+    <button @click="resetStats">Reset Stats</button>
+  </div>
+</template>
+
+<script setup>
+import { useLottery } from '@/composables/useLottery'
+
+const {
+  prizes,
+  isDrawing,
+  totalDraws,
+  winRate,
+  handleGameStart,
+  handleGameEnd,
+  resetStats
+} = useLottery(['Grand Prize', 'Small Prize', 'Try Again'])
+</script>
+```
+
+## 🎯 Best Practices
+
+### 1. Weight Configuration Recommendations
+
+```vue
+<script setup>
+// Reasonable weight distribution
+const prizes = ref(['Special Prize', 'First Prize', 'Second Prize', 'Third Prize', 'Coupon', 'Points', 'Voucher', 'Red Packet', 'Try Again'])
+const weights = ref([1, 3, 8, 15, 20, 25, 20, 5, 3]) // Sum to 100 for easy probability calculation
+</script>
+```
+
+### 2. Error Handling
+
+```vue
+<template>
+  <div>
+    <div v-if="error" class="error">
+      Error: {{ error }}
+    </div>
+
+    <GridLottery
+      :prizes="prizes"
+      :weights="weights"
+      @result="handleResult"
+      @error="handleError"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const error = ref('')
+const prizes = ref(['Prize 1', 'Prize 2', 'Prize 3', 'Try Again'])
+const weights = ref([10, 10, 10, 70])
+
+// Validate configuration
+const isConfigValid = computed(() => {
+  return prizes.value.length === weights.value.length
+})
+
+const handleResult = (result) => {
+  error.value = ''
+  console.log('Lottery success:', result)
+}
+
+const handleError = (err) => {
+  error.value = err.message
+  console.error('Lottery error:', err)
+}
+</script>
+
+<style scoped>
+.error {
+  color: red;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #ffe6e6;
+  border-radius: 4px;
+}
+</style>
+```
+
+### 3. Performance Optimization
+
+```vue
+<script setup>
+import { ref, computed, shallowRef } from 'vue'
+
+// Use shallowRef for large data sets
+const largePrizes = shallowRef(
+  Array.from({ length: 100 }, (_, i) => `Prize ${i + 1}`)
+)
+
+// Use computed to cache calculation results
+const displayPrizes = computed(() =>
+  largePrizes.value.slice(0, 9) // Only show first 9
+)
+
+// Debounce frequent updates
+import { debounce } from 'lodash-es'
+
+const debouncedUpdate = debounce((newPrizes) => {
+  largePrizes.value = newPrizes
+}, 300)
+</script>
+```
+
+## 🐛 Common Issues
+
+### Q: Why are lottery results not random enough?
+A: Please ensure the `randbox` dependency is installed, which provides high-quality random number generation algorithms.
+
+### Q: How to implement fair lottery?
+A: Use weight configuration, ensure reasonable weight totals, and avoid any single prize having excessive weight.
+
+### Q: How does component size adapt?
+A: The component automatically adapts to container size, control component dimensions by setting container width and height.
+
+### Q: Can animations be disabled?
+A: Set `animationDuration` to 0 to disable animation effects.
+
+### Q: How to integrate with Vue Router?
+A: Can be used normally in route components, or dynamically configure prizes through route parameters.
+
+## 🔗 Related Links
+
+- [SlotMachine - Slot Machine](/en/docs/vue/slot-machine)
+- [ScratchCard - Scratch Card](/en/docs/vue/scratch-card)
+- [DiceGame - Dice Game](/en/docs/vue/dice-game)
+- [RandBox Core Library](/en/docs/basics)

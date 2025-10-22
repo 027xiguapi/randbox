@@ -10,6 +10,12 @@ export default {
   usage: {
     title: 'Usage',
   },
+  react: {
+    title: 'react',
+  },
+  vue: {
+    title: 'vue',
+  },
   basics: {
     title: 'Basic Data Types',
   },

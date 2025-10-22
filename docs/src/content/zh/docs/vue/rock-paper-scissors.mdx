@@ -1,0 +1,1078 @@
+---
+title: 'RockPaperScissors - 石头剪刀布'
+description: '基于Vue 3的经典石头剪刀布游戏组件，支持多种AI策略、统计功能和自定义游戏规则'
+---
+
+# RockPaperScissors - 石头剪刀布
+
+`RockPaperScissors` 是一个基于Vue 3的经典石头剪刀布游戏组件，提供多种AI策略、游戏统计和自定义选项。支持传统三选项模式以及扩展的五选项模式。
+
+## 📦 导入
+
+```vue
+<script setup>
+import { RockPaperScissors } from '@randbox/vue'
+// 或者导入类型
+import type { RockPaperScissorsProps, RPSResult, RPSStats } from '@randbox/vue'
+</script>
+```
+
+## 🚀 基础用法
+
+```vue
+<template>
+  <RockPaperScissors @result="handleResult" />
+</template>
+
+<script setup>
+import { RockPaperScissors } from '@randbox/vue'
+
+const handleResult = (result) => {
+  console.log('游戏结果:', result)
+  alert(`你出了${result.emoji.player}，电脑出了${result.emoji.computer}\n${result.message}`)
+}
+</script>
+```
+
+## 🎯 高级用法
+
+### 多种AI策略模式
+
+```vue
+<template>
+  <div class="strategy-rps">
+    <div class="strategy-selector">
+      <label>AI策略: </label>
+      <select v-model="strategy">
+        <option v-for="(name, key) in strategies" :key="key" :value="key">
+          {{ name }}
+        </option>
+      </select>
+    </div>
+
+    <RockPaperScissors
+      :strategy="strategy"
+      :show-stats="true"
+      @result="handleResult"
+    />
+
+    <!-- 最近游戏记录 -->
+    <div v-if="gameHistory.length > 0" class="game-history">
+      <h3>最近对战记录:</h3>
+      <div
+        v-for="(result, index) in gameHistory"
+        :key="index"
+        class="history-item"
+        :class="result.result"
+      >
+        <span>第{{ result.round }}轮</span>
+        <span>{{ result.emoji.player }} vs {{ result.emoji.computer }}</span>
+        <span class="result-text">
+          {{ result.result === 'win' ? '胜利' :
+             result.result === 'lose' ? '失败' : '平局' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const strategy = ref('random')
+const gameHistory = ref([])
+
+const strategies = {
+  random: '随机策略',
+  counter: '反制策略',
+  pattern: '模式识别'
+}
+
+const handleResult = (result) => {
+  gameHistory.value = [result, ...gameHistory.value.slice(0, 9)]
+
+  let message = result.message
+  if (strategy.value === 'counter') {
+    message += '\n(AI正在分析你的出招模式)'
+  } else if (strategy.value === 'pattern') {
+    message += '\n(AI基于历史模式进行预测)'
+  }
+
+  setTimeout(() => alert(message), 500)
+}
+</script>
+
+<style scoped>
+.strategy-rps {
+  padding: 20px;
+}
+
+.strategy-selector {
+  margin-bottom: 20px;
+}
+
+.game-history {
+  margin-top: 20px;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+.history-item.win {
+  background-color: #d4edda;
+}
+
+.history-item.lose {
+  background-color: #f8d7da;
+}
+
+.history-item.tie {
+  background-color: #fff3cd;
+}
+
+.result-text {
+  font-weight: bold;
+}
+</style>
+```
+
+### 扩展五选项模式
+
+```vue
+<template>
+  <div class="extended-rps">
+    <div class="game-title">
+      <h3>大爆炸理论版石头剪刀布</h3>
+      <div class="subtitle">
+        包含蜥蜴🦎和史波克🖖的扩展版本
+      </div>
+    </div>
+
+    <!-- 统计面板 -->
+    <div class="stats-panel">
+      <div class="stat-item win">
+        <div>胜利</div>
+        <div class="stat-number">{{ wins }}</div>
+      </div>
+      <div class="stat-item lose">
+        <div>失败</div>
+        <div class="stat-number">{{ losses }}</div>
+      </div>
+      <div class="stat-item tie">
+        <div>平局</div>
+        <div class="stat-number">{{ ties }}</div>
+      </div>
+      <div class="stat-item rate">
+        <div>胜率</div>
+        <div class="stat-number">{{ winRate }}%</div>
+      </div>
+    </div>
+
+    <RockPaperScissors
+      :choices="extendedChoices"
+      :emojis="extendedEmojis"
+      strategy="pattern"
+      @result="handleResult"
+    />
+
+    <!-- 规则说明 -->
+    <div class="rules">
+      <h4>游戏规则:</h4>
+      <div class="rules-grid">
+        <div>• 石头 → 蜥蜴、剪刀</div>
+        <div>• 纸 → 石头、史波克</div>
+        <div>• 剪刀 → 纸、蜥蜴</div>
+        <div>• 蜥蜴 → 史波克、纸</div>
+        <div>• 史波克 → 剪刀、石头</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+// 包含蜥蜴和史波克的扩展模式
+const extendedChoices = ['rock', 'paper', 'scissors', 'lizard', 'spock']
+const extendedEmojis = {
+  rock: '🪨',
+  paper: '📄',
+  scissors: '✂️',
+  lizard: '🦎',
+  spock: '🖖'
+}
+
+const wins = ref(0)
+const losses = ref(0)
+const ties = ref(0)
+
+const totalGames = computed(() => wins.value + losses.value + ties.value)
+const winRate = computed(() =>
+  totalGames.value > 0 ? ((wins.value / totalGames.value) * 100).toFixed(1) : '0.0'
+)
+
+const handleResult = (result) => {
+  // 更新统计
+  if (result.result === 'win') wins.value++
+  else if (result.result === 'lose') losses.value++
+  else ties.value++
+
+  // 显示扩展规则说明
+  const rules = {
+    'rock-lizard': '石头压扁蜥蜴',
+    'rock-scissors': '石头砸碎剪刀',
+    'paper-rock': '纸包石头',
+    'paper-spock': '纸反驳史波克',
+    'scissors-paper': '剪刀剪纸',
+    'scissors-lizard': '剪刀砍蜥蜴',
+    'lizard-spock': '蜥蜴毒死史波克',
+    'lizard-paper': '蜥蜴吃纸',
+    'spock-scissors': '史波克砸剪刀',
+    'spock-rock': '史波克汽化石头'
+  }
+
+  const combination = `${result.playerChoice}-${result.computerChoice}`
+  const rule = rules[combination]
+
+  alert(
+    `你: ${extendedEmojis[result.playerChoice]} vs 电脑: ${extendedEmojis[result.computerChoice]}\n` +
+    `${result.message}${rule ? `\n规则: ${rule}` : ''}`
+  )
+}
+</script>
+
+<style scoped>
+.extended-rps {
+  padding: 20px;
+}
+
+.game-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.stats-panel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.stat-item {
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.stat-item.win {
+  background-color: #d4edda;
+}
+
+.stat-item.lose {
+  background-color: #f8d7da;
+}
+
+.stat-item.tie {
+  background-color: #fff3cd;
+}
+
+.stat-item.rate {
+  background-color: #d1ecf1;
+}
+
+.stat-number {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.rules {
+  margin-top: 20px;
+  font-size: 0.8em;
+  color: #666;
+}
+
+.rules-grid {
+  columns: 2;
+  column-gap: 20px;
+}
+</style>
+```
+
+### 锦标赛模式
+
+```vue
+<template>
+  <div class="tournament-rps">
+    <!-- 锦标赛状态 -->
+    <div class="tournament-status">
+      <h2>锦标赛模式</h2>
+      <div v-if="!isGameOver" class="current-tournament">
+        <div class="round-info">第 {{ tournament.currentRound }} / {{ tournament.maxRounds }} 轮</div>
+        <div class="score-board">
+          <div class="player-section">
+            <div>玩家</div>
+            <div class="score">{{ tournament.playerScore }}</div>
+          </div>
+          <div class="vs">VS</div>
+          <div class="computer-section">
+            <div>电脑</div>
+            <div class="score">{{ tournament.computerScore }}</div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="tournament-end">
+        <h3>锦标赛结束!</h3>
+        <div class="tournament-winner">
+          {{ winner === 'player' ? '🎉 恭喜获胜!' :
+             winner === 'computer' ? '😢 很遗憾失败!' : '🤝 平局!' }}
+        </div>
+        <div class="final-score">最终比分: {{ tournament.playerScore }} - {{ tournament.computerScore }}</div>
+        <button @click="resetTournament" class="reset-btn">
+          重新开始锦标赛
+        </button>
+      </div>
+    </div>
+
+    <!-- 游戏区域 -->
+    <div v-if="!isGameOver">
+      <RockPaperScissors
+        strategy="counter"
+        @result="handleResult"
+      />
+    </div>
+
+    <!-- 比赛记录 -->
+    <div v-if="tournament.rounds.length > 0" class="tournament-history">
+      <h3>比赛记录:</h3>
+      <div class="rounds-container">
+        <div
+          v-for="round in tournament.rounds"
+          :key="round.round"
+          class="round-result"
+          :class="round.result"
+        >
+          <span>第{{ round.round }}轮</span>
+          <span class="round-emojis">
+            {{ round.playerEmoji }} vs {{ round.computerEmoji }}
+          </span>
+          <span class="round-winner">
+            {{ round.result === 'win' ? '玩家胜' :
+               round.result === 'lose' ? '电脑胜' : '平局' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const tournament = ref({
+  currentRound: 1,
+  maxRounds: 5,
+  playerScore: 0,
+  computerScore: 0,
+  rounds: []
+})
+
+const isGameOver = ref(false)
+
+const winner = computed(() => {
+  const { playerScore, computerScore } = tournament.value
+  if (playerScore > computerScore) return 'player'
+  if (computerScore > playerScore) return 'computer'
+  return 'tie'
+})
+
+const handleResult = (result) => {
+  const newRound = {
+    round: tournament.value.currentRound,
+    player: result.playerChoice,
+    computer: result.computerChoice,
+    result: result.result,
+    playerEmoji: result.emoji.player,
+    computerEmoji: result.emoji.computer
+  }
+
+  tournament.value.rounds.push(newRound)
+  tournament.value.currentRound++
+
+  // 更新分数
+  if (result.result === 'win') {
+    tournament.value.playerScore++
+  } else if (result.result === 'lose') {
+    tournament.value.computerScore++
+  }
+
+  // 检查锦标赛是否结束
+  const winningScore = 3
+  if (tournament.value.currentRound > tournament.value.maxRounds ||
+      tournament.value.playerScore >= winningScore ||
+      tournament.value.computerScore >= winningScore) {
+    isGameOver.value = true
+  }
+}
+
+const resetTournament = () => {
+  tournament.value = {
+    currentRound: 1,
+    maxRounds: 5,
+    playerScore: 0,
+    computerScore: 0,
+    rounds: []
+  }
+  isGameOver.value = false
+}
+</script>
+
+<style scoped>
+.tournament-rps {
+  padding: 20px;
+}
+
+.tournament-status {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.score-board {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-top: 15px;
+}
+
+.player-section, .computer-section {
+  text-align: center;
+}
+
+.score {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.player-section .score {
+  color: #007bff;
+}
+
+.computer-section .score {
+  color: #dc3545;
+}
+
+.reset-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tournament-history {
+  margin-top: 20px;
+}
+
+.rounds-container {
+  display: grid;
+  gap: 8px;
+}
+
+.round-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.round-result.win {
+  background-color: #d4edda;
+}
+
+.round-result.lose {
+  background-color: #f8d7da;
+}
+
+.round-result.tie {
+  background-color: #fff3cd;
+}
+
+.round-emojis {
+  font-size: 1.2em;
+}
+
+.round-winner {
+  font-weight: bold;
+}
+</style>
+```
+
+### 实时对战模式
+
+```vue
+<template>
+  <div class="realtime-rps">
+    <!-- 游戏控制面板 -->
+    <div class="control-panel">
+      <div class="controls-row">
+        <div class="control-item">
+          <label>游戏速度: </label>
+          <select v-model="gameSpeed">
+            <option v-for="(config, key) in speeds" :key="key" :value="key">
+              {{ config.label }}
+            </option>
+          </select>
+        </div>
+
+        <label class="auto-play">
+          <input
+            v-model="autoPlay"
+            type="checkbox"
+          />
+          自动模式
+        </label>
+
+        <button
+          @click="startCountdown"
+          :disabled="isCountingDown || autoPlay"
+          class="countdown-btn"
+        >
+          开始倒计时
+        </button>
+      </div>
+
+      <!-- 连胜统计 -->
+      <div class="streak-stats">
+        <div>当前连胜: <strong>{{ streak.current }}</strong></div>
+        <div>最佳连胜: <strong>{{ streak.best }}</strong></div>
+      </div>
+    </div>
+
+    <!-- 倒计时显示 -->
+    <Transition name="countdown">
+      <div v-if="isCountingDown" class="countdown-display" :class="{ urgent: countdown <= 1 }">
+        {{ countdown > 0 ? countdown : 'GO!' }}
+      </div>
+    </Transition>
+
+    <RockPaperScissors
+      strategy="random"
+      :disabled="isCountingDown"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, watch, onUnmounted } from 'vue'
+
+const countdown = ref(0)
+const isCountingDown = ref(false)
+const gameSpeed = ref('normal')
+const autoPlay = ref(false)
+const streak = ref({ current: 0, best: 0 })
+
+const speeds = {
+  slow: { time: 5, label: '慢速 (5秒)' },
+  normal: { time: 3, label: '正常 (3秒)' },
+  fast: { time: 1, label: '快速 (1秒)' }
+}
+
+let countdownInterval = null
+let autoPlayInterval = null
+
+const handleResult = (result) => {
+  // 更新连胜记录
+  if (result.result === 'win') {
+    streak.value.current++
+    streak.value.best = Math.max(streak.value.best, streak.value.current)
+  } else {
+    streak.value.current = 0
+  }
+
+  if (result.result === 'win' && streak.value.current > 3) {
+    alert(`🔥 连胜 ${streak.value.current} 场！`)
+  }
+}
+
+const startCountdown = () => {
+  isCountingDown.value = true
+  const time = speeds[gameSpeed.value].time
+  countdown.value = time
+
+  countdownInterval = setInterval(() => {
+    countdown.value--
+    if (countdown.value <= 0) {
+      clearInterval(countdownInterval)
+      isCountingDown.value = false
+    }
+  }, 1000)
+}
+
+// 自动游戏
+watch(autoPlay, (newValue) => {
+  if (newValue) {
+    autoPlayInterval = setInterval(() => {
+      if (!isCountingDown.value) {
+        startCountdown()
+      }
+    }, (speeds[gameSpeed.value].time + 2) * 1000)
+  } else {
+    clearInterval(autoPlayInterval)
+  }
+})
+
+onUnmounted(() => {
+  clearInterval(countdownInterval)
+  clearInterval(autoPlayInterval)
+})
+</script>
+
+<style scoped>
+.realtime-rps {
+  padding: 20px;
+}
+
+.control-panel {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.controls-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.countdown-btn {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.countdown-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.streak-stats {
+  display: flex;
+  gap: 20px;
+}
+
+.countdown-display {
+  text-align: center;
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: #007bff;
+}
+
+.countdown-display.urgent {
+  color: #dc3545;
+  animation: pulse 0.5s infinite;
+}
+
+.countdown-enter-active, .countdown-leave-active {
+  transition: all 0.3s ease;
+}
+
+.countdown-enter-from, .countdown-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+</style>
+```
+
+## 📋 API参考
+
+### Props
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `choices` | `string[]` | `['rock', 'paper', 'scissors']` | 可选择的选项数组 |
+| `emojis` | `Record<string, string>` | `{rock: '🪨', paper: '📄', scissors: '✂️'}` | 选项对应的表情符号 |
+| `showStats` | `boolean` | `false` | 是否显示统计信息 |
+| `strategy` | `'random' \| 'counter' \| 'pattern'` | `'random'` | AI策略模式 |
+| `class` | `string` | `''` | CSS类名 |
+| `style` | `Record<string, any>` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+|--------|------|------|
+| `result` | `(result: RPSResult)` | 游戏结果回调 |
+| `game-start` | `()` | 游戏开始回调 |
+| `game-end` | `(result: RPSResult)` | 游戏结束回调 |
+
+### RPSResult
+
+```typescript
+interface RPSResult {
+  playerChoice: string        // 玩家选择
+  computerChoice: string      // 电脑选择
+  result: 'win' | 'lose' | 'tie'  // 游戏结果
+  message: string             // 结果消息
+  emoji: {                    // 表情符号
+    player: string
+    computer: string
+  }
+  round: number               // 轮次编号
+}
+```
+
+### RPSStats
+
+```typescript
+interface RPSStats {
+  totalGames: number    // 总游戏数
+  wins: number          // 胜利数
+  losses: number        // 失败数
+  ties: number          // 平局数
+  winRate: string       // 胜率百分比
+}
+```
+
+## 🎨 样式定制
+
+### 游戏容器样式
+
+```vue
+<style scoped>
+.rps-container {
+  border: 3px solid #6f42c1;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(111, 66, 193, 0.2);
+  background: linear-gradient(145deg, #f8f4ff, #efe8ff);
+}
+
+.rps-container:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+</style>
+```
+
+### 选择按钮样式
+
+```vue
+<style scoped>
+.choice-button {
+  background: linear-gradient(145deg, #ffffff, #e6e6e6);
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  font-size: 2em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.choice-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.choice-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+</style>
+```
+
+## 🔧 高级功能
+
+### 自定义游戏规则
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+// 实现自定义的胜负判定逻辑
+const customRules = {
+  rock: ['scissors', 'lizard'],
+  paper: ['rock', 'spock'],
+  scissors: ['paper', 'lizard'],
+  lizard: ['spock', 'paper'],
+  spock: ['scissors', 'rock']
+}
+
+const checkWinner = (player, computer) => {
+  if (player === computer) return 'tie'
+  return customRules[player]?.includes(computer) ? 'win' : 'lose'
+}
+
+const handleResult = (result) => {
+  const customResult = checkWinner(result.playerChoice, result.computerChoice)
+  console.log('自定义规则结果:', customResult)
+}
+</script>
+```
+
+### AI学习模式
+
+```vue
+<template>
+  <div>
+    <div v-if="aiPrediction" class="ai-prediction">
+      AI预测你下次会出: {{ aiPrediction }}
+    </div>
+
+    <RockPaperScissors
+      strategy="pattern"
+      @result="handleResult"
+    />
+
+    <div class="player-history">
+      <div>你的出招历史: {{ playerHistory.join(' → ') }}</div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const playerHistory = ref([])
+const aiPrediction = ref(null)
+
+const predictNextMove = (history) => {
+  if (history.length < 3) return null
+
+  // 简单的模式识别：查找最常见的选择
+  const frequency = {}
+  history.slice(-5).forEach(choice => {
+    frequency[choice] = (frequency[choice] || 0) + 1
+  })
+
+  const mostCommon = Object.entries(frequency)
+    .sort(([,a], [,b]) => b - a)[0]
+
+  // 预测玩家下次选择，然后选择克制它的选项
+  const counters = {
+    rock: 'paper',
+    paper: 'scissors',
+    scissors: 'rock'
+  }
+
+  return mostCommon ? counters[mostCommon[0]] : null
+}
+
+const handleResult = (result) => {
+  playerHistory.value = [...playerHistory.value, result.playerChoice].slice(-10)
+
+  // 更新AI预测
+  const prediction = predictNextMove(playerHistory.value)
+  aiPrediction.value = prediction
+}
+</script>
+
+<style scoped>
+.ai-prediction {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #fff3cd;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.player-history {
+  margin-top: 20px;
+  font-size: 0.9em;
+  color: #666;
+}
+</style>
+```
+
+### 与Pinia状态管理集成
+
+```vue
+<template>
+  <RockPaperScissors
+    :choices="gameStore.choices"
+    :disabled="gameStore.isLoading"
+    @result="gameStore.recordResult"
+  />
+
+  <div class="game-stats">
+    <div>总游戏次数: {{ gameStore.totalGames }}</div>
+    <div>胜率: {{ gameStore.winRate }}%</div>
+  </div>
+</template>
+
+<script setup>
+import { useGameStore } from '@/stores/game'
+
+const gameStore = useGameStore()
+</script>
+```
+
+```typescript
+// stores/game.ts
+import { defineStore } from 'pinia'
+
+export const useGameStore = defineStore('rpsGame', {
+  state: () => ({
+    choices: ['rock', 'paper', 'scissors'],
+    totalGames: 0,
+    wins: 0,
+    losses: 0,
+    ties: 0,
+    isLoading: false,
+    results: []
+  }),
+
+  getters: {
+    winRate: (state) =>
+      state.totalGames > 0 ? ((state.wins / state.totalGames) * 100).toFixed(1) : '0'
+  },
+
+  actions: {
+    recordResult(result) {
+      this.totalGames++
+
+      if (result.result === 'win') this.wins++
+      else if (result.result === 'lose') this.losses++
+      else this.ties++
+
+      this.results.unshift(result)
+    }
+  }
+})
+```
+
+## 🎯 最佳实践
+
+### 1. 游戏平衡性
+
+```vue
+<script setup>
+// 确保AI策略的平衡性
+const balancedStrategies = {
+  beginner: { randomness: 0.8, pattern: 0.1, counter: 0.1 },
+  intermediate: { randomness: 0.5, pattern: 0.3, counter: 0.2 },
+  expert: { randomness: 0.2, pattern: 0.4, counter: 0.4 }
+}
+</script>
+```
+
+### 2. 用户体验优化
+
+```vue
+<template>
+  <RockPaperScissors
+    :class="{ 'game-animating': isAnimating }"
+    @game-start="handleGameStart"
+    @game-end="handleGameEnd"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const isAnimating = ref(false)
+
+const handleGameStart = () => {
+  isAnimating.value = true
+}
+
+const handleGameEnd = () => {
+  isAnimating.value = false
+}
+</script>
+
+<style scoped>
+.game-animating {
+  animation: gameShake 0.5s ease-in-out;
+}
+
+@keyframes gameShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+</style>
+```
+
+### 3. 数据持久化
+
+```vue
+<script setup>
+import { ref, watch } from 'vue'
+
+// 保存游戏统计到本地存储
+const stats = ref(() => {
+  const saved = localStorage.getItem('rps-stats')
+  return saved ? JSON.parse(saved) : { wins: 0, losses: 0, ties: 0 }
+})
+
+watch(stats, (newStats) => {
+  localStorage.setItem('rps-stats', JSON.stringify(newStats))
+}, { deep: true })
+
+const handleResult = (result) => {
+  if (result.result === 'win') stats.value.wins++
+  else if (result.result === 'lose') stats.value.losses++
+  else stats.value.ties++
+}
+</script>
+```
+
+## 🐛 常见问题
+
+### Q: AI策略是如何工作的？
+A:
+- **随机策略**: 完全随机选择
+- **反制策略**: 分析玩家最近的选择，选择克制选项
+- **模式识别**: 识别玩家的出招模式并进行预测
+
+### Q: 可以自定义游戏规则吗？
+A: 是的，可以通过`choices`和自定义胜负判定逻辑实现任意规则。
+
+### Q: 支持多人对战吗？
+A: 当前版本主要支持人机对战，多人功能需要额外的状态管理。
+
+### Q: 如何实现公平的游戏？
+A: 组件使用RandBox确保随机性，AI策略可以调整以保持游戏平衡。
+
+### Q: 如何与Vue Router集成？
+A: 可以在路由组件中正常使用，或者通过路由参数动态配置游戏模式。
+
+## 🔗 相关链接
+
+- [GridLottery - 九宫格抽奖](/zh/docs/vue/grid-lottery)
+- [SlotMachine - 滚动抽奖](/zh/docs/vue/slot-machine)
+- [DiceGame - 骰子游戏](/zh/docs/vue/dice-game)
+- [RandBox 核心功能](/zh/docs/basics)

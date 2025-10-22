@@ -1,0 +1,686 @@
+---
+title: 'GridLottery - 九宫格抽奖'
+description: '基于Canvas和Vue 3的九宫格抽奖组件，支持自定义奖品、权重配置和流畅的抽奖动画'
+---
+
+# GridLottery - 九宫格抽奖
+
+`GridLottery` 是一个基于Canvas和Vue 3的九宫格抽奖组件，提供经典的转盘抽奖体验。支持自定义奖品、权重配置、动画效果等丰富功能。
+
+## 📦 导入
+
+```vue
+<script setup>
+import { GridLottery } from '@randbox/vue'
+// 或者导入类型
+import type { GridLotteryProps, GridLotteryResult } from '@randbox/vue'
+</script>
+```
+
+## 🚀 基础用法
+
+```vue
+<template>
+  <GridLottery
+    :prizes="prizes"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { GridLottery } from '@randbox/vue'
+
+const prizes = ref([
+  '一等奖', '二等奖', '三等奖',
+  '四等奖', '五等奖', '六等奖',
+  '七等奖', '八等奖', '谢谢参与'
+])
+
+const handleResult = (result) => {
+  console.log('抽奖结果:', result)
+}
+</script>
+```
+
+## 🎯 高级用法
+
+### 带权重的抽奖
+
+```vue
+<template>
+  <GridLottery
+    :prizes="prizes"
+    :weights="weights"
+    :animation-duration="3000"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const prizes = ref([
+  'iPhone 15 Pro', 'iPad', 'AirPods',
+  'Apple Watch', '优惠券', '积分',
+  '代金券', '红包', '谢谢参与'
+])
+
+// 权重越高，中奖概率越大
+const weights = ref([1, 3, 5, 8, 15, 20, 25, 20, 3])
+
+const handleResult = (result) => {
+  if (result.prize !== '谢谢参与') {
+    alert(`恭喜您中奖了：${result.prize}！`)
+  }
+}
+</script>
+```
+
+### 自定义网格大小
+
+```vue
+<template>
+  <GridLottery
+    :prizes="prizes"
+    :grid-size="16"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+// 4x4网格，共16个奖品
+const prizes = computed(() =>
+  Array.from({ length: 16 }, (_, i) => `奖品${i + 1}`)
+)
+
+const handleResult = (result) => {
+  console.log('4x4网格抽奖结果:', result)
+}
+</script>
+```
+
+### 完整配置示例
+
+```vue
+<template>
+  <div class="lottery-container">
+    <!-- 统计信息 -->
+    <div class="stats-panel">
+      <div>总旋转次数: {{ totalSpins }} | 中奖次数: {{ wins }} | 中奖率: {{ winRate }}%</div>
+    </div>
+
+    <GridLottery
+      :prizes="prizes"
+      :weights="weights"
+      :grid-size="9"
+      :animation-duration="2500"
+      :button-text="isDrawing ? '抽奖中...' : '开始抽奖'"
+      class="my-lottery"
+      :style="{ margin: '20px auto' }"
+      :disabled="isDrawing"
+      @game-start="handleGameStart"
+      @game-end="handleGameEnd"
+      @result="handleResult"
+    />
+
+    <!-- 历史记录 -->
+    <div v-if="results.length > 0" class="history">
+      <h3>最近抽奖记录：</h3>
+      <div
+        v-for="(result, index) in results"
+        :key="index"
+        class="history-item"
+      >
+        第 {{ result.position + 1 }} 位：{{ result.prize }}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { GridLottery } from '@randbox/vue'
+
+const isDrawing = ref(false)
+const results = ref([])
+
+const prizes = ref([
+  '🎁 超级大奖', '🏆 一等奖', '💎 二等奖',
+  '⭐ 三等奖', '🎯 四等奖', '🎪 五等奖',
+  '🎨 六等奖', '🎭 七等奖', '🎊 谢谢参与'
+])
+
+const weights = ref([1, 2, 5, 10, 15, 20, 25, 20, 2])
+
+// 计算统计数据
+const totalSpins = computed(() => results.value.length)
+const wins = computed(() =>
+  results.value.filter(r => r.prize !== '🎊 谢谢参与').length
+)
+const winRate = computed(() =>
+  totalSpins.value > 0 ? ((wins.value / totalSpins.value) * 100).toFixed(1) : '0.0'
+)
+
+const handleGameStart = () => {
+  isDrawing.value = true
+  console.log('开始抽奖...')
+}
+
+const handleGameEnd = (result) => {
+  isDrawing.value = false
+  results.value = [result, ...results.value.slice(0, 4)]
+  console.log('抽奖结束:', result)
+}
+
+const handleResult = (result) => {
+  console.log('实时结果:', result)
+}
+</script>
+
+<style scoped>
+.lottery-container {
+  padding: 20px;
+}
+
+.stats-panel {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #e8f4fd;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.my-lottery {
+  border: 3px solid #ff6b6b;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+}
+
+.history {
+  margin-top: 20px;
+}
+
+.history-item {
+  padding: 5px;
+  background-color: #f5f5f5;
+  margin: 5px 0;
+  border-radius: 4px;
+}
+</style>
+```
+
+### 响应式设计
+
+```vue
+<template>
+  <div :style="containerStyle">
+    <GridLottery
+      :prizes="prizes"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+
+const windowWidth = ref(window.innerWidth)
+
+const containerStyle = computed(() => {
+  const width = Math.min(windowWidth.value - 40, 500)
+  return {
+    width: `${width}px`,
+    height: `${width}px`,
+    margin: '0 auto'
+  }
+})
+
+const prizes = ref([
+  '奖品1', '奖品2', '奖品3', '奖品4',
+  '奖品5', '奖品6', '奖品7', '奖品8', '谢谢参与'
+])
+
+const updateSize = () => {
+  windowWidth.value = window.innerWidth
+}
+
+onMounted(() => {
+  window.addEventListener('resize', updateSize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateSize)
+})
+
+const handleResult = (result) => {
+  console.log('响应式抽奖结果:', result)
+}
+</script>
+```
+
+### 动态更新奖品
+
+```vue
+<template>
+  <div>
+    <button @click="updatePrizes">更新奖品</button>
+
+    <GridLottery
+      :key="prizeKey"
+      :prizes="prizes"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const prizeKey = ref(0)
+const prizes = ref([
+  '奖品A', '奖品B', '奖品C',
+  '奖品D', '奖品E', '奖品F',
+  '奖品G', '奖品H', '谢谢参与'
+])
+
+const updatePrizes = () => {
+  prizes.value[0] = `新奖品${Date.now()}`
+  prizeKey.value++ // 强制重新渲染组件
+}
+
+const handleResult = (result) => {
+  console.log('中奖:', result.prize)
+}
+</script>
+```
+
+### 抽奖次数限制
+
+```vue
+<template>
+  <div>
+    <p>剩余抽奖次数：{{ remainingTries }}</p>
+
+    <GridLottery
+      :prizes="prizes"
+      :disabled="!canDraw"
+      :button-text="canDraw ? '开始抽奖' : '今日抽奖已用完'"
+      @game-start="handleGameStart"
+      @game-end="handleGameEnd"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const remainingTries = ref(3)
+
+const canDraw = computed(() => remainingTries.value > 0)
+
+const prizes = ref([
+  '大奖', '小奖', '谢谢参与', '再来一次',
+  '优惠券', '积分', '红包', '礼品', '空奖'
+])
+
+const handleGameStart = () => {
+  if (remainingTries.value <= 0) {
+    return
+  }
+}
+
+const handleGameEnd = (result) => {
+  remainingTries.value--
+  console.log('剩余次数:', remainingTries.value)
+}
+</script>
+```
+
+## 📋 API参考
+
+### Props
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `prizes` | `string[]` | **必需** | 奖品列表，数组长度应匹配gridSize |
+| `weights` | `number[]` | `undefined` | 权重数组，控制每个奖品的中奖概率 |
+| `gridSize` | `number` | `9` | 网格大小（奖品数量） |
+| `animationDuration` | `number` | `3000` | 动画持续时间（毫秒） |
+| `buttonText` | `string` | `'开始抽奖'` | 抽奖按钮文字 |
+| `class` | `string` | `''` | CSS类名 |
+| `style` | `Record<string, any>` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+|--------|------|------|
+| `result` | `(result: GridLotteryResult)` | 抽奖结果回调 |
+| `game-start` | `()` | 游戏开始回调 |
+| `game-end` | `(result: GridLotteryResult)` | 游戏结束回调 |
+
+### GridLotteryResult
+
+```typescript
+interface GridLotteryResult {
+  position: number        // 中奖位置索引（0-8）
+  prize: string          // 中奖奖品
+  animation: number[]    // 动画路径数组
+}
+```
+
+## 🎨 样式定制
+
+### 容器样式
+
+```vue
+<style scoped>
+.my-lottery {
+  border: 3px solid #ff6b6b;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+}
+
+.my-lottery:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+</style>
+```
+
+### 主题切换
+
+```vue
+<template>
+  <div>
+    <select v-model="currentTheme">
+      <option value="default">默认主题</option>
+      <option value="dark">暗色主题</option>
+      <option value="colorful">彩色主题</option>
+    </select>
+
+    <GridLottery
+      :prizes="prizes"
+      :class="themeClass"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const currentTheme = ref('default')
+
+const themeClass = computed(() => `theme-${currentTheme.value}`)
+
+const prizes = ref(['奖品1', '奖品2', '奖品3', '谢谢参与'])
+</script>
+
+<style scoped>
+.theme-default {
+  border: 2px solid #ddd;
+  background: #fff;
+}
+
+.theme-dark {
+  border: 2px solid #555;
+  background: #333;
+  color: #fff;
+}
+
+.theme-colorful {
+  border: 3px solid;
+  border-image: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1) 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+</style>
+```
+
+## 🔧 高级功能
+
+### 与Pinia状态管理集成
+
+```vue
+<template>
+  <GridLottery
+    :prizes="gameStore.prizes"
+    :disabled="gameStore.isLoading"
+    @result="gameStore.recordResult"
+  />
+
+  <div class="stats">
+    <div>总抽奖次数: {{ gameStore.totalDraws }}</div>
+    <div>中奖率: {{ gameStore.winRate }}%</div>
+  </div>
+</template>
+
+<script setup>
+import { useGameStore } from '@/stores/game'
+
+const gameStore = useGameStore()
+</script>
+```
+
+```typescript
+// stores/game.ts
+import { defineStore } from 'pinia'
+
+export const useGameStore = defineStore('game', {
+  state: () => ({
+    prizes: ['大奖', '小奖', '谢谢参与'],
+    totalDraws: 0,
+    totalWins: 0,
+    isLoading: false,
+    results: []
+  }),
+
+  getters: {
+    winRate: (state) =>
+      state.totalDraws > 0 ? ((state.totalWins / state.totalDraws) * 100).toFixed(1) : '0'
+  },
+
+  actions: {
+    recordResult(result) {
+      this.totalDraws++
+      if (result.prize !== '谢谢参与') {
+        this.totalWins++
+      }
+      this.results.unshift(result)
+    }
+  }
+})
+```
+
+### 组合式函数封装
+
+```typescript
+// composables/useLottery.ts
+import { ref, computed } from 'vue'
+
+export function useLottery(initialPrizes = []) {
+  const prizes = ref(initialPrizes)
+  const results = ref([])
+  const isDrawing = ref(false)
+
+  const totalDraws = computed(() => results.value.length)
+  const wins = computed(() =>
+    results.value.filter(r => r.prize !== '谢谢参与').length
+  )
+  const winRate = computed(() =>
+    totalDraws.value > 0 ? ((wins.value / totalDraws.value) * 100).toFixed(1) : '0.0'
+  )
+
+  const handleGameStart = () => {
+    isDrawing.value = true
+  }
+
+  const handleGameEnd = (result) => {
+    isDrawing.value = false
+    results.value.unshift(result)
+  }
+
+  const resetStats = () => {
+    results.value = []
+  }
+
+  return {
+    prizes,
+    results,
+    isDrawing,
+    totalDraws,
+    wins,
+    winRate,
+    handleGameStart,
+    handleGameEnd,
+    resetStats
+  }
+}
+```
+
+```vue
+<template>
+  <GridLottery
+    :prizes="prizes"
+    :disabled="isDrawing"
+    @game-start="handleGameStart"
+    @game-end="handleGameEnd"
+  />
+
+  <div class="stats">
+    <div>抽奖次数: {{ totalDraws }}</div>
+    <div>中奖率: {{ winRate }}%</div>
+    <button @click="resetStats">重置统计</button>
+  </div>
+</template>
+
+<script setup>
+import { useLottery } from '@/composables/useLottery'
+
+const {
+  prizes,
+  isDrawing,
+  totalDraws,
+  winRate,
+  handleGameStart,
+  handleGameEnd,
+  resetStats
+} = useLottery(['大奖', '小奖', '谢谢参与'])
+</script>
+```
+
+## 🎯 最佳实践
+
+### 1. 权重配置建议
+
+```vue
+<script setup>
+// 合理的权重分配
+const prizes = ref(['特等奖', '一等奖', '二等奖', '三等奖', '优惠券', '积分', '代金券', '红包', '谢谢参与'])
+const weights = ref([1, 3, 8, 15, 20, 25, 20, 5, 3]) // 总和为100，便于计算概率
+</script>
+```
+
+### 2. 错误处理
+
+```vue
+<template>
+  <div>
+    <div v-if="error" class="error">
+      错误：{{ error }}
+    </div>
+
+    <GridLottery
+      :prizes="prizes"
+      :weights="weights"
+      @result="handleResult"
+      @error="handleError"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const error = ref('')
+const prizes = ref(['奖品1', '奖品2', '奖品3', '谢谢参与'])
+const weights = ref([10, 10, 10, 70])
+
+// 验证配置
+const isConfigValid = computed(() => {
+  return prizes.value.length === weights.value.length
+})
+
+const handleResult = (result) => {
+  error.value = ''
+  console.log('抽奖成功:', result)
+}
+
+const handleError = (err) => {
+  error.value = err.message
+  console.error('抽奖错误:', err)
+}
+</script>
+
+<style scoped>
+.error {
+  color: red;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #ffe6e6;
+  border-radius: 4px;
+}
+</style>
+```
+
+### 3. 性能优化
+
+```vue
+<script setup>
+import { ref, computed, shallowRef } from 'vue'
+
+// 对于大数据量使用shallowRef
+const largePrizes = shallowRef(
+  Array.from({ length: 100 }, (_, i) => `奖品${i + 1}`)
+)
+
+// 使用computed缓存计算结果
+const displayPrizes = computed(() =>
+  largePrizes.value.slice(0, 9) // 只显示前9个
+)
+
+// 防抖处理频繁更新
+import { debounce } from 'lodash-es'
+
+const debouncedUpdate = debounce((newPrizes) => {
+  largePrizes.value = newPrizes
+}, 300)
+</script>
+```
+
+## 🐛 常见问题
+
+### Q: 为什么抽奖结果不够随机？
+A: 请确保安装了 `randbox` 依赖，它提供了高质量的随机数生成算法。
+
+### Q: 如何实现公平的抽奖？
+A: 使用权重配置，确保权重总和合理，避免某个奖品权重过高。
+
+### Q: 组件大小如何自适应？
+A: 组件会自动适应容器大小，通过设置容器的宽高来控制组件尺寸。
+
+### Q: 可以禁用动画吗？
+A: 将 `animationDuration` 设置为 0 可以禁用动画效果。
+
+### Q: 如何与Vue Router集成？
+A: 可以在路由组件中正常使用，或者通过路由参数动态配置奖品。
+
+## 🔗 相关链接
+
+- [SlotMachine - 滚动抽奖](/zh/docs/vue/slot-machine)
+- [ScratchCard - 刮刮卡](/zh/docs/vue/scratch-card)
+- [DiceGame - 骰子游戏](/zh/docs/vue/dice-game)
+- [RandBox 核心库](/zh/docs/basics)

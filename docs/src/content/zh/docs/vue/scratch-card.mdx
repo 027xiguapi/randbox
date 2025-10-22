@@ -1,0 +1,874 @@
+---
+title: 'ScratchCard - 刮刮卡'
+description: '基于Canvas和Vue 3的交互式刮刮卡组件，支持多种中奖模式、真实刮除体验和自定义符号配置'
+---
+
+# ScratchCard - 刮刮卡
+
+`ScratchCard` 是一个基于Canvas和Vue 3的交互式刮刮卡组件，提供真实的刮除体验。支持横排、竖排、对角线等多种中奖模式，以及自定义符号和中奖概率配置。
+
+## 📦 导入
+
+```vue
+<script setup>
+import { ScratchCard } from '@randbox/vue'
+// 或者导入类型
+import type { ScratchCardProps, ScratchCardResult } from '@randbox/vue'
+</script>
+```
+
+## 🚀 基础用法
+
+```vue
+<template>
+  <ScratchCard @scratch="handleScratch" />
+</template>
+
+<script setup>
+import { ScratchCard } from '@randbox/vue'
+
+const handleScratch = (result) => {
+  console.log('刮奖结果:', result)
+  if (result.isWinner) {
+    alert(`🎉 恭喜中奖！获得 ${result.winningInfo.prize}`)
+  }
+}
+</script>
+```
+
+## 🎯 高级用法
+
+### 自定义网格和符号
+
+```vue
+<template>
+  <ScratchCard
+    :rows="4"
+    :cols="4"
+    :symbols="symbols"
+    :win-probability="0.3"
+    @scratch="handleScratch"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const symbols = ref(['🍎', '🍊', '🍋', '🍒', '🍇', '💎', '⭐', '🔔'])
+
+const handleScratch = (result) => {
+  console.log('自定义刮奖:', result)
+  if (result.isWinner) {
+    const { winningInfo } = result
+    alert(`中奖类型: ${winningInfo.name} - ${winningInfo.prize}`)
+  }
+}
+</script>
+```
+
+### 多种中奖模式展示
+
+```vue
+<template>
+  <div class="scratch-game">
+    <div class="mode-selector">
+      <label>选择中奖模式: </label>
+      <select v-model="winningMode">
+        <option value="all">全部模式</option>
+        <option value="row">横排</option>
+        <option value="col">竖排</option>
+        <option value="diagonal">对角线</option>
+      </select>
+    </div>
+
+    <ScratchCard
+      :key="cardKey"
+      :rows="3"
+      :cols="3"
+      :symbols="symbols"
+      :win-probability="0.4"
+      @scratch="handleScratch"
+    />
+
+    <div v-if="lastResult" class="result-display">
+      <h4>最近刮奖结果:</h4>
+      <div>是否中奖: {{ lastResult.isWinner ? '是' : '否' }}</div>
+      <div>刮除进度: {{ (lastResult.scratchProgress * 100).toFixed(1) }}%</div>
+      <div v-if="lastResult.isWinner" class="win-info">
+        中奖信息: {{ lastResult.winningInfo.name }} - {{ lastResult.winningInfo.prize }}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, watch } from 'vue'
+
+const winningMode = ref('all')
+const cardKey = ref(0)
+const lastResult = ref(null)
+
+const symbols = ref(['🎯', '🎮', '🎲', '🎪', '🎨', '🎭', '🎺', '🎸'])
+
+// 监听模式变化，重新生成卡片
+watch(winningMode, () => {
+  cardKey.value++
+})
+
+const handleScratch = (result) => {
+  lastResult.value = result
+  if (result.isWinner) {
+    const { type, name, prize } = result.winningInfo
+    console.log(`中奖模式: ${type}, 名称: ${name}, 奖品: ${prize}`)
+  }
+}
+</script>
+
+<style scoped>
+.scratch-game {
+  padding: 20px;
+}
+
+.mode-selector {
+  margin-bottom: 20px;
+}
+
+.result-display {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.win-info {
+  color: green;
+  font-weight: bold;
+}
+</style>
+```
+
+### 带统计功能的刮刮卡
+
+```vue
+<template>
+  <div class="stats-scratch-game">
+    <!-- 统计面板 -->
+    <div class="stats-panel">
+      <h3>刮奖统计</h3>
+      <div class="stats-grid">
+        <div class="stat-item">总卡数: {{ stats.totalCards }}</div>
+        <div class="stat-item">中奖数: {{ stats.wins }}</div>
+        <div class="stat-item">未中奖: {{ stats.losses }}</div>
+        <div class="stat-item">中奖率: {{ winRate }}%</div>
+        <div class="stat-item">总奖金: ${{ stats.totalPrize }}</div>
+      </div>
+    </div>
+
+    <div class="current-card">
+      <h4>第 {{ currentCard + 1 }} 张刮刮卡</h4>
+    </div>
+
+    <ScratchCard
+      :key="currentCard"
+      :rows="3"
+      :cols="3"
+      :symbols="symbols"
+      :win-probability="0.25"
+      @scratch="handleScratch"
+      @new-card="handleNewCard"
+    />
+
+    <div class="controls">
+      <button @click="buyNewCard" class="buy-button">
+        购买新卡片
+      </button>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const stats = ref({
+  totalCards: 0,
+  wins: 0,
+  losses: 0,
+  totalPrize: 0
+})
+
+const currentCard = ref(0)
+const symbols = ref(['💰', '💎', '🏆', '🎁', '⭐', '🍀', '🎯', '💯'])
+
+const winRate = computed(() =>
+  stats.value.totalCards > 0
+    ? ((stats.value.wins / stats.value.totalCards) * 100).toFixed(1)
+    : '0.0'
+)
+
+const handleNewCard = () => {
+  currentCard.value++
+}
+
+const handleScratch = (result) => {
+  stats.value.totalCards++
+
+  if (result.isWinner) {
+    stats.value.wins++
+    stats.value.totalPrize += 100
+    alert('🎉 中奖了！奖品价值: $100')
+  } else {
+    stats.value.losses++
+  }
+}
+
+const buyNewCard = () => {
+  handleNewCard()
+}
+</script>
+
+<style scoped>
+.stats-scratch-game {
+  padding: 20px;
+}
+
+.stats-panel {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #e8f4fd;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.stat-item {
+  padding: 8px;
+  background: white;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.current-card {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.controls {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.buy-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.buy-button:hover {
+  background-color: #0056b3;
+}
+</style>
+```
+
+### 主题化刮刮卡
+
+```vue
+<template>
+  <div class="themed-scratch">
+    <div class="theme-selector">
+      <label>选择主题: </label>
+      <select v-model="currentTheme">
+        <option v-for="(theme, key) in themes" :key="key" :value="key">
+          {{ theme.name }}
+        </option>
+      </select>
+    </div>
+
+    <div :class="['themed-container', `theme-${currentTheme}`]">
+      <h4>{{ themes[currentTheme].name }}刮刮卡</h4>
+
+      <ScratchCard
+        :key="themeKey"
+        :rows="3"
+        :cols="3"
+        :symbols="themes[currentTheme].symbols"
+        :win-probability="0.3"
+        @scratch="handleScratch"
+      />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, watch } from 'vue'
+
+const currentTheme = ref('fruit')
+const themeKey = ref(0)
+
+const themes = {
+  fruit: {
+    symbols: ['🍎', '🍊', '🍋', '🍒', '🍇', '🥝', '🍓', '🍑'],
+    name: '水果主题'
+  },
+  gem: {
+    symbols: ['💎', '💍', '👑', '🏆', '⭐', '✨', '🌟', '💫'],
+    name: '宝石主题'
+  },
+  animal: {
+    symbols: ['🐱', '🐶', '🐸', '🐯', '🦁', '🐻', '🐼', '🐨'],
+    name: '动物主题'
+  }
+}
+
+// 监听主题变化
+watch(currentTheme, () => {
+  themeKey.value++
+})
+
+const handleScratch = (result) => {
+  if (result.isWinner) {
+    alert(`🎉 ${themes[currentTheme.value].name}中奖了！`)
+  }
+}
+</script>
+
+<style scoped>
+.themed-scratch {
+  padding: 20px;
+}
+
+.theme-selector {
+  margin-bottom: 20px;
+}
+
+.themed-container {
+  padding: 20px;
+  border-radius: 15px;
+  border: 2px solid #ddd;
+  text-align: center;
+}
+
+.theme-fruit {
+  background-color: #fff3e0;
+  border-color: #ff9800;
+}
+
+.theme-gem {
+  background-color: #f3e5f5;
+  border-color: #9c27b0;
+}
+
+.theme-animal {
+  background-color: #e8f5e8;
+  border-color: #4caf50;
+}
+</style>
+```
+
+### 渐进式奖池刮刮卡
+
+```vue
+<template>
+  <div class="progressive-scratch">
+    <!-- 游戏信息面板 -->
+    <div class="game-info">
+      <div class="info-item jackpot">
+        <h4>累积奖池</h4>
+        <div class="amount">${{ jackpot.toLocaleString() }}</div>
+      </div>
+      <div class="info-item balance">
+        <h4>账户余额</h4>
+        <div class="amount">${{ balance }}</div>
+      </div>
+      <div class="info-item cards">
+        <h4>已购卡片</h4>
+        <div class="amount">{{ cardCount }}</div>
+      </div>
+    </div>
+
+    <div class="card-info">
+      <div>卡片价格: ${{ cardPrice }} | 每张卡片增加${{ cardPrice * 0.5 }}奖池</div>
+      <button
+        @click="buyNewCard"
+        :disabled="balance < cardPrice"
+        class="buy-button"
+        :class="{ disabled: balance < cardPrice }"
+      >
+        购买新卡片 (${{ cardPrice }})
+      </button>
+    </div>
+
+    <ScratchCard
+      v-if="cardCount > 0"
+      :key="cardCount"
+      :rows="3"
+      :cols="3"
+      :symbols="symbols"
+      :win-probability="0.4"
+      @scratch="handleScratch"
+    />
+
+    <div v-else class="no-cards">
+      购买您的第一张刮刮卡开始游戏！
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const jackpot = ref(1000)
+const cardPrice = ref(10)
+const balance = ref(100)
+const cardCount = ref(0)
+
+const symbols = ref(['💰', '💵', '💴', '💶', '💷', '🏦', '💳', '📈'])
+
+const buyNewCard = () => {
+  if (balance.value < cardPrice.value) {
+    alert('余额不足！')
+    return
+  }
+
+  balance.value -= cardPrice.value
+  jackpot.value += cardPrice.value * 0.5 // 每张卡片增加一半价格到奖池
+  cardCount.value++
+}
+
+const handleScratch = (result) => {
+  if (result.isWinner) {
+    const winAmount = Math.random() > 0.95 ? jackpot.value : Math.floor(Math.random() * 100) + 20
+
+    if (winAmount === jackpot.value) {
+      alert(`🎰 超级大奖！获得累积奖池 $${jackpot.value}！`)
+      jackpot.value = 1000 // 重置奖池
+    } else {
+      alert(`🎉 中奖！获得 $${winAmount}！`)
+    }
+
+    balance.value += winAmount
+  }
+}
+</script>
+
+<style scoped>
+.progressive-scratch {
+  padding: 20px;
+}
+
+.game-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.info-item {
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.jackpot {
+  background-color: #fff3cd;
+}
+
+.balance {
+  background-color: #d1ecf1;
+}
+
+.cards {
+  background-color: #d4edda;
+}
+
+.amount {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.jackpot .amount {
+  color: #d4a853;
+}
+
+.balance .amount {
+  color: #0c5460;
+}
+
+.cards .amount {
+  color: #155724;
+}
+
+.card-info {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.buy-button {
+  margin-top: 15px;
+  padding: 12px 24px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  background-color: #28a745;
+}
+
+.buy-button.disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.no-cards {
+  text-align: center;
+  padding: 40px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  color: #6c757d;
+}
+</style>
+```
+
+## 📋 API参考
+
+### Props
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `rows` | `number` | `3` | 网格行数 |
+| `cols` | `number` | `3` | 网格列数 |
+| `symbols` | `string[]` | `['🍎', '🍊', '🍋', '🍒']` | 可用符号数组 |
+| `winProbability` | `number` | `0.2` | 中奖概率（0-1之间） |
+| `class` | `string` | `''` | CSS类名 |
+| `style` | `Record<string, any>` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+|--------|------|------|
+| `scratch` | `(result: ScratchCardResult)` | 刮除完成回调 |
+| `new-card` | `()` | 新卡片生成回调 |
+| `game-start` | `()` | 游戏开始回调 |
+| `game-end` | `(result: ScratchCardResult)` | 游戏结束回调 |
+
+### ScratchCardResult
+
+```typescript
+interface ScratchCardResult {
+  grid: string[][]           // 卡片网格数据
+  isWinner: boolean          // 是否中奖
+  scratchProgress?: number   // 刮除进度（0-1）
+  winningInfo?: {
+    pattern: string[]        // 中奖图案
+    name: string            // 中奖类型名称
+    prize: string           // 奖品描述
+    symbol?: string         // 中奖符号
+    type?: 'row' | 'col' | 'diagonal'  // 中奖类型
+    positions: Array<{       // 中奖位置
+      row: number
+      col: number
+    }>
+  }
+}
+```
+
+## 🎨 样式定制
+
+### 容器样式
+
+```vue
+<style scoped>
+.scratch-card-container {
+  border: 3px solid #ffc107;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+  background: linear-gradient(145deg, #fff9c4, #ffecb5);
+}
+
+.scratch-card-container:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+</style>
+```
+
+### 中奖效果
+
+```vue
+<style scoped>
+.winning-card {
+  animation: winPulse 2s ease-in-out infinite;
+  border-color: #28a745;
+  box-shadow: 0 0 30px rgba(40, 167, 69, 0.5);
+}
+
+@keyframes winPulse {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(40, 167, 69, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(40, 167, 69, 0.8);
+  }
+}
+</style>
+```
+
+## 🔧 高级功能
+
+### 自定义中奖规则
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const symbols = ref(['A', 'B', 'C', 'D', 'E'])
+
+// 自定义中奖检测逻辑
+const checkCustomWinning = (grid) => {
+  // 检查特殊图案
+  const center = grid[1][1]
+  const corners = [grid[0][0], grid[0][2], grid[2][0], grid[2][2]]
+
+  // 规则1: 中心+四角相同
+  if (corners.every(symbol => symbol === center)) {
+    return {
+      isWinner: true,
+      type: 'center_corners',
+      name: '中心四角',
+      prize: '特殊奖励'
+    }
+  }
+
+  // 规则2: X形图案
+  if (grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2] &&
+      grid[0][2] === grid[1][1] && grid[1][1] === grid[2][0]) {
+    return {
+      isWinner: true,
+      type: 'x_pattern',
+      name: 'X图案',
+      prize: '大奖'
+    }
+  }
+
+  return { isWinner: false }
+}
+
+const handleScratch = (result) => {
+  const customResult = checkCustomWinning(result.grid)
+  if (customResult.isWinner) {
+    alert(`特殊中奖: ${customResult.name} - ${customResult.prize}`)
+  }
+}
+</script>
+```
+
+### 动画增强
+
+```vue
+<template>
+  <div class="animated-scratch" :class="{ scratching: isScratching }">
+    <ScratchCard
+      @game-start="handleGameStart"
+      @game-end="handleGameEnd"
+    />
+
+    <Transition name="win-celebration">
+      <div v-if="lastWin" class="win-overlay">
+        🎉 {{ lastWin.name }} 🎉
+        <br />
+        {{ lastWin.prize }}
+      </div>
+    </Transition>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const isScratching = ref(false)
+const lastWin = ref(null)
+
+const handleGameStart = () => {
+  isScratching.value = true
+}
+
+const handleGameEnd = (result) => {
+  isScratching.value = false
+  if (result.isWinner) {
+    lastWin.value = result.winningInfo
+    // 延迟隐藏中奖动画
+    setTimeout(() => {
+      lastWin.value = null
+    }, 3000)
+  }
+}
+</script>
+
+<style scoped>
+.animated-scratch {
+  position: relative;
+}
+
+.scratching {
+  animation: scratchShake 0.2s ease-in-out infinite;
+}
+
+@keyframes scratchShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-1px); }
+  75% { transform: translateX(1px); }
+}
+
+.win-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(40, 167, 69, 0.9);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 10;
+}
+
+.win-celebration-enter-active {
+  animation: bounceIn 0.5s;
+}
+
+.win-celebration-leave-active {
+  animation: fadeOut 0.3s;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+</style>
+```
+
+## 🎯 最佳实践
+
+### 1. 中奖概率设计
+
+```vue
+<script setup>
+// 合理的中奖概率配置
+const probabilities = {
+  easy: 0.4,      // 简单模式，40%中奖率
+  normal: 0.25,   // 普通模式，25%中奖率
+  hard: 0.15,     // 困难模式，15%中奖率
+  extreme: 0.05   // 极限模式，5%中奖率
+}
+</script>
+```
+
+### 2. 符号设计建议
+
+```vue
+<script setup>
+// 推荐的符号组合
+const symbolSets = {
+  // 高对比度，易区分
+  classic: ['🔴', '🟢', '🔵', '🟡', '🟣', '🟠', '⚫', '⚪'],
+
+  // 主题化符号
+  casino: ['🎰', '🃏', '🎲', '💰', '💎', '🏆', '⭐', '🍀'],
+
+  // 避免使用相似符号
+  bad: ['😀', '😃', '😄', '😁'] // 太相似，用户难以区分
+}
+</script>
+```
+
+### 3. 错误处理
+
+```vue
+<template>
+  <div>
+    <div v-if="error" class="error-message">
+      错误: {{ error }}
+    </div>
+
+    <ScratchCard
+      :rows="3"
+      :cols="3"
+      :win-probability="0.3"
+      @scratch="handleScratch"
+      @error="handleError"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const error = ref('')
+
+const handleScratch = (result) => {
+  error.value = ''
+  console.log('刮奖成功:', result)
+}
+
+const handleError = (err) => {
+  error.value = err.message
+  console.error('刮刮卡错误:', err)
+}
+</script>
+
+<style scoped>
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #ffe6e6;
+  border-radius: 4px;
+}
+</style>
+```
+
+## 🐛 常见问题
+
+### Q: 如何实现真正的随机性？
+A: 组件使用RandBox的Mersenne Twister算法，提供高质量的随机数生成，确保每次刮奖都是真正随机的。
+
+### Q: 可以自定义刮除手势吗？
+A: 目前组件支持鼠标和触摸刮除，刮除区域和敏感度可以通过Canvas事件进行调整。
+
+### Q: 如何控制中奖概率？
+A: 通过`winProbability`属性设置，范围是0-1，例如0.3表示30%的中奖概率。
+
+### Q: 支持哪些中奖模式？
+A: 支持横排、竖排、对角线三种基础模式，也可以通过自定义逻辑实现更复杂的中奖规则。
+
+### Q: 如何与Vue Router集成？
+A: 可以在路由组件中正常使用，或者通过路由参数动态配置符号和概率。
+
+## 🔗 相关链接
+
+- [GridLottery - 九宫格抽奖](/zh/docs/vue/grid-lottery)
+- [SlotMachine - 滚动抽奖](/zh/docs/vue/slot-machine)
+- [DiceGame - 骰子游戏](/zh/docs/vue/dice-game)
+- [RandBox 随机算法](/zh/docs/basics)

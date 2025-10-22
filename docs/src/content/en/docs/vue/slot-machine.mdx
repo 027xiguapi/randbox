@@ -1,0 +1,752 @@
+---
+title: "SlotMachine - Slot Machine"
+description: "Slot machine style spinning lottery component based on Canvas and Vue 3, supporting multi-reel, custom symbols, and winning rule configuration"
+---
+
+# SlotMachine - Slot Machine
+
+`SlotMachine` is a slot machine style spinning lottery component based on Canvas and Vue 3, providing multi-reel synchronous or asynchronous spinning with support for custom symbols, weight configuration, and winning rules.
+
+## 📦 Import
+
+```vue
+<script setup>
+import { SlotMachine } from '@randbox/vue'
+// Or import types
+import type { SlotMachineProps, SlotMachineResult } from '@randbox/vue'
+</script>
+```
+
+## 🚀 Basic Usage
+
+```vue
+<template>
+  <SlotMachine
+    :reels="reels"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { SlotMachine } from '@randbox/vue'
+
+const reels = ref([
+  ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+  ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+  ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣']
+])
+
+const handleResult = (result) => {
+  console.log('Slot machine result:', result)
+  if (result.isJackpot) {
+    alert('🎉 Congratulations! Jackpot!')
+  }
+}
+</script>
+```
+
+## 🎯 Advanced Usage
+
+### Weighted Spinning Lottery
+
+```vue
+<template>
+  <SlotMachine
+    :reels="reels"
+    :weights="weights"
+    :animation-duration="4000"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const reels = ref([
+  ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+  ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+  ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣']
+])
+
+// Set different weights for each reel
+const weights = ref([
+  [20, 18, 15, 12, 10, 8, 5, 2],  // First reel weights
+  [20, 18, 15, 12, 10, 8, 5, 2],  // Second reel weights
+  [20, 18, 15, 12, 10, 8, 5, 2]   // Third reel weights
+])
+
+const handleResult = (result) => {
+  console.log('Weighted lottery result:', result)
+  if (result.combination === '💎💎💎') {
+    alert('💎 Diamond Jackpot!')
+  }
+}
+</script>
+```
+
+### Number Slot Machine
+
+```vue
+<template>
+  <SlotMachine
+    :reels="numberReels"
+    :animation-duration="3000"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const numberReels = ref([
+  ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+  ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+  ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+])
+
+const checkJackpot = (results) => {
+  // Check for sequence or three identical numbers
+  const [a, b, c] = results.map(r => parseInt(r))
+  return a === b && b === c // Three identical numbers
+}
+
+const handleResult = (result) => {
+  const isWin = checkJackpot(result.results)
+  console.log('Number slot machine:', { ...result, isWin })
+}
+</script>
+```
+
+### Five-Reel Slot Machine
+
+```vue
+<template>
+  <SlotMachine
+    :reels="reels"
+    :weights="weights"
+    :animation-duration="5000"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const symbols = ['A', 'K', 'Q', 'J', '10', '9', '8', '7']
+const reels = ref(Array(5).fill(symbols))
+
+// Set different weight distributions for five reels
+const weights = computed(() =>
+  reels.value.map((_, index) => {
+    // Middle reel more likely to produce good symbols
+    const bonus = index === 2 ? 1.2 : 1.0
+    return symbols.map((_, i) => (symbols.length - i) * bonus)
+  })
+)
+
+const checkWinningLines = (results) => {
+  const lines = [
+    results, // Middle line
+    // Can add more payline logic
+  ]
+
+  return lines.some(line => {
+    const first = line[0]
+    return line.every(symbol => symbol === first)
+  })
+}
+
+const handleResult = (result) => {
+  const hasWin = checkWinningLines(result.results)
+  console.log('Five-reel result:', { ...result, hasWin })
+}
+</script>
+```
+
+### Complete Configuration Example
+
+```vue
+<template>
+  <div class="slot-machine-container">
+    <!-- Statistics Panel -->
+    <div class="stats-panel">
+      <div>Total Spins: {{ totalSpins }} | Wins: {{ wins }} | Win Rate: {{ winRate }}%</div>
+    </div>
+
+    <SlotMachine
+      :reels="reels"
+      :weights="weights"
+      :animation-duration="3500"
+      :button-text="isSpinning ? 'Spinning...' : '🎰 Start Spin'"
+      class="casino-slot"
+      :style="{ border: '3px solid gold', borderRadius: '15px' }"
+      :disabled="isSpinning"
+      @game-start="handleGameStart"
+      @game-end="handleGameEnd"
+      @result="handleResult"
+    />
+
+    <!-- History -->
+    <div v-if="history.length > 0" class="history">
+      <h3>Recent Spin Records:</h3>
+      <div
+        v-for="(result, index) in history"
+        :key="index"
+        class="history-item"
+        :class="{ 'jackpot': result.isJackpot }"
+      >
+        <strong>{{ result.combination }}</strong>
+        <span v-if="result.isJackpot" class="jackpot-text">🎉 Winner!</span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { SlotMachine } from '@randbox/vue'
+
+const isSpinning = ref(false)
+const totalSpins = ref(0)
+const wins = ref(0)
+const history = ref([])
+
+const reels = ref([
+  ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐'],
+  ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐'],
+  ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐']
+])
+
+const weights = ref([
+  [25, 20, 15, 12, 10, 8, 5, 5],
+  [25, 20, 15, 12, 10, 8, 5, 5],
+  [25, 20, 15, 12, 10, 8, 5, 5]
+])
+
+const winRate = computed(() =>
+  totalSpins.value > 0 ? ((wins.value / totalSpins.value) * 100).toFixed(1) : '0.0'
+)
+
+const handleGameStart = () => {
+  isSpinning.value = true
+  console.log('Starting spin...')
+}
+
+const handleGameEnd = (result) => {
+  isSpinning.value = false
+  totalSpins.value++
+
+  if (result.isJackpot) {
+    wins.value++
+  }
+
+  history.value = [result, ...history.value.slice(0, 9)]
+  console.log('Spin ended:', result)
+}
+
+const handleResult = (result) => {
+  console.log('Real-time result:', result)
+}
+</script>
+
+<style scoped>
+.slot-machine-container {
+  padding: 20px;
+}
+
+.stats-panel {
+  margin-bottom: 20px;
+  text-align: center;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.casino-slot {
+  background: linear-gradient(145deg, #2c3e50, #34495e);
+  border: 3px solid #f39c12;
+  border-radius: 20px;
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.3),
+    inset 0 2px 10px rgba(255,255,255,0.1);
+}
+
+.casino-slot:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+
+.history {
+  margin-top: 20px;
+}
+
+.history-item {
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+
+.history-item.jackpot {
+  background-color: #fff3cd;
+  border: 2px solid #ffc107;
+}
+
+.jackpot-text {
+  color: #d4a853;
+  margin-left: 10px;
+}
+</style>
+```
+
+### Progressive Jackpot
+
+```vue
+<template>
+  <div>
+    <div class="jackpot-info">
+      <h2>Progressive Jackpot: ${{ jackpotAmount.toLocaleString() }}</h2>
+      <div v-if="lastWin" class="last-win">
+        Last Win: {{ lastWin.type }} - ${{ lastWin.amount }}
+      </div>
+    </div>
+
+    <SlotMachine
+      :reels="reels"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const jackpotAmount = ref(1000)
+const lastWin = ref(null)
+
+const reels = ref([
+  ['💎', '⭐', '🔔', '🍒', '🍇', '🍊', '🍎'],
+  ['💎', '⭐', '🔔', '🍒', '🍇', '🍊', '🍎'],
+  ['💎', '⭐', '🔔', '🍒', '🍇', '🍊', '🍎']
+])
+
+const handleResult = (result) => {
+  // Increase jackpot amount each game
+  jackpotAmount.value += 10
+
+  if (result.combination === '💎💎💎') {
+    // Super jackpot win
+    lastWin.value = { type: 'jackpot', amount: jackpotAmount.value }
+    jackpotAmount.value = 1000 // Reset jackpot
+    alert(`🎉 Super Jackpot! Prize: $${lastWin.value.amount}`)
+  } else if (result.isJackpot) {
+    const amount = 100
+    lastWin.value = { type: 'normal', amount }
+    alert(`🎉 Winner! Prize: $${amount}`)
+  }
+}
+</script>
+
+<style scoped>
+.jackpot-info {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+}
+
+.last-win {
+  color: #90EE90;
+  margin-top: 10px;
+}
+</style>
+```
+
+### Multi-Payline Slot Machine
+
+```vue
+<template>
+  <SlotMachine
+    :reels="reels"
+    @result="handleResult"
+  />
+
+  <div v-if="winInfo.length > 0" class="win-info">
+    <h3>Win Information:</h3>
+    <div
+      v-for="(win, index) in winInfo"
+      :key="index"
+      class="win-line"
+    >
+      Payline {{ win.line }}: {{ win.symbol }} x{{ win.count }} = {{ win.payout }} points
+    </div>
+    <div class="total-payout">Total Payout: {{ totalPayout }} points</div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const symbols = ['A', 'K', 'Q', 'J', '10', '9']
+const reels = ref(Array(5).fill(symbols))
+const winInfo = ref([])
+
+// Define paylines
+const paylines = [
+  [1, 1, 1, 1, 1], // Middle line
+  [0, 0, 0, 0, 0], // Top line
+  [2, 2, 2, 2, 2], // Bottom line
+  [0, 1, 2, 1, 0], // V shape
+  [2, 1, 0, 1, 2], // Inverted V shape
+]
+
+const totalPayout = computed(() =>
+  winInfo.value.reduce((sum, win) => sum + win.payout, 0)
+)
+
+const calculatePayout = (symbol, count) => {
+  const payouts = {
+    'A': [0, 0, 50, 200, 1000],
+    'K': [0, 0, 25, 100, 500],
+    'Q': [0, 0, 20, 80, 400],
+    'J': [0, 0, 15, 60, 300],
+    '10': [0, 0, 10, 40, 200],
+    '9': [0, 0, 5, 20, 100],
+  }
+  return payouts[symbol]?.[count] || 0
+}
+
+const checkPaylines = (results) => {
+  const wins = []
+
+  paylines.forEach((line, lineIndex) => {
+    const lineSymbols = line.map((row, col) => {
+      return results[col] // Simplified version
+    })
+
+    // Check if payline wins
+    const firstSymbol = lineSymbols[0]
+    let matchCount = 1
+
+    for (let i = 1; i < lineSymbols.length; i++) {
+      if (lineSymbols[i] === firstSymbol) {
+        matchCount++
+      } else {
+        break
+      }
+    }
+
+    if (matchCount >= 3) {
+      wins.push({
+        line: lineIndex + 1,
+        symbol: firstSymbol,
+        count: matchCount,
+        payout: calculatePayout(firstSymbol, matchCount)
+      })
+    }
+  })
+
+  return wins
+}
+
+const handleResult = (result) => {
+  const wins = checkPaylines(result.results)
+  winInfo.value = wins
+
+  if (totalPayout.value > 0) {
+    alert(`Winner! Total payout: ${totalPayout.value}`)
+  }
+}
+</script>
+
+<style scoped>
+.win-info {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #d4edda;
+  border-radius: 8px;
+}
+
+.win-line {
+  margin: 5px 0;
+  padding: 5px;
+  background-color: #c3e6cb;
+  border-radius: 4px;
+}
+
+.total-payout {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #155724;
+}
+</style>
+```
+
+## 📋 API Reference
+
+### Props
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `reels` | `string[][]` | **Required** | Reel configuration, each sub-array represents symbols for one reel |
+| `weights` | `number[][]` | `undefined` | Weight configuration controlling symbol appearance probability for each reel |
+| `animationDuration` | `number` | `3000` | Animation duration (milliseconds) |
+| `buttonText` | `string` | `'Start Spin'` | Action button text |
+| `class` | `string` | `''` | CSS class name |
+| `style` | `Record<string, any>` | `{}` | Inline styles |
+| `disabled` | `boolean` | `false` | Whether disabled |
+
+### Events
+
+| Event | Parameters | Description |
+|-------|------------|-------------|
+| `result` | `(result: SlotMachineResult)` | Result callback |
+| `game-start` | `()` | Game start callback |
+| `game-end` | `(result: SlotMachineResult)` | Game end callback |
+
+### SlotMachineResult
+
+```typescript
+interface SlotMachineResult {
+  results: string[]      // Result for each reel
+  isJackpot: boolean     // Whether jackpot
+  combination: string    // Combination string (e.g., "🍎🍎🍎")
+}
+```
+
+## 🎨 Style Customization
+
+### Neon Light Effect
+
+```vue
+<style scoped>
+.neon-slot {
+  border: 2px solid #ff6b6b;
+  border-radius: 15px;
+  box-shadow:
+    0 0 20px #ff6b6b,
+    inset 0 0 20px rgba(255, 107, 107, 0.1);
+  animation: neonGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes neonGlow {
+  from {
+    box-shadow:
+      0 0 20px #ff6b6b,
+      inset 0 0 20px rgba(255, 107, 107, 0.1);
+  }
+  to {
+    box-shadow:
+      0 0 30px #ff6b6b,
+      0 0 40px #ff6b6b,
+      inset 0 0 30px rgba(255, 107, 107, 0.2);
+  }
+}
+</style>
+```
+
+### Responsive Layout
+
+```vue
+<template>
+  <div class="responsive-container">
+    <SlotMachine
+      :reels="reels"
+      class="responsive-slot"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<style scoped>
+.responsive-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.responsive-slot {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .responsive-container {
+    padding: 10px;
+  }
+
+  .responsive-slot {
+    font-size: 0.8em;
+  }
+}
+</style>
+```
+
+## 🔧 Advanced Features
+
+### Custom Winning Rules
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const symbols = ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐']
+const reels = ref([symbols, symbols, symbols])
+
+// Custom winning rules
+const checkWinning = (results) => {
+  const [a, b, c] = results
+
+  // Rule 1: Three identical
+  if (a === b && b === c) return { type: 'triple', multiplier: 10 }
+
+  // Rule 2: Two identical
+  if (a === b || b === c || a === c) return { type: 'double', multiplier: 2 }
+
+  // Rule 3: Special combination
+  if (results.includes('💎') && results.includes('⭐')) {
+    return { type: 'special', multiplier: 5 }
+  }
+
+  return { type: 'none', multiplier: 0 }
+}
+
+const handleResult = (result) => {
+  const winInfo = checkWinning(result.results)
+  console.log('Win info:', winInfo)
+
+  if (winInfo.multiplier > 0) {
+    alert(`Win type: ${winInfo.type}, Multiplier: ${winInfo.multiplier}x`)
+  }
+}
+</script>
+```
+
+### Vuex/Pinia State Management Integration
+
+```vue
+<template>
+  <SlotMachine
+    :reels="gameStore.reels"
+    :disabled="gameStore.isSpinning"
+    @result="gameStore.recordResult"
+  />
+
+  <div class="game-stats">
+    <div>Total Spins: {{ gameStore.totalSpins }}</div>
+    <div>Win Rate: {{ gameStore.winRate }}%</div>
+  </div>
+</template>
+
+<script setup>
+import { useGameStore } from '@/stores/game'
+
+const gameStore = useGameStore()
+</script>
+```
+
+```typescript
+// stores/game.ts
+import { defineStore } from 'pinia'
+
+export const useGameStore = defineStore('slotGame', {
+  state: () => ({
+    reels: [
+      ['🍎', '🍊', '🍋'],
+      ['🍎', '🍊', '🍋'],
+      ['🍎', '🍊', '🍋']
+    ],
+    totalSpins: 0,
+    totalWins: 0,
+    isSpinning: false,
+    results: []
+  }),
+
+  getters: {
+    winRate: (state) =>
+      state.totalSpins > 0 ? ((state.totalWins / state.totalSpins) * 100).toFixed(1) : '0'
+  },
+
+  actions: {
+    recordResult(result) {
+      this.totalSpins++
+      if (result.isJackpot) {
+        this.totalWins++
+      }
+      this.results.unshift(result)
+    }
+  }
+})
+```
+
+## 🎯 Best Practices
+
+### 1. Symbol Design Recommendations
+
+```vue
+<script setup>
+// Use easily distinguishable symbols
+const goodSymbols = ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐']
+
+// Avoid similar symbols
+const badSymbols = ['😀', '😃', '😄', '😁'] // Too similar, hard to distinguish
+</script>
+```
+
+### 2. Weight Balance
+
+```vue
+<script setup>
+// Balanced weight distribution
+const balancedWeights = ref([
+  [30, 25, 20, 15, 5, 3, 1, 1], // Common symbols high weight, rare symbols low weight
+  [30, 25, 20, 15, 5, 3, 1, 1],
+  [30, 25, 20, 15, 5, 3, 1, 1]
+])
+</script>
+```
+
+### 3. Performance Optimization
+
+```vue
+<script setup>
+import { ref, computed, shallowRef } from 'vue'
+
+// Use shallowRef for large arrays
+const reels = shallowRef([...])
+
+// Use computed to cache complex calculations
+const processedReels = computed(() =>
+  generateReels(complexity.value)
+)
+</script>
+```
+
+## 🐛 Common Issues
+
+### Q: How to achieve true randomness?
+A: The component uses RandBox's Mersenne Twister algorithm, providing high-quality random number generation.
+
+### Q: Is there a limit to the number of reels?
+A: Theoretically no limit, but recommend no more than 7 reels to ensure performance and user experience.
+
+### Q: Can asynchronous spinning be implemented?
+A: Yes, the component internally implements asynchronous spinning effects, with each reel stopping at different times.
+
+### Q: How to adjust winning probability?
+A: Use the weights property to adjust the weight of each symbol; higher weight means higher appearance probability.
+
+### Q: How to integrate with Vue Router?
+A: Can be used normally in route components, or dynamically configure reels through route parameters.
+
+## 🔗 Related Links
+
+- [GridLottery - Grid Lottery](/en/docs/vue/grid-lottery)
+- [ScratchCard - Scratch Card](/en/docs/vue/scratch-card)
+- [DiceGame - Dice Game](/en/docs/vue/dice-game)
+- [RandBox Weighted Methods](/en/docs/miscellaneous/weighted)

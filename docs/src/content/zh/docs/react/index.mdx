@@ -1,0 +1,135 @@
+---
+title: '@randbox/react 组件库'
+description: '基于Canvas的高性能React游戏组件库，提供九宫格抽奖、滚动抽奖、刮刮卡、骰子游戏和石头剪刀布组件'
+---
+
+# @randbox/react 组件库
+
+@randbox/react 是一个基于Canvas渲染的高性能React游戏组件库，提供了5个核心游戏组件。所有组件都使用RandBox作为随机数生成器，确保真正的随机性和公平性。
+
+## ✨ 特性
+
+- 🎮 **5个核心游戏组件**：九宫格抽奖、滚动抽奖、刮刮卡、骰子游戏、石头剪刀布
+- 🚀 **高性能**：基于Canvas渲染，流畅的动画效果
+- 📦 **轻量级**：优化后的打包大小（ES模块：~109KB，UMD：~45KB）
+- 🎨 **无需CSS**：所有样式都通过Canvas渲染，无外部依赖
+- 📱 **响应式**：自适应不同屏幕尺寸
+- 🔧 **TypeScript**：完整的类型定义支持
+- 🎲 **真实随机**：基于RandBox的高质量随机数生成
+
+## 📦 安装
+
+```bash
+npm install @randbox/react randbox
+# 或
+yarn add @randbox/react randbox
+# 或
+pnpm add @randbox/react randbox
+```
+
+## 🚀 快速开始
+
+```typescript
+import { GridLottery, DiceGame, ScratchCard } from '@randbox/react';
+
+function App() {
+  return (
+    <div>
+      {/* 九宫格抽奖 */}
+      <GridLottery
+        prizes={['奖品1', '奖品2', '奖品3', '谢谢参与']}
+        onResult={(result) => console.log('中奖:', result)}
+      />
+
+      {/* 骰子游戏 */}
+      <DiceGame
+        diceCount={2}
+        gameMode="sum"
+        targetSum={7}
+        onResult={(result) => console.log('投掷结果:', result)}
+      />
+
+      {/* 刮刮卡 */}
+      <ScratchCard
+        rows={3}
+        cols={3}
+        symbols={['🍎', '🍌', '🍇']}
+        onScratch={(result) => console.log('刮奖结果:', result)}
+      />
+    </div>
+  );
+}
+```
+
+## 🎮 组件列表
+
+### [GridLottery - 九宫格抽奖](/zh/docs/react/grid-lottery)
+经典的九宫格转盘抽奖，支持自定义奖品和权重。
+
+### [SlotMachine - 滚动抽奖](/zh/docs/react/slot-machine)
+多滚轴老虎机风格的抽奖组件，支持自定义符号和中奖规则。
+
+### [ScratchCard - 刮刮卡](/zh/docs/react/scratch-card)
+真实的刮除体验，支持多种中奖模式（横排、竖排、对角线）。
+
+### [DiceGame - 骰子游戏](/zh/docs/react/dice-game)
+3D效果的骰子游戏，支持多种游戏模式（简单、和值、大小、猜测等）。
+
+### [RockPaperScissors - 石头剪刀布](/zh/docs/react/rock-paper-scissors)
+经典的石头剪刀布游戏，支持多种AI策略和统计功能。
+
+## 🎯 性能优化
+
+- **Tree-shaking**: 支持按需导入，未使用的组件不会被打包
+- **Canvas渲染**: 利用GPU加速，提供流畅的60fps动画
+- **外部依赖**: React和RandBox作为外部依赖，避免重复打包
+- **代码压缩**: 生产环境自动移除console.log和调试代码
+
+## 🔧 技术规格
+
+- **渲染引擎**: HTML5 Canvas
+- **随机数生成**: RandBox (Mersenne Twister算法)
+- **动画**: requestAnimationFrame + 缓动函数
+- **响应式**: 自动适配容器大小
+- **TypeScript**: 完整的类型支持
+
+## 📚 API参考
+
+所有组件都继承自 `BaseGameProps` 接口：
+
+```typescript
+interface BaseGameProps {
+  className?: string;
+  style?: React.CSSProperties;
+  disabled?: boolean;
+  onGameStart?: () => void;
+  onGameEnd?: (result: any) => void;
+}
+```
+
+每个组件还有自己特定的属性和类型定义，详见各组件的专门文档。
+
+## 🎨 自定义样式
+
+由于所有组件都基于Canvas渲染，样式定制主要通过组件属性进行：
+
+```typescript
+// 通过容器样式控制组件外观
+<div style={{ border: '2px solid #ccc', borderRadius: '10px' }}>
+  <GridLottery {...props} />
+</div>
+
+// 通过组件属性控制Canvas内容
+<DiceGame
+  style={{ border: '1px solid #ddd' }}
+  className="my-dice-game"
+/>
+```
+
+## 🤝 贡献
+
+欢迎贡献代码！请查看我们的[贡献指南](https://github.com/027xiguapi/randbox/blob/main/CONTRIBUTING.md)。
+
+## 📄 许可证
+
+MIT License - 详见 [LICENSE](https://github.com/027xiguapi/randbox/blob/main/LICENSE) 文件。

@@ -1,0 +1,654 @@
+---
+title: 'ScratchCard - Scratch Card Game'
+description: 'Canvas-based interactive scratch card component with support for multiple winning modes, realistic scratching experience and custom symbol configuration'
+---
+
+# ScratchCard - Scratch Card Game
+
+`ScratchCard` is a Canvas-based interactive scratch card component that provides a realistic scratching experience. It supports multiple winning modes including horizontal, vertical, and diagonal patterns, as well as custom symbols and winning probability configuration.
+
+## 📦 Import
+
+```typescript
+import { ScratchCard } from '@randbox/react';
+import type { ScratchCardProps, ScratchCardResult } from '@randbox/react';
+```
+
+## 🚀 Basic Usage
+
+```typescript
+import React from 'react';
+import { ScratchCard } from '@randbox/react';
+
+function BasicScratchCard() {
+  const handleScratch = (result) => {
+    console.log('Scratch result:', result);
+    if (result.isWinner) {
+      alert(`🎉 Congratulations! You won ${result.winningInfo.prize}`);
+    }
+  };
+
+  return (
+    <ScratchCard
+      onScratch={handleScratch}
+    />
+  );
+}
+```
+
+## 🎯 Advanced Usage
+
+### Custom Grid and Symbols
+
+```typescript
+function CustomScratchCard() {
+  const symbols = ['🍎', '🍊', '🍋', '🍒', '🍇', '💎', '⭐', '🔔'];
+
+  return (
+    <ScratchCard
+      rows={4}
+      cols={4}
+      symbols={symbols}
+      winProbability={0.3}
+      onScratch={(result) => {
+        console.log('Custom scratch:', result);
+        if (result.isWinner) {
+          const { winningInfo } = result;
+          alert(`Win type: ${winningInfo.name} - ${winningInfo.prize}`);
+        }
+      }}
+    />
+  );
+}
+```
+
+### Multiple Winning Modes Display
+
+```typescript
+function WinningModesScratchCard() {
+  const [winningMode, setWinningMode] = useState('all');
+  const [lastResult, setLastResult] = useState(null);
+
+  const symbols = ['🎯', '🎮', '🎲', '🎪', '🎨', '🎭', '🎺', '🎸'];
+
+  const handleScratch = (result) => {
+    setLastResult(result);
+    if (result.isWinner) {
+      const { type, name, prize } = result.winningInfo;
+      console.log(`Win mode: ${type}, Name: ${name}, Prize: ${prize}`);
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <label>Select winning mode: </label>
+        <select value={winningMode} onChange={(e) => setWinningMode(e.target.value)}>
+          <option value="all">All modes</option>
+          <option value="row">Horizontal</option>
+          <option value="col">Vertical</option>
+          <option value="diagonal">Diagonal</option>
+        </select>
+      </div>
+
+      <ScratchCard
+        rows={3}
+        cols={3}
+        symbols={symbols}
+        winProbability={0.4}
+        onScratch={handleScratch}
+        key={winningMode} // Regenerate card
+      />
+
+      {lastResult && (
+        <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f5f5f5' }}>
+          <h4>Latest Scratch Result:</h4>
+          <div>Winner: {lastResult.isWinner ? 'Yes' : 'No'}</div>
+          <div>Scratch Progress: {(lastResult.scratchProgress * 100).toFixed(1)}%</div>
+          {lastResult.isWinner && (
+            <div style={{ color: 'green' }}>
+              Winning Info: {lastResult.winningInfo.name} - {lastResult.winningInfo.prize}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### Scratch Card with Statistics
+
+```typescript
+function StatsScratchCard() {
+  const [stats, setStats] = useState({
+    totalCards: 0,
+    wins: 0,
+    losses: 0,
+    totalPrize: 0
+  });
+  const [currentCard, setCurrentCard] = useState(0);
+
+  const symbols = ['💰', '💎', '🏆', '🎁', '⭐', '🍀', '🎯', '💯'];
+
+  const handleNewCard = () => {
+    setCurrentCard(prev => prev + 1);
+  };
+
+  const handleScratch = (result) => {
+    setStats(prev => ({
+      ...prev,
+      totalCards: prev.totalCards + 1,
+      wins: result.isWinner ? prev.wins + 1 : prev.wins,
+      losses: result.isWinner ? prev.losses : prev.losses + 1,
+      totalPrize: result.isWinner ? prev.totalPrize + 100 : prev.totalPrize
+    }));
+
+    if (result.isWinner) {
+      alert(`🎉 You won! Prize value: $100`);
+    }
+  };
+
+  const winRate = stats.totalCards > 0 ? ((stats.wins / stats.totalCards) * 100).toFixed(1) : '0.0';
+
+  return (
+    <div style={{ padding: '20px' }}>
+      {/* Statistics Panel */}
+      <div style={{
+        marginBottom: '20px',
+        padding: '15px',
+        backgroundColor: '#e8f4fd',
+        borderRadius: '10px',
+        textAlign: 'center'
+      }}>
+        <h3>Scratch Statistics</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+          <div>Total Cards: {stats.totalCards}</div>
+          <div>Wins: {stats.wins}</div>
+          <div>Losses: {stats.losses}</div>
+          <div>Win Rate: {winRate}%</div>
+          <div>Total Prize: ${stats.totalPrize}</div>
+        </div>
+      </div>
+
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <h4>Scratch Card #{currentCard + 1}</h4>
+      </div>
+
+      <ScratchCard
+        key={currentCard}
+        rows={3}
+        cols={3}
+        symbols={symbols}
+        winProbability={0.25}
+        onScratch={handleScratch}
+        onNewCard={handleNewCard}
+      />
+
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <button
+          onClick={handleNewCard}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer'
+          }}
+        >
+          Buy New Card
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+### Themed Scratch Cards
+
+```typescript
+function ThemedScratchCard() {
+  const [theme, setTheme] = useState('fruit');
+
+  const themes = {
+    fruit: {
+      symbols: ['🍎', '🍊', '🍋', '🍒', '🍇', '🥝', '🍓', '🍑'],
+      background: '#fff3e0',
+      name: 'Fruit Theme'
+    },
+    gem: {
+      symbols: ['💎', '💍', '👑', '🏆', '⭐', '✨', '🌟', '💫'],
+      background: '#f3e5f5',
+      name: 'Gem Theme'
+    },
+    animal: {
+      symbols: ['🐱', '🐶', '🐸', '🐯', '🦁', '🐻', '🐼', '🐨'],
+      background: '#e8f5e8',
+      name: 'Animal Theme'
+    }
+  };
+
+  const currentTheme = themes[theme];
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <label>Select theme: </label>
+        <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+          {Object.entries(themes).map(([key, themeData]) => (
+            <option key={key} value={key}>{themeData.name}</option>
+          ))}
+        </select>
+      </div>
+
+      <div
+        style={{
+          padding: '20px',
+          backgroundColor: currentTheme.background,
+          borderRadius: '15px',
+          border: '2px solid #ddd'
+        }}
+      >
+        <h4 style={{ textAlign: 'center', marginBottom: '20px' }}>
+          {currentTheme.name} Scratch Card
+        </h4>
+
+        <ScratchCard
+          key={theme}
+          rows={3}
+          cols={3}
+          symbols={currentTheme.symbols}
+          winProbability={0.3}
+          onScratch={(result) => {
+            if (result.isWinner) {
+              alert(`🎉 ${currentTheme.name} winner!`);
+            }
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+```
+
+### Progressive Jackpot Scratch Card
+
+```typescript
+function ProgressiveScratchCard() {
+  const [jackpot, setJackpot] = useState(1000);
+  const [cardPrice] = useState(10);
+  const [balance, setBalance] = useState(100);
+  const [cardCount, setCardCount] = useState(0);
+
+  const symbols = ['💰', '💵', '💴', '💶', '💷', '🏦', '💳', '📈'];
+
+  const handleNewCard = () => {
+    if (balance < cardPrice) {
+      alert('Insufficient balance!');
+      return;
+    }
+
+    setBalance(prev => prev - cardPrice);
+    setJackpot(prev => prev + 5); // Increase jackpot by $5 per card
+    setCardCount(prev => prev + 1);
+  };
+
+  const handleScratch = (result) => {
+    if (result.isWinner) {
+      const winAmount = Math.random() > 0.95 ? jackpot : Math.floor(Math.random() * 100) + 20;
+
+      if (winAmount === jackpot) {
+        alert(`🎰 Mega Jackpot! You won the progressive jackpot $${jackpot}!`);
+        setJackpot(1000); // Reset jackpot
+      } else {
+        alert(`🎉 You won $${winAmount}!`);
+      }
+
+      setBalance(prev => prev + winAmount);
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      {/* Game Info Panel */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '20px',
+        marginBottom: '20px',
+        textAlign: 'center'
+      }}>
+        <div style={{ padding: '15px', backgroundColor: '#fff3cd', borderRadius: '10px' }}>
+          <h4>Progressive Jackpot</h4>
+          <div style={{ fontSize: '24px', color: '#d4a853' }}>${jackpot.toLocaleString()}</div>
+        </div>
+        <div style={{ padding: '15px', backgroundColor: '#d1ecf1', borderRadius: '10px' }}>
+          <h4>Account Balance</h4>
+          <div style={{ fontSize: '24px', color: '#0c5460' }}>${balance}</div>
+        </div>
+        <div style={{ padding: '15px', backgroundColor: '#d4edda', borderRadius: '10px' }}>
+          <h4>Cards Purchased</h4>
+          <div style={{ fontSize: '24px', color: '#155724' }}>{cardCount}</div>
+        </div>
+      </div>
+
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <div style={{ marginBottom: '10px' }}>
+          Card Price: ${cardPrice} | Each card adds ${(cardPrice * 0.5)} to jackpot
+        </div>
+        <button
+          onClick={handleNewCard}
+          disabled={balance < cardPrice}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: balance >= cardPrice ? '#28a745' : '#6c757d',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: balance >= cardPrice ? 'pointer' : 'not-allowed',
+            fontSize: '16px'
+          }}
+        >
+          Buy New Card (${cardPrice})
+        </button>
+      </div>
+
+      {cardCount > 0 && (
+        <ScratchCard
+          key={cardCount}
+          rows={3}
+          cols={3}
+          symbols={symbols}
+          winProbability={0.4}
+          onScratch={handleScratch}
+        />
+      )}
+
+      {cardCount === 0 && (
+        <div style={{
+          textAlign: 'center',
+          padding: '40px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          color: '#6c757d'
+        }}>
+          Buy your first scratch card to start playing!
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## 📋 API Reference
+
+### ScratchCardProps
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `rows` | `number` | `3` | Number of grid rows |
+| `cols` | `number` | `3` | Number of grid columns |
+| `symbols` | `string[]` | `['🍎', '🍊', '🍋', '🍒']` | Available symbols array |
+| `winProbability` | `number` | `0.2` | Winning probability (0-1) |
+| `onScratch` | `(result: ScratchCardResult) => void` | `undefined` | Scratch completion callback |
+| `onNewCard` | `() => void` | `undefined` | New card generation callback |
+
+### Inherited BaseGameProps
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `className` | `string` | `''` | CSS class name |
+| `style` | `React.CSSProperties` | `{}` | Inline styles |
+| `disabled` | `boolean` | `false` | Whether disabled |
+| `onGameStart` | `() => void` | `undefined` | Game start callback |
+| `onGameEnd` | `(result: ScratchCardResult) => void` | `undefined` | Game end callback |
+
+### ScratchCardResult
+
+```typescript
+interface ScratchCardResult {
+  grid: string[][];           // Card grid data
+  isWinner: boolean;          // Whether it's a winner
+  scratchProgress?: number;   // Scratch progress (0-1)
+  winningInfo?: {
+    pattern: string[];        // Winning pattern
+    name: string;            // Winning type name
+    prize: string;           // Prize description
+    symbol?: string;         // Winning symbol
+    type?: 'row' | 'col' | 'diagonal';  // Winning type
+    positions: Array<{       // Winning positions
+      row: number;
+      col: number;
+    }>;
+  };
+}
+```
+
+## 🎨 Style Customization
+
+### Container Styles
+
+```css
+.scratch-card-container {
+  border: 3px solid #ffc107;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+  background: linear-gradient(145deg, #fff9c4, #ffecb5);
+}
+
+.scratch-card-container:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+```
+
+### Winning Effects
+
+```css
+.winning-card {
+  animation: winPulse 2s ease-in-out infinite;
+  border-color: #28a745;
+  box-shadow: 0 0 30px rgba(40, 167, 69, 0.5);
+}
+
+@keyframes winPulse {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(40, 167, 69, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(40, 167, 69, 0.8);
+  }
+}
+```
+
+## 🔧 Advanced Features
+
+### Custom Winning Rules
+
+```typescript
+function CustomWinRules() {
+  const symbols = ['A', 'B', 'C', 'D', 'E'];
+
+  // Custom winning detection logic
+  const checkCustomWinning = (grid) => {
+    // Check special patterns
+    const center = grid[1][1];
+    const corners = [grid[0][0], grid[0][2], grid[2][0], grid[2][2]];
+
+    // Rule 1: Center + four corners same
+    if (corners.every(symbol => symbol === center)) {
+      return {
+        isWinner: true,
+        type: 'center_corners',
+        name: 'Center & Corners',
+        prize: 'Special Reward'
+      };
+    }
+
+    // Rule 2: X pattern
+    if (grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2] &&
+        grid[0][2] === grid[1][1] && grid[1][1] === grid[2][0]) {
+      return {
+        isWinner: true,
+        type: 'x_pattern',
+        name: 'X Pattern',
+        prize: 'Big Prize'
+      };
+    }
+
+    return { isWinner: false };
+  };
+
+  return (
+    <ScratchCard
+      rows={3}
+      cols={3}
+      symbols={symbols}
+      onScratch={(result) => {
+        const customResult = checkCustomWinning(result.grid);
+        if (customResult.isWinner) {
+          alert(`Special win: ${customResult.name} - ${customResult.prize}`);
+        }
+      }}
+    />
+  );
+}
+```
+
+### Animation Enhancement
+
+```typescript
+function AnimatedScratchCard() {
+  const [isScratching, setIsScratching] = useState(false);
+  const [lastWin, setLastWin] = useState(null);
+
+  const handleGameStart = () => {
+    setIsScratching(true);
+  };
+
+  const handleGameEnd = (result) => {
+    setIsScratching(false);
+    if (result.isWinner) {
+      setLastWin(result.winningInfo);
+      // Delay showing win animation
+      setTimeout(() => setLastWin(null), 3000);
+    }
+  };
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <ScratchCard
+        rows={3}
+        cols={3}
+        symbols={['🎯', '🎮', '🎲', '🎪']}
+        className={isScratching ? 'scratching' : ''}
+        onGameStart={handleGameStart}
+        onGameEnd={handleGameEnd}
+      />
+
+      {lastWin && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgba(40, 167, 69, 0.9)',
+          color: 'white',
+          padding: '20px',
+          borderRadius: '10px',
+          textAlign: 'center',
+          animation: 'bounceIn 0.5s'
+        }}>
+          🎉 {lastWin.name} 🎉
+          <br />
+          {lastWin.prize}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## 🎯 Best Practices
+
+### 1. Winning Probability Design
+
+```typescript
+// Reasonable winning probability configuration
+const probabilities = {
+  easy: 0.4,      // Easy mode, 40% win rate
+  normal: 0.25,   // Normal mode, 25% win rate
+  hard: 0.15,     // Hard mode, 15% win rate
+  extreme: 0.05   // Extreme mode, 5% win rate
+};
+```
+
+### 2. Symbol Design Recommendations
+
+```typescript
+// Recommended symbol combinations
+const symbolSets = {
+  // High contrast, easy to distinguish
+  classic: ['🔴', '🟢', '🔵', '🟡', '🟣', '🟠', '⚫', '⚪'],
+
+  // Themed symbols
+  casino: ['🎰', '🃏', '🎲', '💰', '💎', '🏆', '⭐', '🍀'],
+
+  // Avoid using similar symbols
+  bad: ['😀', '😃', '😄', '😁'] // Too similar, hard for users to distinguish
+};
+```
+
+### 3. Error Handling
+
+```typescript
+function SafeScratchCard() {
+  const [error, setError] = useState(null);
+
+  const handleError = (error) => {
+    setError(error.message);
+    console.error('Scratch card error:', error);
+  };
+
+  return (
+    <div>
+      {error && (
+        <div style={{ color: 'red', marginBottom: '10px' }}>
+          Error: {error}
+        </div>
+      )}
+      <ScratchCard
+        rows={3}
+        cols={3}
+        winProbability={0.3}
+        onScratch={(result) => {
+          setError(null);
+          console.log('Scratch successful:', result);
+        }}
+      />
+    </div>
+  );
+}
+```
+
+## 🐛 Common Issues
+
+### Q: How to implement true randomness?
+A: The component uses RandBox's Mersenne Twister algorithm, providing high-quality random number generation to ensure each scratch is truly random.
+
+### Q: Can scratching gestures be customized?
+A: Currently the component supports mouse and touch scratching, scratch area and sensitivity can be adjusted through Canvas events.
+
+### Q: How to control winning probability?
+A: Set through the `winProbability` property, range is 0-1, e.g., 0.3 means 30% winning probability.
+
+### Q: What winning modes are supported?
+A: Supports horizontal, vertical, and diagonal basic modes, and custom logic can implement more complex winning rules.
+
+## 🔗 Related Links
+
+- [GridLottery - Grid Lottery Game](/en/docs/react/grid-lottery)
+- [SlotMachine - Slot Machine Game](/en/docs/react/slot-machine)
+- [DiceGame - Dice Game](/en/docs/react/dice-game)
+- [RandBox Random Algorithms](/en/docs/basics)

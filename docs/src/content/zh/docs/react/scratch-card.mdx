@@ -1,0 +1,654 @@
+---
+title: 'ScratchCard - 刮刮卡'
+description: '基于Canvas的交互式刮刮卡组件，支持多种中奖模式、真实刮除体验和自定义符号配置'
+---
+
+# ScratchCard - 刮刮卡
+
+`ScratchCard` 是一个基于Canvas的交互式刮刮卡组件，提供真实的刮除体验。支持横排、竖排、对角线等多种中奖模式，以及自定义符号和中奖概率配置。
+
+## 📦 导入
+
+```typescript
+import { ScratchCard } from '@randbox/react';
+import type { ScratchCardProps, ScratchCardResult } from '@randbox/react';
+```
+
+## 🚀 基础用法
+
+```typescript
+import React from 'react';
+import { ScratchCard } from '@randbox/react';
+
+function BasicScratchCard() {
+  const handleScratch = (result) => {
+    console.log('刮奖结果:', result);
+    if (result.isWinner) {
+      alert(`🎉 恭喜中奖！获得 ${result.winningInfo.prize}`);
+    }
+  };
+
+  return (
+    <ScratchCard
+      onScratch={handleScratch}
+    />
+  );
+}
+```
+
+## 🎯 高级用法
+
+### 自定义网格和符号
+
+```typescript
+function CustomScratchCard() {
+  const symbols = ['🍎', '🍊', '🍋', '🍒', '🍇', '💎', '⭐', '🔔'];
+
+  return (
+    <ScratchCard
+      rows={4}
+      cols={4}
+      symbols={symbols}
+      winProbability={0.3}
+      onScratch={(result) => {
+        console.log('自定义刮奖:', result);
+        if (result.isWinner) {
+          const { winningInfo } = result;
+          alert(`中奖类型: ${winningInfo.name} - ${winningInfo.prize}`);
+        }
+      }}
+    />
+  );
+}
+```
+
+### 多种中奖模式展示
+
+```typescript
+function WinningModesScratchCard() {
+  const [winningMode, setWinningMode] = useState('all');
+  const [lastResult, setLastResult] = useState(null);
+
+  const symbols = ['🎯', '🎮', '🎲', '🎪', '🎨', '🎭', '🎺', '🎸'];
+
+  const handleScratch = (result) => {
+    setLastResult(result);
+    if (result.isWinner) {
+      const { type, name, prize } = result.winningInfo;
+      console.log(`中奖模式: ${type}, 名称: ${name}, 奖品: ${prize}`);
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <label>选择中奖模式: </label>
+        <select value={winningMode} onChange={(e) => setWinningMode(e.target.value)}>
+          <option value="all">全部模式</option>
+          <option value="row">横排</option>
+          <option value="col">竖排</option>
+          <option value="diagonal">对角线</option>
+        </select>
+      </div>
+
+      <ScratchCard
+        rows={3}
+        cols={3}
+        symbols={symbols}
+        winProbability={0.4}
+        onScratch={handleScratch}
+        key={winningMode} // 重新生成卡片
+      />
+
+      {lastResult && (
+        <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f5f5f5' }}>
+          <h4>最近刮奖结果:</h4>
+          <div>是否中奖: {lastResult.isWinner ? '是' : '否'}</div>
+          <div>刮除进度: {(lastResult.scratchProgress * 100).toFixed(1)}%</div>
+          {lastResult.isWinner && (
+            <div style={{ color: 'green' }}>
+              中奖信息: {lastResult.winningInfo.name} - {lastResult.winningInfo.prize}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### 带统计功能的刮刮卡
+
+```typescript
+function StatsScratchCard() {
+  const [stats, setStats] = useState({
+    totalCards: 0,
+    wins: 0,
+    losses: 0,
+    totalPrize: 0
+  });
+  const [currentCard, setCurrentCard] = useState(0);
+
+  const symbols = ['💰', '💎', '🏆', '🎁', '⭐', '🍀', '🎯', '💯'];
+
+  const handleNewCard = () => {
+    setCurrentCard(prev => prev + 1);
+  };
+
+  const handleScratch = (result) => {
+    setStats(prev => ({
+      ...prev,
+      totalCards: prev.totalCards + 1,
+      wins: result.isWinner ? prev.wins + 1 : prev.wins,
+      losses: result.isWinner ? prev.losses : prev.losses + 1,
+      totalPrize: result.isWinner ? prev.totalPrize + 100 : prev.totalPrize
+    }));
+
+    if (result.isWinner) {
+      alert(`🎉 中奖了！奖品价值: $100`);
+    }
+  };
+
+  const winRate = stats.totalCards > 0 ? ((stats.wins / stats.totalCards) * 100).toFixed(1) : '0.0';
+
+  return (
+    <div style={{ padding: '20px' }}>
+      {/* 统计面板 */}
+      <div style={{
+        marginBottom: '20px',
+        padding: '15px',
+        backgroundColor: '#e8f4fd',
+        borderRadius: '10px',
+        textAlign: 'center'
+      }}>
+        <h3>刮奖统计</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+          <div>总卡数: {stats.totalCards}</div>
+          <div>中奖数: {stats.wins}</div>
+          <div>未中奖: {stats.losses}</div>
+          <div>中奖率: {winRate}%</div>
+          <div>总奖金: ${stats.totalPrize}</div>
+        </div>
+      </div>
+
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <h4>第 {currentCard + 1} 张刮刮卡</h4>
+      </div>
+
+      <ScratchCard
+        key={currentCard}
+        rows={3}
+        cols={3}
+        symbols={symbols}
+        winProbability={0.25}
+        onScratch={handleScratch}
+        onNewCard={handleNewCard}
+      />
+
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <button
+          onClick={handleNewCard}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer'
+          }}
+        >
+          购买新卡片
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+### 主题化刮刮卡
+
+```typescript
+function ThemedScratchCard() {
+  const [theme, setTheme] = useState('fruit');
+
+  const themes = {
+    fruit: {
+      symbols: ['🍎', '🍊', '🍋', '🍒', '🍇', '🥝', '🍓', '🍑'],
+      background: '#fff3e0',
+      name: '水果主题'
+    },
+    gem: {
+      symbols: ['💎', '💍', '👑', '🏆', '⭐', '✨', '🌟', '💫'],
+      background: '#f3e5f5',
+      name: '宝石主题'
+    },
+    animal: {
+      symbols: ['🐱', '🐶', '🐸', '🐯', '🦁', '🐻', '🐼', '🐨'],
+      background: '#e8f5e8',
+      name: '动物主题'
+    }
+  };
+
+  const currentTheme = themes[theme];
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <label>选择主题: </label>
+        <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+          {Object.entries(themes).map(([key, themeData]) => (
+            <option key={key} value={key}>{themeData.name}</option>
+          ))}
+        </select>
+      </div>
+
+      <div
+        style={{
+          padding: '20px',
+          backgroundColor: currentTheme.background,
+          borderRadius: '15px',
+          border: '2px solid #ddd'
+        }}
+      >
+        <h4 style={{ textAlign: 'center', marginBottom: '20px' }}>
+          {currentTheme.name}刮刮卡
+        </h4>
+
+        <ScratchCard
+          key={theme}
+          rows={3}
+          cols={3}
+          symbols={currentTheme.symbols}
+          winProbability={0.3}
+          onScratch={(result) => {
+            if (result.isWinner) {
+              alert(`🎉 ${currentTheme.name}中奖了！`);
+            }
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+```
+
+### 渐进式奖池刮刮卡
+
+```typescript
+function ProgressiveScratchCard() {
+  const [jackpot, setJackpot] = useState(1000);
+  const [cardPrice] = useState(10);
+  const [balance, setBalance] = useState(100);
+  const [cardCount, setCardCount] = useState(0);
+
+  const symbols = ['💰', '💵', '💴', '💶', '💷', '🏦', '💳', '📈'];
+
+  const handleNewCard = () => {
+    if (balance < cardPrice) {
+      alert('余额不足！');
+      return;
+    }
+
+    setBalance(prev => prev - cardPrice);
+    setJackpot(prev => prev + 5); // 每张卡片增加5元奖池
+    setCardCount(prev => prev + 1);
+  };
+
+  const handleScratch = (result) => {
+    if (result.isWinner) {
+      const winAmount = Math.random() > 0.95 ? jackpot : Math.floor(Math.random() * 100) + 20;
+
+      if (winAmount === jackpot) {
+        alert(`🎰 超级大奖！获得累积奖池 $${jackpot}！`);
+        setJackpot(1000); // 重置奖池
+      } else {
+        alert(`🎉 中奖！获得 $${winAmount}！`);
+      }
+
+      setBalance(prev => prev + winAmount);
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      {/* 游戏信息面板 */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '20px',
+        marginBottom: '20px',
+        textAlign: 'center'
+      }}>
+        <div style={{ padding: '15px', backgroundColor: '#fff3cd', borderRadius: '10px' }}>
+          <h4>累积奖池</h4>
+          <div style={{ fontSize: '24px', color: '#d4a853' }}>${jackpot.toLocaleString()}</div>
+        </div>
+        <div style={{ padding: '15px', backgroundColor: '#d1ecf1', borderRadius: '10px' }}>
+          <h4>账户余额</h4>
+          <div style={{ fontSize: '24px', color: '#0c5460' }}>${balance}</div>
+        </div>
+        <div style={{ padding: '15px', backgroundColor: '#d4edda', borderRadius: '10px' }}>
+          <h4>已购卡片</h4>
+          <div style={{ fontSize: '24px', color: '#155724' }}>{cardCount}</div>
+        </div>
+      </div>
+
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <div style={{ marginBottom: '10px' }}>
+          卡片价格: ${cardPrice} | 每张卡片增加${(cardPrice * 0.5)}奖池
+        </div>
+        <button
+          onClick={handleNewCard}
+          disabled={balance < cardPrice}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: balance >= cardPrice ? '#28a745' : '#6c757d',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: balance >= cardPrice ? 'pointer' : 'not-allowed',
+            fontSize: '16px'
+          }}
+        >
+          购买新卡片 (${cardPrice})
+        </button>
+      </div>
+
+      {cardCount > 0 && (
+        <ScratchCard
+          key={cardCount}
+          rows={3}
+          cols={3}
+          symbols={symbols}
+          winProbability={0.4}
+          onScratch={handleScratch}
+        />
+      )}
+
+      {cardCount === 0 && (
+        <div style={{
+          textAlign: 'center',
+          padding: '40px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '10px',
+          color: '#6c757d'
+        }}>
+          购买您的第一张刮刮卡开始游戏！
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## 📋 API参考
+
+### ScratchCardProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `rows` | `number` | `3` | 网格行数 |
+| `cols` | `number` | `3` | 网格列数 |
+| `symbols` | `string[]` | `['🍎', '🍊', '🍋', '🍒']` | 可用符号数组 |
+| `winProbability` | `number` | `0.2` | 中奖概率（0-1之间） |
+| `onScratch` | `(result: ScratchCardResult) => void` | `undefined` | 刮除完成回调 |
+| `onNewCard` | `() => void` | `undefined` | 新卡片生成回调 |
+
+### 继承的BaseGameProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `className` | `string` | `''` | CSS类名 |
+| `style` | `React.CSSProperties` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
+| `onGameEnd` | `(result: ScratchCardResult) => void` | `undefined` | 游戏结束回调 |
+
+### ScratchCardResult
+
+```typescript
+interface ScratchCardResult {
+  grid: string[][];           // 卡片网格数据
+  isWinner: boolean;          // 是否中奖
+  scratchProgress?: number;   // 刮除进度（0-1）
+  winningInfo?: {
+    pattern: string[];        // 中奖图案
+    name: string;            // 中奖类型名称
+    prize: string;           // 奖品描述
+    symbol?: string;         // 中奖符号
+    type?: 'row' | 'col' | 'diagonal';  // 中奖类型
+    positions: Array<{       // 中奖位置
+      row: number;
+      col: number;
+    }>;
+  };
+}
+```
+
+## 🎨 样式定制
+
+### 容器样式
+
+```css
+.scratch-card-container {
+  border: 3px solid #ffc107;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+  background: linear-gradient(145deg, #fff9c4, #ffecb5);
+}
+
+.scratch-card-container:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+```
+
+### 中奖效果
+
+```css
+.winning-card {
+  animation: winPulse 2s ease-in-out infinite;
+  border-color: #28a745;
+  box-shadow: 0 0 30px rgba(40, 167, 69, 0.5);
+}
+
+@keyframes winPulse {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(40, 167, 69, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(40, 167, 69, 0.8);
+  }
+}
+```
+
+## 🔧 高级功能
+
+### 自定义中奖规则
+
+```typescript
+function CustomWinRules() {
+  const symbols = ['A', 'B', 'C', 'D', 'E'];
+
+  // 自定义中奖检测逻辑
+  const checkCustomWinning = (grid) => {
+    // 检查特殊图案
+    const center = grid[1][1];
+    const corners = [grid[0][0], grid[0][2], grid[2][0], grid[2][2]];
+
+    // 规则1: 中心+四角相同
+    if (corners.every(symbol => symbol === center)) {
+      return {
+        isWinner: true,
+        type: 'center_corners',
+        name: '中心四角',
+        prize: '特殊奖励'
+      };
+    }
+
+    // 规则2: X形图案
+    if (grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2] &&
+        grid[0][2] === grid[1][1] && grid[1][1] === grid[2][0]) {
+      return {
+        isWinner: true,
+        type: 'x_pattern',
+        name: 'X图案',
+        prize: '大奖'
+      };
+    }
+
+    return { isWinner: false };
+  };
+
+  return (
+    <ScratchCard
+      rows={3}
+      cols={3}
+      symbols={symbols}
+      onScratch={(result) => {
+        const customResult = checkCustomWinning(result.grid);
+        if (customResult.isWinner) {
+          alert(`特殊中奖: ${customResult.name} - ${customResult.prize}`);
+        }
+      }}
+    />
+  );
+}
+```
+
+### 动画增强
+
+```typescript
+function AnimatedScratchCard() {
+  const [isScratching, setIsScratching] = useState(false);
+  const [lastWin, setLastWin] = useState(null);
+
+  const handleGameStart = () => {
+    setIsScratching(true);
+  };
+
+  const handleGameEnd = (result) => {
+    setIsScratching(false);
+    if (result.isWinner) {
+      setLastWin(result.winningInfo);
+      // 延迟显示中奖动画
+      setTimeout(() => setLastWin(null), 3000);
+    }
+  };
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <ScratchCard
+        rows={3}
+        cols={3}
+        symbols={['🎯', '🎮', '🎲', '🎪']}
+        className={isScratching ? 'scratching' : ''}
+        onGameStart={handleGameStart}
+        onGameEnd={handleGameEnd}
+      />
+
+      {lastWin && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgba(40, 167, 69, 0.9)',
+          color: 'white',
+          padding: '20px',
+          borderRadius: '10px',
+          textAlign: 'center',
+          animation: 'bounceIn 0.5s'
+        }}>
+          🎉 {lastWin.name} 🎉
+          <br />
+          {lastWin.prize}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## 🎯 最佳实践
+
+### 1. 中奖概率设计
+
+```typescript
+// 合理的中奖概率配置
+const probabilities = {
+  easy: 0.4,      // 简单模式，40%中奖率
+  normal: 0.25,   // 普通模式，25%中奖率
+  hard: 0.15,     // 困难模式，15%中奖率
+  extreme: 0.05   // 极限模式，5%中奖率
+};
+```
+
+### 2. 符号设计建议
+
+```typescript
+// 推荐的符号组合
+const symbolSets = {
+  // 高对比度，易区分
+  classic: ['🔴', '🟢', '🔵', '🟡', '🟣', '🟠', '⚫', '⚪'],
+
+  // 主题化符号
+  casino: ['🎰', '🃏', '🎲', '💰', '💎', '🏆', '⭐', '🍀'],
+
+  // 避免使用相似符号
+  bad: ['😀', '😃', '😄', '😁'] // 太相似，用户难以区分
+};
+```
+
+### 3. 错误处理
+
+```typescript
+function SafeScratchCard() {
+  const [error, setError] = useState(null);
+
+  const handleError = (error) => {
+    setError(error.message);
+    console.error('刮刮卡错误:', error);
+  };
+
+  return (
+    <div>
+      {error && (
+        <div style={{ color: 'red', marginBottom: '10px' }}>
+          错误: {error}
+        </div>
+      )}
+      <ScratchCard
+        rows={3}
+        cols={3}
+        winProbability={0.3}
+        onScratch={(result) => {
+          setError(null);
+          console.log('刮奖成功:', result);
+        }}
+      />
+    </div>
+  );
+}
+```
+
+## 🐛 常见问题
+
+### Q: 如何实现真正的随机性？
+A: 组件使用RandBox的Mersenne Twister算法，提供高质量的随机数生成，确保每次刮奖都是真正随机的。
+
+### Q: 可以自定义刮除手势吗？
+A: 目前组件支持鼠标和触摸刮除，刮除区域和敏感度可以通过Canvas事件进行调整。
+
+### Q: 如何控制中奖概率？
+A: 通过`winProbability`属性设置，范围是0-1，例如0.3表示30%的中奖概率。
+
+### Q: 支持哪些中奖模式？
+A: 支持横排、竖排、对角线三种基础模式，也可以通过自定义逻辑实现更复杂的中奖规则。
+
+## 🔗 相关链接
+
+- [GridLottery - 九宫格抽奖](/zh/docs/react/grid-lottery)
+- [SlotMachine - 滚动抽奖](/zh/docs/react/slot-machine)
+- [DiceGame - 骰子游戏](/zh/docs/react/dice-game)
+- [RandBox 随机算法](/zh/docs/basics)

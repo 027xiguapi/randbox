@@ -1,0 +1,348 @@
+---
+title: "@randbox/vue Component Library"
+description: "High-performance game component library based on Vue 3 and Canvas, providing grid lottery, slot machine, scratch card, dice game, and rock-paper-scissors components"
+---
+
+# @randbox/vue Component Library
+
+@randbox/vue is a high-performance game component library based on Vue 3 and Canvas rendering, providing 5 core game components. All components use RandBox as the random number generator, ensuring true randomness and fairness.
+
+## ✨ Features
+
+- 🎮 **5 Core Game Components**: Grid lottery, slot machine, scratch card, dice game, rock-paper-scissors
+- 🚀 **High Performance**: Canvas-based rendering with smooth animations
+- 📦 **Lightweight**: Optimized bundle size with Tree-shaking support
+- 🎨 **CSS-Free**: All styles rendered through Canvas, no external dependencies
+- 📱 **Responsive**: Adaptive to different screen sizes
+- 🔧 **TypeScript**: Complete type definition support
+- 🎲 **True Random**: High-quality random number generation based on RandBox
+- ⚡ **Vue 3 Optimized**: Leverages Composition API and reactive system
+
+## 📦 Installation
+
+```bash
+npm install @randbox/vue randbox
+# or
+yarn add @randbox/vue randbox
+# or
+pnpm add @randbox/vue randbox
+```
+
+## 🚀 Quick Start
+
+```vue
+<template>
+  <div>
+    <!-- Grid Lottery -->
+    <GridLottery
+      :prizes="['Prize 1', 'Prize 2', 'Prize 3', 'Try Again']"
+      @result="handleGridResult"
+    />
+
+    <!-- Dice Game -->
+    <DiceGame
+      :dice-count="2"
+      game-mode="sum"
+      :target-sum="7"
+      @result="handleDiceResult"
+    />
+
+    <!-- Scratch Card -->
+    <ScratchCard
+      :rows="3"
+      :cols="3"
+      :symbols="['🍎', '🍌', '🍇']"
+      @scratch="handleScratchResult"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { GridLottery, DiceGame, ScratchCard } from '@randbox/vue'
+
+const handleGridResult = (result) => {
+  console.log('Grid lottery result:', result)
+}
+
+const handleDiceResult = (result) => {
+  console.log('Dice roll result:', result)
+}
+
+const handleScratchResult = (result) => {
+  console.log('Scratch result:', result)
+}
+</script>
+```
+
+## 🎮 Component List
+
+### [GridLottery - Grid Lottery](/en/docs/vue/grid-lottery)
+Classic grid-based spinning lottery with customizable prizes and weights.
+
+### [SlotMachine - Slot Machine](/en/docs/vue/slot-machine)
+Multi-reel slot machine style lottery component with customizable symbols and winning rules.
+
+### [ScratchCard - Scratch Card](/en/docs/vue/scratch-card)
+Realistic scratching experience with multiple winning modes (horizontal, vertical, diagonal).
+
+### [DiceGame - Dice Game](/en/docs/vue/dice-game)
+3D effect dice game with multiple game modes (simple, sum, high-low, guess, etc.).
+
+### [RockPaperScissors - Rock Paper Scissors](/en/docs/vue/rock-paper-scissors)
+Classic rock-paper-scissors game with multiple AI strategies and statistics features.
+
+## 🎯 Vue 3 Feature Integration
+
+### Composition API Support
+
+```vue
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { GridLottery } from '@randbox/vue'
+
+const prizes = ref(['First Prize', 'Second Prize', 'Third Prize', 'Try Again'])
+const gameStats = ref({ total: 0, wins: 0 })
+
+const winRate = computed(() => {
+  return gameStats.value.total > 0
+    ? (gameStats.value.wins / gameStats.value.total * 100).toFixed(1)
+    : '0.0'
+})
+
+const handleResult = (result) => {
+  gameStats.value.total++
+  if (result.prize !== 'Try Again') {
+    gameStats.value.wins++
+  }
+}
+
+onMounted(() => {
+  console.log('Component mounted')
+})
+</script>
+```
+
+### Reactive Data Binding
+
+```vue
+<template>
+  <div>
+    <GridLottery
+      :prizes="prizes"
+      :weights="weights"
+      :animation-duration="animationDuration"
+      :disabled="isDisabled"
+      @result="handleResult"
+    />
+
+    <div>
+      <label>Animation Duration: {{ animationDuration }}ms</label>
+      <input v-model.number="animationDuration" type="range" min="1000" max="5000" />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const prizes = ref(['Grand Prize', 'Small Prize', 'Try Again'])
+const weights = ref([10, 30, 60])
+const animationDuration = ref(3000)
+const isDisabled = ref(false)
+</script>
+```
+
+### Event Handling
+
+```vue
+<template>
+  <DiceGame
+    @game-start="onGameStart"
+    @game-end="onGameEnd"
+    @result="onResult"
+  />
+</template>
+
+<script setup>
+const onGameStart = () => {
+  console.log('Game started')
+}
+
+const onGameEnd = (result) => {
+  console.log('Game ended:', result)
+}
+
+const onResult = (result) => {
+  console.log('Dice result:', result)
+}
+</script>
+```
+
+## 🔧 Technical Specifications
+
+- **Framework Version**: Vue 3.3+
+- **Rendering Engine**: HTML5 Canvas
+- **Random Number Generation**: RandBox (Mersenne Twister algorithm)
+- **Animation**: requestAnimationFrame + easing functions
+- **Responsive**: Auto-adapts to container size
+- **TypeScript**: Complete type support
+- **Build Tool**: Vite
+
+## 📚 API Reference
+
+All components inherit from the base properties interface:
+
+```typescript
+interface BaseGameProps {
+  class?: string
+  style?: Record<string, any>
+  disabled?: boolean
+}
+```
+
+Each component also has its own specific properties and type definitions, see the dedicated documentation for each component.
+
+## 🎨 Custom Styling
+
+Since all components are Canvas-based, style customization is primarily done through component properties:
+
+```vue
+<template>
+  <!-- Control component appearance through container styles -->
+  <div class="game-container">
+    <GridLottery v-bind="gameProps" />
+  </div>
+
+  <!-- Control Canvas content through component properties -->
+  <DiceGame
+    :style="{ border: '1px solid #ddd' }"
+    class="my-dice-game"
+  />
+</template>
+
+<style scoped>
+.game-container {
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.my-dice-game {
+  margin: 20px auto;
+}
+</style>
+```
+
+## 🛠️ Development Environment Setup
+
+### 1. Project Initialization
+
+```bash
+# Create Vue 3 project
+npm create vue@latest my-game-app
+cd my-game-app
+
+# Install dependencies
+npm install @randbox/vue randbox
+```
+
+### 2. Register components in main.ts
+
+```typescript
+import { createApp } from 'vue'
+import App from './App.vue'
+
+// Global registration (optional)
+import * as RandBoxVue from '@randbox/vue'
+
+const app = createApp(App)
+
+// Register all components
+Object.keys(RandBoxVue).forEach(key => {
+  app.component(key, RandBoxVue[key])
+})
+
+app.mount('#app')
+```
+
+### 3. On-demand Import (Recommended)
+
+```vue
+<script setup>
+import { GridLottery, DiceGame } from '@randbox/vue'
+</script>
+```
+
+## ⚡ Performance Optimization
+
+- **Tree-shaking**: Supports on-demand import, unused components won't be bundled
+- **Canvas Rendering**: Leverages GPU acceleration for smooth 60fps animations
+- **Reactive Optimization**: Utilizes Vue 3's reactive system for performance optimization
+- **Code Splitting**: Supports async component loading
+
+```vue
+<script setup>
+// Async component loading
+import { defineAsyncComponent } from 'vue'
+
+const GridLottery = defineAsyncComponent(() =>
+  import('@randbox/vue').then(m => ({ default: m.GridLottery }))
+)
+</script>
+```
+
+## 🧪 Integration with Vue Ecosystem
+
+### Pinia State Management
+
+```typescript
+// stores/game.ts
+import { defineStore } from 'pinia'
+
+export const useGameStore = defineStore('game', {
+  state: () => ({
+    totalGames: 0,
+    totalWins: 0,
+    gameHistory: []
+  }),
+
+  getters: {
+    winRate: (state) =>
+      state.totalGames > 0 ? (state.totalWins / state.totalGames * 100).toFixed(1) : '0.0'
+  },
+
+  actions: {
+    recordGame(result) {
+      this.totalGames++
+      if (result.isWin) this.totalWins++
+      this.gameHistory.unshift(result)
+    }
+  }
+})
+```
+
+### Vue Router Integration
+
+```typescript
+// router/index.ts
+import { createRouter, createWebHistory } from 'vue-router'
+
+const routes = [
+  {
+    path: '/games',
+    component: () => import('../views/GamesView.vue'),
+    children: [
+      { path: 'lottery', component: () => import('../components/LotteryGames.vue') },
+      { path: 'dice', component: () => import('../components/DiceGames.vue') },
+    ]
+  }
+]
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please check our [Contributing Guide](https://github.com/027xiguapi/randbox/blob/main/CONTRIBUTING.md).
+
+## 📄 License
+
+MIT License - see [LICENSE](https://github.com/027xiguapi/randbox/blob/main/LICENSE) file for details.

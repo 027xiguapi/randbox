@@ -1,0 +1,380 @@
+---
+title: 'GridLottery - Grid Lottery'
+description: 'Canvas-based grid lottery component supporting custom prizes, weight configuration, and smooth lottery animations'
+---
+
+# GridLottery - Grid Lottery
+
+`GridLottery` is a Canvas-based grid lottery component that provides a classic turntable lottery experience. It supports custom prizes, weight configuration, animation effects, and many other rich features.
+
+## 📦 Import
+
+```typescript
+import { GridLottery } from '@randbox/react';
+import type { GridLotteryProps, GridLotteryResult } from '@randbox/react';
+```
+
+## 🚀 Basic Usage
+
+```typescript
+import React from 'react';
+import { GridLottery } from '@randbox/react';
+
+function BasicGridLottery() {
+  const prizes = [
+    'First Prize', 'Second Prize', 'Third Prize',
+    'Fourth Prize', 'Fifth Prize', 'Sixth Prize',
+    'Seventh Prize', 'Eighth Prize', 'Thank you for playing'
+  ];
+
+  const handleResult = (result) => {
+    console.log('Lottery result:', result);
+  };
+
+  return (
+    <GridLottery
+      prizes={prizes}
+      onResult={handleResult}
+    />
+  );
+}
+```
+
+## 🎯 Advanced Usage
+
+### Weighted Lottery
+
+```typescript
+function WeightedGridLottery() {
+  const prizes = [
+    'iPhone 15 Pro', 'iPad', 'AirPods',
+    'Apple Watch', 'Coupon', 'Points',
+    'Voucher', 'Red Packet', 'Thank you for playing'
+  ];
+
+  // Higher weight means higher winning probability
+  const weights = [1, 3, 5, 8, 15, 20, 25, 20, 3];
+
+  return (
+    <GridLottery
+      prizes={prizes}
+      weights={weights}
+      animationDuration={3000}
+      onResult={(result) => {
+        if (result.prize !== 'Thank you for playing') {
+          alert(`Congratulations! You won: ${result.prize}!`);
+        }
+      }}
+    />
+  );
+}
+```
+
+### Custom Grid Size
+
+```typescript
+function CustomGridLottery() {
+  // 4x4 grid with 16 total prizes
+  const prizes = Array.from({ length: 16 }, (_, i) => `Prize ${i + 1}`);
+
+  return (
+    <GridLottery
+      prizes={prizes}
+      gridSize={16}
+      onResult={(result) => console.log(result)}
+    />
+  );
+}
+```
+
+### Complete Configuration Example
+
+```typescript
+function FullConfigGridLottery() {
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [results, setResults] = useState([]);
+
+  const prizes = [
+    '🎁 Super Prize', '🏆 First Prize', '💎 Second Prize',
+    '⭐ Third Prize', '🎯 Fourth Prize', '🎪 Fifth Prize',
+    '🎨 Sixth Prize', '🎭 Seventh Prize', '🎊 Thank you for playing'
+  ];
+
+  const weights = [1, 2, 5, 10, 15, 20, 25, 20, 2];
+
+  const handleGameStart = () => {
+    setIsDrawing(true);
+    console.log('Starting lottery...');
+  };
+
+  const handleGameEnd = (result) => {
+    setIsDrawing(false);
+    setResults(prev => [result, ...prev.slice(0, 4)]);
+    console.log('Lottery ended:', result);
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <GridLottery
+        prizes={prizes}
+        weights={weights}
+        gridSize={9}
+        animationDuration={2500}
+        buttonText={isDrawing ? 'Drawing...' : 'Start Draw'}
+        className="my-lottery"
+        style={{ margin: '20px auto' }}
+        disabled={isDrawing}
+        onGameStart={handleGameStart}
+        onGameEnd={handleGameEnd}
+        onResult={(result) => {
+          console.log('Real-time result:', result);
+        }}
+      />
+
+      {/* History */}
+      {results.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <h3>Recent Draw Records:</h3>
+          {results.map((result, index) => (
+            <div key={index} style={{ padding: '5px', backgroundColor: '#f5f5f5', margin: '5px 0' }}>
+              Position {result.position + 1}: {result.prize}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## 📋 API Reference
+
+### GridLotteryProps
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `prizes` | `string[]` | **Required** | Prize list, array length should match gridSize |
+| `weights` | `number[]` | `undefined` | Weight array controlling the winning probability of each prize |
+| `gridSize` | `number` | `9` | Grid size (number of prizes) |
+| `animationDuration` | `number` | `3000` | Animation duration (milliseconds) |
+| `buttonText` | `string` | `'Start Draw'` | Draw button text |
+| `onResult` | `(result: GridLotteryResult) => void` | `undefined` | Draw result callback |
+
+### Inherited BaseGameProps
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `className` | `string` | `''` | CSS class name |
+| `style` | `React.CSSProperties` | `{}` | Inline styles |
+| `disabled` | `boolean` | `false` | Whether disabled |
+| `onGameStart` | `() => void` | `undefined` | Game start callback |
+| `onGameEnd` | `(result: GridLotteryResult) => void` | `undefined` | Game end callback |
+
+### GridLotteryResult
+
+```typescript
+interface GridLotteryResult {
+  position: number;        // Winning position index (0-8)
+  prize: string;          // Winning prize
+  animation: number[];    // Animation path array
+}
+```
+
+## 🎨 Style Customization
+
+### Container Styles
+
+```css
+.my-lottery {
+  border: 3px solid #ff6b6b;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+}
+
+.my-lottery:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+```
+
+### Responsive Design
+
+```typescript
+function ResponsiveGridLottery() {
+  const [containerSize, setContainerSize] = useState({ width: 400, height: 400 });
+
+  useEffect(() => {
+    const updateSize = () => {
+      const width = Math.min(window.innerWidth - 40, 500);
+      setContainerSize({ width, height: width });
+    };
+
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  return (
+    <div style={{ width: containerSize.width, height: containerSize.height }}>
+      <GridLottery
+        prizes={['Prize 1', 'Prize 2', 'Prize 3', 'Prize 4', 'Prize 5', 'Prize 6', 'Prize 7', 'Prize 8', 'Thank you for playing']}
+      />
+    </div>
+  );
+}
+```
+
+## 🔧 Advanced Features
+
+### Dynamic Prize Updates
+
+```typescript
+function DynamicGridLottery() {
+  const [prizes, setPrizes] = useState([
+    'Prize A', 'Prize B', 'Prize C',
+    'Prize D', 'Prize E', 'Prize F',
+    'Prize G', 'Prize H', 'Thank you for playing'
+  ]);
+
+  const updatePrizes = () => {
+    const newPrizes = prizes.map((prize, index) =>
+      index === 0 ? `New Prize ${Date.now()}` : prize
+    );
+    setPrizes(newPrizes);
+  };
+
+  return (
+    <div>
+      <button onClick={updatePrizes}>Update Prizes</button>
+      <GridLottery
+        prizes={prizes}
+        onResult={(result) => console.log('Won:', result.prize)}
+      />
+    </div>
+  );
+}
+```
+
+### Draw Attempt Limits
+
+```typescript
+function LimitedGridLottery() {
+  const [remainingTries, setRemainingTries] = useState(3);
+  const [canDraw, setCanDraw] = useState(true);
+
+  const handleGameStart = () => {
+    if (remainingTries <= 0) {
+      setCanDraw(false);
+      return;
+    }
+  };
+
+  const handleGameEnd = (result) => {
+    setRemainingTries(prev => prev - 1);
+    if (remainingTries <= 1) {
+      setCanDraw(false);
+    }
+  };
+
+  return (
+    <div>
+      <p>Remaining attempts: {remainingTries}</p>
+      <GridLottery
+        prizes={['Grand Prize', 'Small Prize', 'Thank you', 'Try Again', 'Coupon', 'Points', 'Red Packet', 'Gift', 'Empty']}
+        disabled={!canDraw}
+        buttonText={canDraw ? 'Start Draw' : 'Daily draws exhausted'}
+        onGameStart={handleGameStart}
+        onGameEnd={handleGameEnd}
+      />
+    </div>
+  );
+}
+```
+
+## 🎯 Best Practices
+
+### 1. Weight Configuration Recommendations
+
+```typescript
+// Reasonable weight distribution
+const prizes = ['Special Prize', 'First Prize', 'Second Prize', 'Third Prize', 'Coupon', 'Points', 'Voucher', 'Red Packet', 'Thank you for playing'];
+const weights = [1, 3, 8, 15, 20, 25, 20, 5, 3]; // Sum of 100 for easy probability calculation
+```
+
+### 2. Error Handling
+
+```typescript
+function SafeGridLottery() {
+  const [error, setError] = useState(null);
+
+  const prizes = ['Prize 1', 'Prize 2', 'Prize 3', 'Prize 4', 'Prize 5', 'Prize 6', 'Prize 7', 'Prize 8', 'Thank you for playing'];
+  const weights = [10, 10, 10, 10, 15, 15, 15, 10, 5];
+
+  // Validate prizes and weights count match
+  if (prizes.length !== weights.length) {
+    return <div>Configuration error: Prize count doesn't match weight count</div>;
+  }
+
+  const handleError = (error) => {
+    setError(error.message);
+    console.error('Lottery error:', error);
+  };
+
+  return (
+    <div>
+      {error && <div style={{ color: 'red' }}>Error: {error}</div>}
+      <GridLottery
+        prizes={prizes}
+        weights={weights}
+        onResult={(result) => {
+          setError(null);
+          console.log('Lottery success:', result);
+        }}
+      />
+    </div>
+  );
+}
+```
+
+### 3. Performance Optimization
+
+```typescript
+// Use useMemo to optimize large datasets
+function OptimizedGridLottery() {
+  const prizes = useMemo(() =>
+    Array.from({ length: 100 }, (_, i) => `Prize ${i + 1}`)
+  , []);
+
+  const weights = useMemo(() =>
+    Array.from({ length: 100 }, () => Math.random() * 10 + 1)
+  , []);
+
+  return (
+    <GridLottery
+      prizes={prizes.slice(0, 9)} // Only show first 9
+      weights={weights.slice(0, 9)}
+    />
+  );
+}
+```
+
+## 🐛 Common Issues
+
+### Q: Why are the lottery results not random enough?
+A: Please ensure the `randbox` dependency is installed, which provides high-quality random number generation algorithms.
+
+### Q: How to implement fair lottery?
+A: Use weight configuration to ensure reasonable weight totals and avoid any single prize having too high a weight.
+
+### Q: How does component size adapt?
+A: The component automatically adapts to container size. Control component dimensions by setting container width and height.
+
+### Q: Can animations be disabled?
+A: Set `animationDuration` to 0 to disable animation effects.
+
+## 🔗 Related Links
+
+- [SlotMachine - Slot Machine](/en/docs/react/slot-machine)
+- [ScratchCard - Scratch Card](/en/docs/react/scratch-card)
+- [DiceGame - Dice Game](/en/docs/react/dice-game)
+- [RandBox Core Library](/en/docs/basics)

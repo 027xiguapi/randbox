@@ -1,0 +1,135 @@
+---
+title: '@randbox/react Component Library'
+description: 'High-performance React game component library based on Canvas, providing grid lottery, slot machine, scratch card, dice game, and rock-paper-scissors components'
+---
+
+# @randbox/react Component Library
+
+@randbox/react is a high-performance React game component library based on Canvas rendering, providing 5 core game components. All components use RandBox as the random number generator to ensure true randomness and fairness.
+
+## ✨ Features
+
+- 🎮 **5 Core Game Components**: Grid lottery, slot machine, scratch card, dice game, rock-paper-scissors
+- 🚀 **High Performance**: Canvas-based rendering with smooth animation effects
+- 📦 **Lightweight**: Optimized bundle size (ES module: ~109KB, UMD: ~45KB)
+- 🎨 **No CSS Required**: All styles rendered via Canvas with no external dependencies
+- 📱 **Responsive**: Automatically adapts to different screen sizes
+- 🔧 **TypeScript**: Complete type definition support
+- 🎲 **True Random**: High-quality random number generation based on RandBox
+
+## 📦 Installation
+
+```bash
+npm install @randbox/react randbox
+# or
+yarn add @randbox/react randbox
+# or
+pnpm add @randbox/react randbox
+```
+
+## 🚀 Quick Start
+
+```typescript
+import { GridLottery, DiceGame, ScratchCard } from '@randbox/react';
+
+function App() {
+  return (
+    <div>
+      {/* Grid Lottery */}
+      <GridLottery
+        prizes={['Prize 1', 'Prize 2', 'Prize 3', 'Thank you for playing']}
+        onResult={(result) => console.log('Lottery result:', result)}
+      />
+
+      {/* Dice Game */}
+      <DiceGame
+        diceCount={2}
+        gameMode="sum"
+        targetSum={7}
+        onResult={(result) => console.log('Dice result:', result)}
+      />
+
+      {/* Scratch Card */}
+      <ScratchCard
+        rows={3}
+        cols={3}
+        symbols={['🍎', '🍌', '🍇']}
+        onScratch={(result) => console.log('Scratch result:', result)}
+      />
+    </div>
+  );
+}
+```
+
+## 🎮 Component List
+
+### [GridLottery - Grid Lottery](/en/docs/react/grid-lottery)
+Classic nine-grid turntable lottery supporting custom prizes and weights.
+
+### [SlotMachine - Slot Machine](/en/docs/react/slot-machine)
+Multi-reel slot machine style lottery component supporting custom symbols and winning rules.
+
+### [ScratchCard - Scratch Card](/en/docs/react/scratch-card)
+Real scratch experience supporting multiple winning modes (horizontal, vertical, diagonal).
+
+### [DiceGame - Dice Game](/en/docs/react/dice-game)
+3D effect dice game supporting multiple game modes (simple, sum, big/small, guess, etc.).
+
+### [RockPaperScissors - Rock Paper Scissors](/en/docs/react/rock-paper-scissors)
+Classic rock paper scissors game supporting multiple AI strategies and statistics.
+
+## 🎯 Performance Optimization
+
+- **Tree-shaking**: Supports on-demand imports, unused components won't be bundled
+- **Canvas Rendering**: GPU acceleration for smooth 60fps animations
+- **External Dependencies**: React and RandBox as external dependencies to avoid duplicate bundling
+- **Code Minification**: Automatically removes console.log and debug code in production
+
+## 🔧 Technical Specifications
+
+- **Rendering Engine**: HTML5 Canvas
+- **Random Number Generation**: RandBox (Mersenne Twister algorithm)
+- **Animation**: requestAnimationFrame + easing functions
+- **Responsive**: Automatically adapts to container size
+- **TypeScript**: Complete type support
+
+## 📚 API Reference
+
+All components inherit from the `BaseGameProps` interface:
+
+```typescript
+interface BaseGameProps {
+  className?: string;
+  style?: React.CSSProperties;
+  disabled?: boolean;
+  onGameStart?: () => void;
+  onGameEnd?: (result: any) => void;
+}
+```
+
+Each component also has its own specific properties and type definitions. See the dedicated documentation for each component.
+
+## 🎨 Custom Styling
+
+Since all components are Canvas-based, style customization is mainly done through component properties:
+
+```typescript
+// Control component appearance through container styles
+<div style={{ border: '2px solid #ccc', borderRadius: '10px' }}>
+  <GridLottery {...props} />
+</div>
+
+// Control Canvas content through component properties
+<DiceGame
+  style={{ border: '1px solid #ddd' }}
+  className="my-dice-game"
+/>
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please check our [Contributing Guide](https://github.com/027xiguapi/randbox/blob/main/CONTRIBUTING.md).
+
+## 📄 License
+
+MIT License - see [LICENSE](https://github.com/027xiguapi/randbox/blob/main/LICENSE) file for details.
