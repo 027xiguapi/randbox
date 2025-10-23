@@ -1,8 +1,9 @@
+import type { ButtonProps } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import * as React from 'react'
 
-import { ButtonProps, buttonVariants } from '@/components/ui/button'
+import * as React from 'react'
+import { buttonVariants } from '@/components/ui/button'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 
@@ -16,23 +17,21 @@ const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
 )
 Pagination.displayName = 'Pagination'
 
-const PaginationContent = React.forwardRef<HTMLUListElement, React.ComponentProps<'ul'>>(
-  ({ className, ...props }, ref) => (
-    <ul ref={ref} className={cn('flex flex-row items-center gap-1', className)} {...props} />
-  )
+const PaginationContent = ({ ref, className, ...props }: React.ComponentProps<'ul'> & { ref?: React.RefObject<HTMLUListElement | null> }) => (
+  <ul ref={ref} className={cn('flex flex-row items-center gap-1', className)} {...props} />
 )
 PaginationContent.displayName = 'PaginationContent'
 
-const PaginationItem = React.forwardRef<HTMLLIElement, React.ComponentProps<'li'>>(({ className, ...props }, ref) => (
+const PaginationItem = ({ ref, className, ...props }: React.ComponentProps<'li'> & { ref?: React.RefObject<HTMLLIElement | null> }) => (
   <li ref={ref} className={cn('', className)} {...props} />
-))
+)
 PaginationItem.displayName = 'PaginationItem'
 
 type PaginationLinkProps = {
   isActive?: boolean
   href: string
-} & Pick<ButtonProps, 'size'> &
-  React.ComponentProps<'a'>
+} & Pick<ButtonProps, 'size'>
+& React.ComponentProps<'a'>
 
 const PaginationLink = ({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) => (
   <Link
@@ -40,9 +39,9 @@ const PaginationLink = ({ className, isActive, size = 'icon', ...props }: Pagina
     className={cn(
       buttonVariants({
         variant: isActive ? 'outline' : 'ghost',
-        size
+        size,
       }),
-      className
+      className,
     )}
     {...props}
   />
@@ -90,9 +89,9 @@ PaginationEllipsis.displayName = 'PaginationEllipsis'
 export {
   Pagination,
   PaginationContent,
-  PaginationLink,
+  PaginationEllipsis,
   PaginationItem,
-  PaginationPrevious,
+  PaginationLink,
   PaginationNext,
-  PaginationEllipsis
+  PaginationPrevious,
 }

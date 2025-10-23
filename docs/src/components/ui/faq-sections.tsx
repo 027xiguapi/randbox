@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 
 interface FAQItem {
@@ -29,7 +29,7 @@ export default function FAQSections({
   className,
   faqs = [],
   randomize = false,
-  maxItems
+  maxItems,
 }: FAQSectionsProps) {
   const [displayedFaqs, setDisplayedFaqs] = useState<FAQItem[]>(faqs)
 

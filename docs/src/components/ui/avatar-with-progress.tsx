@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 
 interface AvatarWithProgressProps {
@@ -24,7 +24,7 @@ export function AvatarWithProgress({
   className,
   width = 40,
   height = 40,
-  avatarScale = 0.75
+  avatarScale = 0.75,
 }: AvatarWithProgressProps) {
   // 使用标准化的 viewBox，便于控制
   const viewBoxSize = 100
@@ -64,7 +64,7 @@ export function AvatarWithProgress({
             className="text-primary transition-all duration-500 ease-out"
             style={{
               transform: 'rotate(90deg) scaleX(-1)',
-              transformOrigin: '50% 50%'
+              transformOrigin: '50% 50%',
             }}
           />
         </svg>
@@ -77,7 +77,7 @@ export function AvatarWithProgress({
           width: `${width * avatarScale}px`,
           height: `${height * avatarScale}px`,
           transform: `translate(-50%, -50%)`,
-          opacity: 1
+          opacity: 1,
         }}
       >
         <Avatar className="h-full w-full">

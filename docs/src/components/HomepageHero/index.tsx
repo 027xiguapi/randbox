@@ -1,6 +1,5 @@
 'use client'
 
-import { useTheme } from 'nextra-theme-docs'
 import { useMemo } from 'react'
 import Marquee from 'react-fast-marquee'
 import { PanelParticles } from '@/components/PanelParticles'

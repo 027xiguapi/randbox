@@ -1,7 +1,8 @@
+import type { Button } from '@/components/ui/button'
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react'
-import * as React from 'react'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import * as React from 'react'
+import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
@@ -26,8 +27,8 @@ function PaginationItem({ ...props }: React.ComponentProps<'li'>) {
 
 type PaginationLinkProps = {
   isActive?: boolean
-} & Pick<React.ComponentProps<typeof Button>, 'size'> &
-  React.ComponentProps<'a'>
+} & Pick<React.ComponentProps<typeof Button>, 'size'>
+& React.ComponentProps<'a'>
 
 function PaginationLink({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) {
   return (
@@ -38,9 +39,9 @@ function PaginationLink({ className, isActive, size = 'icon', ...props }: Pagina
       className={cn(
         buttonVariants({
           variant: isActive ? 'outline' : 'ghost',
-          size
+          size,
         }),
-        className
+        className,
       )}
       {...props}
     />
@@ -92,9 +93,9 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<'span'
 export {
   Pagination,
   PaginationContent,
-  PaginationLink,
+  PaginationEllipsis,
   PaginationItem,
-  PaginationPrevious,
+  PaginationLink,
   PaginationNext,
-  PaginationEllipsis
+  PaginationPrevious,
 }

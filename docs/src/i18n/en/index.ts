@@ -1,6 +1,7 @@
 import banner from './banner'
 import common from './common'
 import features from './features'
+import games from './games'
 import metadata from './metadata'
 import pages from './pages'
 import search from './search'
@@ -14,4 +15,5 @@ export default {
   ...theme,
   ...features,
   ...pages,
+  ...games,
 }

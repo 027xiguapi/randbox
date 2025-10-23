@@ -44,6 +44,21 @@ export default {
   stratified: {
     title: '分层随机化',
   },
+  'dice-game': {
+    title: '骰子游戏',
+  },
+  'grid-lottery': {
+    title: '网格抽奖',
+  },
+  'rock-paper-scissors': {
+    title: '石头剪刀布',
+  },
+  'scratch-card': {
+    title: '刮刮卡',
+  },
+  'slot-machine': {
+    title: '老虎机',
+  },
   history: {
     title: '历史',
   },

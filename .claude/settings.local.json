@@ -29,7 +29,10 @@
       "Bash(pnpm dev:react:*)",
       "Bash(pnpm build:*)",
       "Bash(copy:*)",
-      "Bash(pnpm dev:*)"
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm list:*)",
+      "Bash(pnpm install:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

@@ -24,7 +24,7 @@ export default {
     type: 'page',
   },
   blog: {
-    title: 'blog',
+    title: 'Blog',
     type: 'page',
   },
   upgrade: {
@@ -44,6 +44,21 @@ export default {
   },
   stratified: {
     title: 'Stratified Random',
+  },
+  'dice-game': {
+    title: 'Dice Game',
+  },
+  'grid-lottery': {
+    title: 'Grid Lottery',
+  },
+  'rock-paper-scissors': {
+    title: 'Rock Paper Scissors',
+  },
+  'scratch-card': {
+    title: 'Scratch Card',
+  },
+  'slot-machine': {
+    title: 'Slot Machine',
   },
   history: {
     title: 'History',

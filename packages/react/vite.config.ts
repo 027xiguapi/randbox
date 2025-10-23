@@ -21,12 +21,20 @@ export default defineConfig({
       fileName: (format) => `react.${format}.js`,
     },
     rollupOptions: {
-      // 外部化依赖
-      external: ['react', 'react-dom', 'randbox'],
+      // 外部化所有 React 相关依赖
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+        'randbox'
+      ],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
+          'react/jsx-runtime': 'React',
+          'react/jsx-dev-runtime': 'React',
           randbox: 'RandBox'
         },
       },

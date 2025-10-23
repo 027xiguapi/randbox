@@ -2,9 +2,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import MarkdownRender from '@/components/markdown/mark-down-render'
-import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 
 interface TextImageSection {
   title: string
@@ -37,7 +37,7 @@ export default function TextImageSections({ className, sections = [] }: TextImag
               <section
                 className={cn(
                   'grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12',
-                  currentImagePosition === 'left' && 'lg:grid-flow-col-dense'
+                  currentImagePosition === 'left' && 'lg:grid-flow-col-dense',
                 )}
               >
                 <div className={cn('space-y-6', currentImagePosition === 'left' && 'lg:col-start-2')}>
@@ -58,7 +58,9 @@ export default function TextImageSections({ className, sections = [] }: TextImag
                           size="lg"
                           className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 px-8 py-3"
                         >
-                          {section.ctaText ?? 'View Page'} →
+                          {section.ctaText ?? 'View Page'}
+                          {' '}
+                          →
                         </Button>
                       </Link>
                     </div>
@@ -68,7 +70,7 @@ export default function TextImageSections({ className, sections = [] }: TextImag
                 <div
                   className={cn(
                     'flex justify-center',
-                    currentImagePosition === 'left' ? 'lg:col-start-1 lg:justify-start' : 'lg:justify-end'
+                    currentImagePosition === 'left' ? 'lg:col-start-1 lg:justify-start' : 'lg:justify-end',
                   )}
                 >
                   <div className="relative group">
