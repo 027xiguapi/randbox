@@ -2,6 +2,9 @@
   "name": "@randbox/react",
   "version": "1.0.0",
   "description": "Lightweight Canvas-based React game components: GridLottery, SlotMachine, ScratchCard, DiceGame, and RockPaperScissors powered by RandBox",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/react.umd.js",
   "module": "dist/react.es.js",
   "types": "dist/index.d.ts",
