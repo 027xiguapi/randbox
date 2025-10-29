@@ -2,6 +2,9 @@
   "name": "@randbox/vue",
   "version": "1.0.0",
   "description": "RandBox Vue Components - Game and lottery components for Vue 3",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",

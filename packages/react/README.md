@@ -1,117 +1,270 @@
 # @randbox/react
 
-轻量级、高性能的React游戏组件库，基于Canvas渲染，由RandBox随机数生成器驱动。
+Lightweight, high-performance React game components library with Canvas rendering, powered by RandBox random number generator.
 
-## ✨ 特性
+## ✨ Features
 
-- 🎮 **5个核心游戏组件**：九宫格抽奖、滚动抽奖、刮刮卡、骰子游戏、石头剪刀布
-- 🚀 **高性能**：基于Canvas渲染，流畅的动画效果
-- 📦 **轻量级**：优化后的打包大小（ES模块：~109KB，UMD：~45KB）
-- 🎨 **无需CSS**：所有样式都通过Canvas渲染，无外部依赖
-- 📱 **响应式**：自适应不同屏幕尺寸
-- 🔧 **TypeScript**：完整的类型定义支持
-- 🎲 **真实随机**：基于RandBox的高质量随机数生成
+- 🎮 **Rich Component Collection**: Grid lottery, slot machine, scratch card, dice game, rock-paper-scissors, and more
+- 🚀 **High Performance**: Canvas-based rendering with 60fps smooth animations
+- 📦 **Lightweight**: Optimized bundle size (ES module: ~109KB, UMD: ~45KB)
+- 🎨 **Zero CSS Dependencies**: All styles rendered via Canvas with no external dependencies
+- 📱 **Responsive**: Adaptive to different screen sizes
+- 🔧 **TypeScript**: Full type definition support
+- 🎲 **True Randomness**: High-quality random number generation based on RandBox
+- ⚡ **GPU Acceleration**: Leverages browser hardware acceleration for optimal performance
 
-## 📦 安装
+## 📦 Installation
 
 ```bash
 npm install @randbox/react randbox
-# 或
+# or
 yarn add @randbox/react randbox
-# 或
+# or
 pnpm add @randbox/react randbox
 ```
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
 ```typescript
-import { GridLottery, DiceGame, ScratchCard } from '@randbox/react';
+import { CanvasGridLottery, CanvasDiceGame, CanvasScratchCard } from '@randbox/react';
 
 function App() {
   return (
     <div>
-      {/* 九宫格抽奖 */}
-      <GridLottery
-        prizes={['奖品1', '奖品2', '奖品3', '谢谢参与']}
-        onResult={(result) => console.log('中奖:', result)}
+      {/* Grid Lottery */}
+      <CanvasGridLottery
+        prizes={['Prize 1', 'Prize 2', 'Prize 3', 'Try Again']}
+        onResult={(result) => console.log('Winner:', result)}
       />
 
-      {/* 骰子游戏 */}
-      <DiceGame
+      {/* Dice Game */}
+      <CanvasDiceGame
         diceCount={2}
         gameMode="sum"
         targetSum={7}
-        onResult={(result) => console.log('投掷结果:', result)}
+        onResult={(result) => console.log('Roll result:', result)}
       />
 
-      {/* 刮刮卡 */}
-      <ScratchCard
+      {/* Scratch Card */}
+      <CanvasScratchCard
         rows={3}
         cols={3}
         symbols={['🍎', '🍌', '🍇']}
-        onScratch={(result) => console.log('刮奖结果:', result)}
+        onScratch={(result) => console.log('Scratch result:', result)}
       />
     </div>
   );
 }
 ```
 
-## 🎮 组件列表
+## 🎮 Components
 
-### GridLottery - 九宫格抽奖
-经典的九宫格转盘抽奖，支持自定义奖品和权重。
+### Canvas Components (Recommended)
 
-### SlotMachine - 滚动抽奖
-多滚轴老虎机风格的抽奖组件，支持自定义符号和中奖规则。
+High-performance Canvas-based components with advanced visual effects and smooth animations.
 
-### ScratchCard - 刮刮卡
-真实的刮除体验，支持多种中奖模式（横排、竖排、对角线）。
+#### CanvasGridLottery
+Classic 9-grid lottery with customizable prizes and weights.
 
-### DiceGame - 骰子游戏
-3D效果的骰子游戏，支持多种游戏模式（简单、和值、大小、猜测等）。
+```tsx
+<CanvasGridLottery
+  prizes={string[]}              // Prize list
+  weights={number[]}             // Weight configuration
+  gridSize={9}                   // Grid size
+  animationDuration={3000}       // Animation duration
+  buttonText="Start"             // Button text
+  onResult={(result) => {...}}   // Result callback
+/>
+```
 
-### RockPaperScissors - 石头剪刀布
-经典的石头剪刀布游戏，支持多种AI策略和统计功能。
+**Key Features:**
+- Glowing highlight effects
+- Easing animation functions
+- Real-time progress display
+- Pixel-perfect rounded corners
 
-## 📚 文档
+#### CanvasScratchCard
+Realistic scratch card experience with pixel-level scratch detection.
 
-完整的文档和API参考请访问：[https://randbox.js.org](https://randbox.js.org)
+```tsx
+<CanvasScratchCard
+  rows={3}                       // Number of rows
+  cols={3}                       // Number of columns
+  symbols={string[]}             // Symbol list
+  winProbability={30}            // Win probability (%)
+  onScratch={(result) => {...}}  // Scratch callback
+/>
+```
 
-## 🔧 开发
+**Key Features:**
+- Dual-layer Canvas rendering
+- Pixel-level scratch detection
+- Real-time progress calculation
+- Mouse and touch support
+- Auto-reveal functionality
+
+#### CanvasSlotMachine
+Professional slot machine implementation with multi-reel animations.
+
+```tsx
+<CanvasSlotMachine
+  reels={string[][]}             // Reel configuration
+  weights={number[][]}           // Weight configuration
+  animationDuration={3000}       // Animation duration
+  onResult={(result) => {...}}   // Result callback
+/>
+```
+
+**Key Features:**
+- 5-reel independent animations
+- Payline visualization
+- Cascading stop effects
+- Jackpot detection
+- Symbol value display
+
+#### CanvasDiceGame
+3D-style dice game with multiple game modes.
+
+```tsx
+<CanvasDiceGame
+  diceCount={2}                  // Number of dice
+  gameMode="sum"                 // Game mode
+  targetSum={7}                  // Target sum
+  onResult={(result) => {...}}   // Result callback
+/>
+```
+
+**Key Features:**
+- 3D perspective rendering
+- Realistic shadow effects
+- Multiple game modes
+- Statistics tracking
+- Physics-based animation
+
+### HTML Components
+
+Traditional HTML/CSS components for simple interactions and quick customization.
+
+#### GridLottery
+HTML-based 9-grid lottery component.
+
+#### SlotMachine
+HTML-based multi-reel slot machine.
+
+#### ScratchCard
+HTML-based scratch card component.
+
+#### DiceGame
+HTML-based dice game.
+
+#### RockPaperScissors
+Classic rock-paper-scissors game with multiple AI strategies and statistics.
+
+## 🎨 Performance Comparison
+
+| Feature | HTML Version | Canvas Version |
+|---------|-------------|----------------|
+| Rendering | DOM Manipulation | Canvas 2D API |
+| Animation | CSS Animation | 60fps requestAnimationFrame |
+| CPU Usage | Higher | Lower |
+| Memory Usage | Medium | Low |
+| Visual Effects | Limited | Rich |
+| Interaction Precision | Element-level | Pixel-level |
+| Mobile Performance | Good | Excellent |
+
+## 🚀 Canvas Advantages
+
+### Performance Optimization
+- **60fps Smooth Animation**: High-performance rendering based on requestAnimationFrame
+- **GPU Acceleration**: Leverages browser hardware acceleration
+- **Low CPU Usage**: More efficient rendering compared to DOM manipulation
+
+### Visual Effects
+- **Advanced Effects**: Support for gradients, shadows, glowing effects
+- **Pixel-level Control**: Precise graphics drawing and interaction detection
+- **3D Perspective**: Realistic 3D rendering (e.g., 3D dice)
+
+### Interactive Experience
+- **Precise Interaction**: Pixel-level precision for mouse and touch events
+- **Realistic Physics**: Simulated real-world physics animation
+- **Cross-platform**: Perfect support for desktop and mobile
+
+## 📱 Mobile Support
+
+All Canvas components fully support mobile devices:
+- Auto-detection of touch events
+- Responsive Canvas sizing
+- High-DPI screen adaptation
+- Optimized touch interaction experience
+
+## 🔧 Development
 
 ```bash
-# 克隆项目
+# Clone the repository
 git clone https://github.com/your-username/randbox.git
 cd randbox/packages/react
 
-# 安装依赖
+# Install dependencies
 pnpm install
 
-# 开发模式
+# Development mode
 pnpm dev
 
-# 构建
+# Build
 pnpm build
 
-# 测试
+# Test
 pnpm test
 ```
 
-## 🎯 性能优化
+## 🎯 Optimization
 
-- **Tree-shaking**: 支持按需导入，未使用的组件不会被打包
-- **代码压缩**: 生产环境自动移除console.log和调试代码
-- **外部依赖**: React和RandBox作为外部依赖，避免重复打包
-- **类型优化**: 仅为核心组件生成类型定义
+- **Tree-shaking**: Supports on-demand imports, unused components won't be bundled
+- **Code Minification**: Automatically removes console.log and debug code in production
+- **External Dependencies**: React and RandBox as external dependencies to avoid duplicate bundling
+- **Type Optimization**: Type definitions generated only for core components
 
-## 📄 许可证
+## 🛠 Best Practices
 
-MIT License - 详见 [LICENSE](LICENSE) 文件。
+### Component Selection Guide
+- **Canvas Version**: For scenarios requiring high animation performance and complex visual effects
+- **HTML Version**: For simple interactions and quick style customization
 
-## 🤝 贡献
+### Development Tips
+1. **Performance**: Canvas components automatically optimize rendering, no extra configuration needed
+2. **Responsive Design**: Canvas automatically adapts to container size
+3. **Event Handling**: Canvas components handle all interaction logic internally
+4. **Style Customization**: Control appearance through component props, not CSS
 
-欢迎贡献代码！请查看 [CONTRIBUTING.md](CONTRIBUTING.md) 了解详细信息。
+### Considerations
+- Canvas components don't support CSS style customization
+- Some browsers may require hardware acceleration support
+- Mobile devices need touch event handling
+
+## 🐛 Troubleshooting
+
+### Common Issues
+1. **Blurry Canvas**: Check device pixel ratio settings
+2. **Animation Lag**: Ensure browser hardware acceleration is enabled
+3. **Touch Not Responding**: Check touch-action CSS property
+
+### Debugging Tips
+- Use browser DevTools Performance panel
+- Check actual Canvas element dimensions
+- Monitor requestAnimationFrame call frequency
+
+## 📚 Documentation
+
+Complete documentation and API reference: [https://randbox.js.org](https://randbox.js.org)
+
+## 📄 License
+
+MIT License - See [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please check [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ---
 
-由 ❤️ 和 RandBox 驱动
+Powered by ❤️ and RandBox
