@@ -141,6 +141,27 @@ export interface GameConfigContextType {
   animationEnabled: boolean;
 }
 
+// 抛硬币相关类型
+export interface CoinFlipProps extends BaseGameProps {
+  animationDuration?: number;
+  showStats?: boolean;
+  onResult?: (result: CoinFlipResult) => void;
+}
+
+export interface CoinFlipResult {
+  result: 'heads' | 'tails';
+  round: number;
+  timestamp: number;
+}
+
+export interface CoinFlipStats {
+  totalFlips: number;
+  heads: number;
+  tails: number;
+  headsRate: string;
+  tailsRate: string;
+}
+
 // 样式相关类型
 export interface StyleConfig {
   containerClass?: string;

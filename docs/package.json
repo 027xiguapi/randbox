@@ -37,7 +37,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-toggle": "^1.1.10",
-    "@randbox/react": "^1.0.0",
+    "@randbox/react": "^1.1.0",
     "@tsparticles/engine": "^3.9.1",
     "@tsparticles/react": "^3.0.0",
     "class-variance-authority": "^0.7.1",

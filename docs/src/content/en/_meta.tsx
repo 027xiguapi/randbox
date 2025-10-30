@@ -45,6 +45,9 @@ export default {
   stratified: {
     title: 'Stratified Random',
   },
+  'coin-flip': {
+    title: 'Coin Flip',
+  },
   'dice-game': {
     title: 'Dice Game',
   },

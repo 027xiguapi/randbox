@@ -1,7 +1,7 @@
 {
   "name": "@randbox/react",
-  "version": "1.0.0",
-  "description": "Lightweight Canvas-based React game components: GridLottery, SlotMachine, ScratchCard, DiceGame, and RockPaperScissors powered by RandBox",
+  "version": "1.1.0",
+  "description": "Lightweight Canvas-based React game components: GridLottery, SlotMachine, ScratchCard, DiceGame, RockPaperScissors, and CoinFlip powered by RandBox",
   "publishConfig": {
     "access": "public"
   },
@@ -38,6 +38,7 @@
     "scratch-card",
     "dice-game",
     "rock-paper-scissors",
+    "coin-flip",
     "randbox",
     "ui",
     "lightweight",

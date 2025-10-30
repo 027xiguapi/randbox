@@ -44,6 +44,9 @@ export default {
   stratified: {
     title: '分层随机化',
   },
+  'coin-flip': {
+    title: '抛硬币',
+  },
   'dice-game': {
     title: '骰子游戏',
   },

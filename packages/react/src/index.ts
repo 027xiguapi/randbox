@@ -4,6 +4,7 @@ export { default as SlotMachine } from './components/SlotMachine';
 export { default as ScratchCard } from './components/ScratchCard';
 export { default as DiceGame } from './components/DiceGame';
 export { default as RockPaperScissors } from './components/RockPaperScissors';
+export { default as CoinFlip } from './components/CoinFlip';
 
 // 类型导出
 export type {
@@ -35,6 +36,11 @@ export type {
   // 骰子游戏类型
   DiceGameProps,
   DiceGameResult,
+
+  // 抛硬币类型
+  CoinFlipProps,
+  CoinFlipResult,
+  CoinFlipStats,
 } from './types';
 
 // 注意：所有组件都基于Canvas渲染，无需外部CSS
