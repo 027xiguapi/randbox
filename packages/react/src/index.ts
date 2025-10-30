@@ -5,6 +5,7 @@ export { default as ScratchCard } from './components/ScratchCard';
 export { default as DiceGame } from './components/DiceGame';
 export { default as RockPaperScissors } from './components/RockPaperScissors';
 export { default as CoinFlip } from './components/CoinFlip';
+export { default as LuckyWheel } from './components/LuckyWheel';
 
 // 类型导出
 export type {
@@ -41,6 +42,11 @@ export type {
   CoinFlipProps,
   CoinFlipResult,
   CoinFlipStats,
+
+  // 幸运大转盘类型
+  LuckyWheelProps,
+  LuckyWheelResult,
+  LuckyWheelStats,
 } from './types';
 
 // 注意：所有组件都基于Canvas渲染，无需外部CSS

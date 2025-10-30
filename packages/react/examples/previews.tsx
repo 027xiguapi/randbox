@@ -4,6 +4,8 @@ import { DiceGame } from '../src/components/DiceGame';
 import { GridLottery } from '../src/components/GridLottery';
 import { SlotMachine } from '../src/components/SlotMachine';
 import { ScratchCard } from '../src/components/ScratchCard';
+import { LuckyWheel } from '../src/components/LuckyWheel';
+import { CoinFlip } from '../src/components/CoinFlip';
 
 // 游戏组件预览
 export const DiceGamePreview: React.FC = () => (
@@ -222,12 +224,111 @@ export const ScratchCardPreview: React.FC = () => (
   />
 );
 
+export const LuckyWheelPreview: React.FC = () => (
+  <ComponentPreview
+    component={LuckyWheel}
+    componentName="幸运大转盘 (LuckyWheel)"
+    description="使用Canvas渲染的幸运大转盘组件，支持带权重的随机抽奖和流畅动画效果"
+    defaultProps={{
+      prizes: ['一等奖', '二等奖', '三等奖', '四等奖', '五等奖', '六等奖', '七等奖', '八等奖'],
+      animationDuration: 4000
+    }}
+    propVariations={[
+      {
+        name: '快速模式',
+        props: {
+          prizes: ['🎁', '🏆', '💎', '⭐', '🎯', '🎪'],
+          animationDuration: 2000
+        }
+      },
+      {
+        name: '商品奖品',
+        props: {
+          prizes: ['iPhone 15', 'iPad', 'AirPods', 'Apple Watch', '优惠券', '积分', '代金券', '红包'],
+          weights: [1, 3, 5, 8, 15, 20, 25, 23],
+          animationDuration: 5000
+        }
+      },
+      {
+        name: 'emoji奖品',
+        props: {
+          prizes: ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+          colors: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2'],
+          animationDuration: 3500
+        }
+      },
+      {
+        name: '简单四选项',
+        props: {
+          prizes: ['大奖', '中奖', '小奖', '谢谢参与'],
+          weights: [5, 15, 30, 50],
+          animationDuration: 3000
+        }
+      }
+    ]}
+    config={{
+      autoPlay: false,
+      randomizeProps: true,
+      showSettings: true
+    }}
+  />
+);
+
+export const CoinFlipPreview: React.FC = () => (
+  <ComponentPreview
+    component={CoinFlip}
+    componentName="抛硬币 (CoinFlip)"
+    description="使用Canvas渲染的3D硬币抛掷游戏，支持动画效果和统计数据"
+    defaultProps={{
+      animationDuration: 2000,
+      showStats: true
+    }}
+    propVariations={[
+      {
+        name: '快速模式',
+        props: {
+          animationDuration: 1000,
+          showStats: true
+        }
+      },
+      {
+        name: '慢速模式',
+        props: {
+          animationDuration: 3000,
+          showStats: true
+        }
+      },
+      {
+        name: '无统计',
+        props: {
+          animationDuration: 2000,
+          showStats: false
+        }
+      },
+      {
+        name: '极速模式',
+        props: {
+          animationDuration: 800,
+          showStats: true
+        }
+      }
+    ]}
+    config={{
+      autoPlay: false,
+      randomizeProps: false,
+      showSettings: true
+    }}
+  />
+);
+
 // 所有预览组件的导出
 export const AllComponentPreviews = {
   DiceGamePreview,
   GridLotteryPreview,
   SlotMachinePreview,
-  ScratchCardPreview
+  ScratchCardPreview,
+  LuckyWheelPreview,
+  CoinFlipPreview
 };
 
 export default AllComponentPreviews;

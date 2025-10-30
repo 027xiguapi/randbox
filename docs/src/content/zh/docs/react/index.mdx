@@ -1,17 +1,17 @@
 ---
 title: '@randbox/react 组件库'
-description: '基于Canvas的高性能React游戏组件库，提供九宫格抽奖、滚动抽奖、刮刮卡、骰子游戏和石头剪刀布组件'
+description: '基于Canvas的高性能React游戏组件库，提供九宫格抽奖、老虎机、幸运大转盘、骰子游戏、刮刮卡、石头剪刀布和抛硬币组件'
 ---
 
 # @randbox/react 组件库
 
-@randbox/react 是一个基于Canvas渲染的高性能React游戏组件库，提供了5个核心游戏组件。所有组件都使用RandBox作为随机数生成器，确保真正的随机性和公平性。
+@randbox/react 是一个基于Canvas渲染的高性能React游戏组件库，提供了7个核心游戏组件。所有组件都使用RandBox作为随机数生成器，确保真正的随机性和公平性。
 
 ## ✨ 特性
 
-- 🎮 **5个核心游戏组件**：九宫格抽奖、滚动抽奖、刮刮卡、骰子游戏、石头剪刀布
+- 🎮 **7个核心游戏组件**：九宫格抽奖、老虎机、幸运大转盘、骰子游戏、刮刮卡、石头剪刀布、抛硬币
 - 🚀 **高性能**：基于Canvas渲染，流畅的动画效果
-- 📦 **轻量级**：优化后的打包大小（ES模块：~109KB，UMD：~45KB）
+- 📦 **轻量级**：优化后的打包大小（ES模块：~96KB，UMD：~43KB）
 - 🎨 **无需CSS**：所有样式都通过Canvas渲染，无外部依赖
 - 📱 **响应式**：自适应不同屏幕尺寸
 - 🔧 **TypeScript**：完整的类型定义支持
@@ -30,14 +30,38 @@ pnpm add @randbox/react randbox
 ## 🚀 快速开始
 
 ```typescript
-import { GridLottery, DiceGame, ScratchCard } from '@randbox/react';
+import {
+  GridLottery,
+  SlotMachine,
+  LuckyWheel,
+  DiceGame,
+  ScratchCard,
+  RockPaperScissors,
+  CoinFlip
+} from '@randbox/react';
 
 function App() {
   return (
     <div>
       {/* 九宫格抽奖 */}
       <GridLottery
-        prizes={['奖品1', '奖品2', '奖品3', '谢谢参与']}
+        prizes={['一等奖', '二等奖', '三等奖', '谢谢参与']}
+        onResult={(result) => console.log('中奖:', result)}
+      />
+
+      {/* 老虎机 */}
+      <SlotMachine
+        reels={[
+          ['🍎', '🍊', '🍋', '🍒'],
+          ['🍎', '🍊', '🍋', '🍒'],
+          ['🍎', '🍊', '🍋', '🍒']
+        ]}
+        onResult={(result) => console.log('结果:', result)}
+      />
+
+      {/* 幸运大转盘 */}
+      <LuckyWheel
+        prizes={['大奖', '中奖', '小奖', '谢谢参与']}
         onResult={(result) => console.log('中奖:', result)}
       />
 
@@ -45,7 +69,6 @@ function App() {
       <DiceGame
         diceCount={2}
         gameMode="sum"
-        targetSum={7}
         onResult={(result) => console.log('投掷结果:', result)}
       />
 
@@ -55,6 +78,16 @@ function App() {
         cols={3}
         symbols={['🍎', '🍌', '🍇']}
         onScratch={(result) => console.log('刮奖结果:', result)}
+      />
+
+      {/* 石头剪刀布 */}
+      <RockPaperScissors
+        onResult={(result) => console.log('游戏结果:', result)}
+      />
+
+      {/* 抛硬币 */}
+      <CoinFlip
+        onResult={(result) => console.log('抛币结果:', result)}
       />
     </div>
   );
@@ -66,17 +99,23 @@ function App() {
 ### [GridLottery - 九宫格抽奖](/zh/docs/react/grid-lottery)
 经典的九宫格转盘抽奖，支持自定义奖品和权重。
 
-### [SlotMachine - 滚动抽奖](/zh/docs/react/slot-machine)
+### [SlotMachine - 老虎机](/zh/docs/react/slot-machine)
 多滚轴老虎机风格的抽奖组件，支持自定义符号和中奖规则。
 
-### [ScratchCard - 刮刮卡](/zh/docs/react/scratch-card)
-真实的刮除体验，支持多种中奖模式（横排、竖排、对角线）。
+### [LuckyWheel - 幸运大转盘](/zh/docs/react/lucky-wheel)
+经典转盘抽奖，支持自定义奖品、颜色和权重配置。
 
 ### [DiceGame - 骰子游戏](/zh/docs/react/dice-game)
 3D效果的骰子游戏，支持多种游戏模式（简单、和值、大小、猜测等）。
 
+### [ScratchCard - 刮刮卡](/zh/docs/react/scratch-card)
+真实的刮除体验，支持多种中奖模式（横排、竖排、对角线）。
+
 ### [RockPaperScissors - 石头剪刀布](/zh/docs/react/rock-paper-scissors)
 经典的石头剪刀布游戏，支持多种AI策略和统计功能。
+
+### [CoinFlip - 抛硬币](/zh/docs/react/coin-flip)
+3D硬币抛掷游戏，支持动画效果和统计数据。
 
 ## 🎯 性能优化
 
@@ -95,6 +134,8 @@ function App() {
 
 ## 📚 API参考
 
+### 基础类型
+
 所有组件都继承自 `BaseGameProps` 接口：
 
 ```typescript
@@ -104,6 +145,34 @@ interface BaseGameProps {
   disabled?: boolean;
   onGameStart?: () => void;
   onGameEnd?: (result: any) => void;
+}
+```
+
+### 通用类型
+
+```typescript
+// 动画状态
+interface AnimationState {
+  isAnimating: boolean;
+  currentStep: number;
+  totalSteps: number;
+}
+
+// 游戏状态
+interface GameState {
+  isPlaying: boolean;
+  result?: any;
+  history: any[];
+}
+
+// 游戏主题配置
+interface GameTheme {
+  primaryColor: string;
+  secondaryColor: string;
+  backgroundColor: string;
+  textColor: string;
+  borderRadius: string;
+  fontFamily: string;
 }
 ```
 
@@ -123,6 +192,12 @@ interface BaseGameProps {
 <DiceGame
   style={{ border: '1px solid #ddd' }}
   className="my-dice-game"
+/>
+
+// 幸运大转盘支持自定义颜色
+<LuckyWheel
+  prizes={['奖品1', '奖品2', '奖品3', '奖品4']}
+  colors={['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']}
 />
 ```
 

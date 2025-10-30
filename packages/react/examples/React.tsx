@@ -5,7 +5,9 @@ import {
   DiceGamePreview,
   GridLotteryPreview,
   SlotMachinePreview,
-  ScratchCardPreview
+  ScratchCardPreview,
+  LuckyWheelPreview,
+  CoinFlipPreview
 } from './previews';
 
 /**
@@ -128,6 +130,8 @@ const RandBoxReactPreview: React.FC = () => {
             </div>
             <div style={{ padding: '30px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+                <LuckyWheelPreview />
+                <CoinFlipPreview />
                 <DiceGamePreview />
                 <GridLotteryPreview />
                 <SlotMachinePreview />
