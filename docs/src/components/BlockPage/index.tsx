@@ -16,58 +16,49 @@ import { blockRandomization } from '@/lib/randomization'
 
 export default function BlockRandomizationPage() {
   const { t, currentLocale } = useLocale()
-  const [sampleSize, setSampleSize] = useState<number>(20)
-  const [groupCount, setGroupCount] = useState<number>(2)
-  const [blockSize, setBlockSize] = useState<number>(4)
-  const [seed, setSeed] = useState<string>('')
+
+  // Parameters
+  const [blocks, setBlocks] = useState<string>('')
+  const [prob, setProb] = useState<string>('')
+  const [probUnit, setProbUnit] = useState<string>('')
+  const [probEach, setProbEach] = useState<string>('')
+  const [m, setM] = useState<string>('')
+  const [mUnit, setMUnit] = useState<string>('')
+  const [blockM, setBlockM] = useState<string>('')
+  const [blockMEach, setBlockMEach] = useState<string>('')
+  const [blockProb, setBlockProb] = useState<string>('')
+  const [blockProbEach, setBlockProbEach] = useState<string>('')
+  const [numArms, setNumArms] = useState<string>('')
+  const [conditions, setConditions] = useState<string>('')
+  const [checkInputs, setCheckInputs] = useState<boolean>(true)
+
   const [result, setResult] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string>('')
-
-  // Calculate valid block sizes based on group count
-  const getValidBlockSizes = () => {
-    const sizes = []
-    for (let i = groupCount; i <= Math.min(20, sampleSize); i++) {
-      if (i % groupCount === 0) {
-        sizes.push(i)
-      }
-    }
-    return sizes
-  }
-
-  const validBlockSizes = getValidBlockSizes()
-  const isBlockSizeValid = blockSize % groupCount === 0
 
   const handleRandomize = async () => {
     setError('')
     setIsLoading(true)
 
     try {
-      if (sampleSize < 1 || sampleSize > 10000) {
-        throw new Error(t('blockPage.errorMessages.sampleSizeRange'))
-      }
-      if (groupCount < 2 || groupCount > 10) {
-        throw new Error(t('blockPage.errorMessages.groupCountRange'))
-      }
-      if (blockSize % groupCount !== 0) {
-        throw new Error(t('blockPage.errorMessages.blockSizeDivisible'))
-      }
-      if (blockSize < groupCount) {
-        throw new Error(t('blockPage.errorMessages.blockSizeMinimum'))
-      }
 
-      const seedValue = seed ? Number.parseInt(seed) : undefined
-      const randomizationResult = blockRandomization(sampleSize, groupCount, blockSize, seedValue)
-      console.log('seedValue', randomizationResult)
+      const randomizationResult = blockRandomization(
+        blocks || null,
+        prob ? prob.split(',').map(p => Number.parseFloat(p.trim())) : null,
+        probUnit || null,
+        probEach || null,
+        m || null,
+        mUnit || null,
+        blockM || null,
+        blockMEach || null,
+        blockProb ? blockProb.split(',').map(p => Number.parseFloat(p.trim())) : null,
+        blockProbEach || null,
+        numArms ? Number.parseInt(numArms) : null,
+        conditions || null,
+        checkInputs,
+      )
+      console.log('randomizationResult', randomizationResult)
       setResult(randomizationResult)
-
-      // Save to history
-      RandomizationHistory.saveRecord('block', {
-        sampleSize,
-        groupCount,
-        blockSize,
-        seed,
-      }, randomizationResult)
     }
     catch (err) {
       setError(err instanceof Error ? err.message : t('blockPage.errorMessages.randomizationError'))
@@ -95,9 +86,6 @@ export default function BlockRandomizationPage() {
     URL.revokeObjectURL(url)
   }
 
-  const totalBlocks = Math.ceil(sampleSize / blockSize)
-  const samplesPerGroup = blockSize / groupCount
-
   return (
     <main className="pt-20 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -119,104 +107,154 @@ export default function BlockRandomizationPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="sampleSize">{t('blockPage.inputPanel.sampleSize')}</Label>
-                <Input
-                  id="sampleSize"
-                  type="number"
-                  min="1"
-                  max="10000"
-                  value={sampleSize}
-                  onChange={(e) => setSampleSize(Number.parseInt(e.target.value) || 0)}
-                  placeholder={t('blockPage.inputPanel.sampleSizePlaceholder')}
-                />
-                <p className="text-sm text-muted-foreground">{t('blockPage.inputPanel.sampleSizeHint')}</p>
-              </div>
+              {/* Parameters Section */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="blocks">Blocks</Label>
+                  <Input
+                    id="blocks"
+                    type="text"
+                    value={blocks}
+                    onChange={(e) => setBlocks(e.target.value)}
+                    placeholder="例如: 4"
+                  />
+                  <p className="text-sm text-muted-foreground">区组大小（默认：4）</p>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="groupCount">{t('blockPage.inputPanel.groupCount')}</Label>
-                <Input
-                  id="groupCount"
-                  type="number"
-                  min="2"
-                  max="10"
-                  value={groupCount}
-                  onChange={(e) => {
-                    const newGroupCount = Number.parseInt(e.target.value) || 0
-                    setGroupCount(newGroupCount)
-                    // Reset block size if current one is invalid
-                    if (blockSize % newGroupCount !== 0) {
-                      const validSizes = []
-                      for (let i = newGroupCount; i <= 20; i++) {
-                        if (i % newGroupCount === 0) {
-                          validSizes.push(i)
-                          break
-                        }
-                      }
-                      if (validSizes.length > 0) {
-                        setBlockSize(validSizes[0])
-                      }
-                    }
-                  }}
-                  placeholder={t('blockPage.inputPanel.groupCountPlaceholder')}
-                />
-                <p className="text-sm text-muted-foreground">{t('blockPage.inputPanel.groupCountHint')}</p>
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="prob">Prob (逗号分隔)</Label>
+                  <Input
+                    id="prob"
+                    type="text"
+                    value={prob}
+                    onChange={(e) => setProb(e.target.value)}
+                    placeholder="例如: 0.5, 0.5"
+                  />
+                  <p className="text-sm text-muted-foreground">概率向量，逗号分隔</p>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="blockSize">{t('blockPage.inputPanel.blockSize')}</Label>
-                <Select value={blockSize.toString()} onValueChange={(value) => setBlockSize(Number.parseInt(value))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('blockPage.inputPanel.blockSizePlaceholder')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {validBlockSizes.map((size) => (
-                      <SelectItem key={size} value={size.toString()}>
-                        {size}
-                        {' '}
-                        (
-                        {t('blockPage.inputPanel.samplesPerGroupText', { count: size / groupCount })}
-                        )
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-sm text-muted-foreground">{t('blockPage.inputPanel.blockSizeHint')}</p>
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="probUnit">Prob Unit</Label>
+                  <Input
+                    id="probUnit"
+                    type="text"
+                    value={probUnit}
+                    onChange={(e) => setProbUnit(e.target.value)}
+                    placeholder="留空"
+                  />
+                </div>
 
-              {!isBlockSizeValid && (
-                <Alert variant="destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
-                    {t('blockPage.errorMessages.blockSizeValidation', { blockSize, groupCount })}
-                  </AlertDescription>
-                </Alert>
-              )}
+                <div className="space-y-2">
+                  <Label htmlFor="probEach">Prob Each</Label>
+                  <Input
+                    id="probEach"
+                    type="text"
+                    value={probEach}
+                    onChange={(e) => setProbEach(e.target.value)}
+                    placeholder="留空"
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="seed">{t('blockPage.inputPanel.seed')}</Label>
-                <Input
-                  id="seed"
-                  type="number"
-                  value={seed}
-                  onChange={(e) => setSeed(e.target.value)}
-                  placeholder={t('blockPage.inputPanel.seedPlaceholder')}
-                />
-                <p className="text-sm text-muted-foreground">{t('blockPage.inputPanel.seedHint')}</p>
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="m">M</Label>
+                  <Input
+                    id="m"
+                    type="text"
+                    value={m}
+                    onChange={(e) => setM(e.target.value)}
+                    placeholder="留空"
+                  />
+                </div>
 
-              {/* Block Preview */}
-              <div className="bg-muted/50 rounded-lg p-4">
-                <h4 className="font-medium mb-2">{t('blockPage.inputPanel.blockPreviewTitle')}</h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">{t('blockPage.inputPanel.totalBlocks')}</span>
-                    <span className="font-medium">{totalBlocks}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">{t('blockPage.inputPanel.samplesPerGroup')}</span>
-                    <span className="font-medium">{samplesPerGroup}</span>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="mUnit">M Unit</Label>
+                  <Input
+                    id="mUnit"
+                    type="text"
+                    value={mUnit}
+                    onChange={(e) => setMUnit(e.target.value)}
+                    placeholder="留空"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="blockM">Block M</Label>
+                  <Input
+                    id="blockM"
+                    type="text"
+                    value={blockM}
+                    onChange={(e) => setBlockM(e.target.value)}
+                    placeholder="留空"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="blockMEach">Block M Each</Label>
+                  <Input
+                    id="blockMEach"
+                    type="text"
+                    value={blockMEach}
+                    onChange={(e) => setBlockMEach(e.target.value)}
+                    placeholder="留空"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="blockProb">Block Prob (逗号分隔)</Label>
+                  <Input
+                    id="blockProb"
+                    type="text"
+                    value={blockProb}
+                    onChange={(e) => setBlockProb(e.target.value)}
+                    placeholder="例如: 0.5, 0.5"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="blockProbEach">Block Prob Each</Label>
+                  <Input
+                    id="blockProbEach"
+                    type="text"
+                    value={blockProbEach}
+                    onChange={(e) => setBlockProbEach(e.target.value)}
+                    placeholder="留空"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="numArms">Num Arms</Label>
+                  <Input
+                    id="numArms"
+                    type="number"
+                    value={numArms}
+                    onChange={(e) => setNumArms(e.target.value)}
+                    placeholder="例如: 2"
+                  />
+                  <p className="text-sm text-muted-foreground">组数（默认：2）</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="conditions">Conditions (逗号分隔)</Label>
+                  <Input
+                    id="conditions"
+                    type="text"
+                    value={conditions}
+                    onChange={(e) => setConditions(e.target.value)}
+                    placeholder="例如: 处理组, 对照组"
+                  />
+                  <p className="text-sm text-muted-foreground">组名称，逗号分隔</p>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <input
+                    id="checkInputs"
+                    type="checkbox"
+                    checked={checkInputs}
+                    onChange={(e) => setCheckInputs(e.target.checked)}
+                    className="rounded border-border"
+                  />
+                  <Label htmlFor="checkInputs">Check Inputs</Label>
+                  <span className="text-sm text-muted-foreground">（默认：true）</span>
                 </div>
               </div>
 
@@ -228,25 +266,12 @@ export default function BlockRandomizationPage() {
 
               <Button
                 onClick={handleRandomize}
-                disabled={isLoading || !isBlockSizeValid}
+                disabled={isLoading}
                 className="w-full"
                 size="lg"
               >
                 {isLoading ? t('blockPage.inputPanel.calculatingButton') : t('blockPage.inputPanel.startButton')}
               </Button>
-
-              {/* Algorithm Info */}
-              <div className="bg-muted/50 rounded-lg p-4">
-                <div className="flex items-start gap-2">
-                  <Info className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                  <div className="text-sm text-muted-foreground">
-                    <p className="font-medium mb-1">{t('blockPage.inputPanel.algorithmTitle')}</p>
-                    <p>
-                      {t('blockPage.inputPanel.algorithmDescription')}
-                    </p>
-                  </div>
-                </div>
-              </div>
             </CardContent>
           </Card>
 

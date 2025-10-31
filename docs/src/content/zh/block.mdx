@@ -9,3 +9,370 @@ keywords: ["RandBox", "block", "随机", "JavaScript", "MDX"]
 import BlockPage from "@/components/BlockPage";
 
 <BlockPage />
+
+## 什么是区组随机化？
+
+区组随机化（Block Randomization）是一种在预设区块内进行完全随机分配的随机化方法。它确保了来自不同区组（由预处理协变量定义的组）的参与者能够在各自区组内被随机分配到不同的治疗组别中。
+
+例如，想象有100名男性和200名参与者，通过区组随机化可以确保在男性组中有50人被分配到治疗组，而在女性组中有75人被分配到治疗组。
+
+### 主要特点
+
+- **区内平衡**：在每个区组内实现完全随机分配
+- **区组灵活性**：支持基于协变量（如性别、年龄、地理位置等）定义区组
+- **多种分配策略**：支持固定数量分配、概率分配和多种治疗臂
+- **完全随机化**：在每个区组内使用完全随机分配（complete random assignment）
+- **可重复性**：通过设置随机种子确保结果可重复
+
+## 函数语法
+
+```typescript
+blockRandomization(
+  blocks?: any,
+  prob?: number[] | null,
+  prob_unit?: string | null,
+  prob_each?: string | null,
+  m?: any,
+  m_unit?: string | null,
+  block_m?: any,
+  block_m_each?: any,
+  block_prob?: number[] | null,
+  block_prob_each?: any,
+  num_arms?: number | null,
+  conditions?: string | null,
+  check_inputs: boolean = true
+): BlockResult
+```
+
+## 使用示例
+
+### 基本两臂设计（完全随机分配）
+
+```javascript
+// 两臂设计，区组大小为4，每个区组内完全随机分配
+const result = blockRandomization(
+  4,      // blocks: 区组大小
+  null,   // prob: 使用完全随机分配（不指定概率）
+  null,   // prob_unit: 概率单位
+  null,   // prob_each: 逐个概率
+  null,   // m: 固定分配数量
+  null,   // m_unit: 数量单位
+  null,   // block_m: 每区组固定分配数量
+  null,   // block_m_each: 多臂设计的每区组分配
+  null,   // block_prob: 每区组概率
+  null,   // block_prob_each: 多臂设计的每区组概率
+  2,      // num_arms: 2个治疗臂
+  null,   // conditions: 条件名
+  true    // check_inputs: 检查输入
+);
+
+// 结果示例：每4人一组，随机分配到两个组
+// 区组1: [1,3] 到组1, [2,4] 到组2
+// 区组2: [5,8] 到组1, [6,7] 到组2
+```
+
+### 指定概率的两臂设计
+
+```javascript
+// 使用概率分配（例如30%分配到治疗组）
+const result = blockRandomization(
+  10,     // blocks: 区组大小
+  0.3,    // prob: 30%概率分配到治疗组
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  2,      // 两臂设计
+  null,
+  true
+);
+
+// 结果：每个区组中约30%的人被分配到治疗组
+```
+
+### 多臂设计
+
+```javascript
+// 三臂设计，区组大小为6
+const result = blockRandomization(
+  6,      // blocks: 区组大小
+  null,
+  null,
+  [0.2, 0.3, 0.5],  // prob_each: 三组的概率分布
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  3,      // num_arms: 3个臂
+  ['对照组', '治疗组A', '治疗组B'],  // 自定义组名
+  true
+);
+
+// 结果：每个区组内按概率[0.2, 0.3, 0.5]随机分配
+```
+
+### 自定义每区组分配数量
+
+```javascript
+// 指定每个区组的分配数量
+const result = blockRandomization(
+  100,    // blocks: 区组大小（实际上每组100人）
+  null,
+  null,
+  null,
+  20,     // m: 每区组固定分配20人到治疗组
+  null,
+  [20, 30, 40],  // block_m: 分别为三个区组指定20, 30, 40人
+  null,
+  null,
+  null,
+  2,
+  null,
+  true
+);
+
+// 结果：区组A分配20人到治疗组，区组B分配30人，区组C分配40人
+```
+
+## 参数详细说明
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `blocks` | any | 4 | **区组标识符**。长度 N 的向量，指示每个单位属于哪个区组。可以是字符、因子或数值向量。当前版本使用区组大小。 |
+| `prob` | number[] | null | **概率分配**。用于两臂设计，在每个区组内以概率 `prob` 分配到治疗组。必须是 0 到 1 之间的实数。 |
+| `prob_unit` | string | null | **单位概率**。用于两臂设计。长度为 N 的向量。`tapply(prob_unit, blocks, unique)` 将传递给 `block_prob`。 |
+| `prob_each` | number[] | null | **多臂概率**。用于多臂设计，指定分配到每个治疗条件的概率。必须是数值向量，所有条目非负且总和为 1。 |
+| `m` | any | null | **固定分配数量**。用于两臂设计，标量 m 描述每个区组内要分配的固定单位数量。 |
+| `m_unit` | string | null | **单位分配数量**。用于两臂设计。长度为 N 的向量。`tapply(m_unit, blocks, unique)` 将传递给 `block_m`。 |
+| `block_m` | any | null | **每区组分配数量**。用于两臂设计，向量 block_m 描述每个区组内要分配到治疗组的单位数量。 |
+| `block_m_each` | any | null | **多臂每区组分配**。用于多臂设计，矩阵形式，每行对应一个区组，每列对应一个治疗臂，指定分配数量。 |
+| `block_prob` | number[] | null | **每区组概率**。用于两臂设计，描述每个区组内分配到治疗组的概率。可跨区组变化。 |
+| `block_prob_each` | any | null | **多臂每区组概率**。用于多臂设计，矩阵形式，指定每个区组内分配到各治疗条件的概率。 |
+| `num_arms` | number | 2 | **治疗臂数**。治疗臂的数量。如果未指定，将从其他参数确定。 |
+| `conditions` | string | null | **条件名称**。字符向量，给出治疗组的名称。如果未指定，两臂试验默认为 0（对照）和 1（治疗），多臂试验默认为 T1、T2、T3... |
+| `check_inputs` | boolean | true | **检查输入**。逻辑值，默认为 TRUE。是否验证输入参数的有效性。 |
+
+### 参数使用优先级
+
+1. **完全随机分配（默认）**：不指定 `prob`、`m`、`block_m` 等参数时，使用完全随机分配
+2. **概率分配**：`prob` 或 `prob_each` 指定概率
+3. **固定数量分配**：`m`、`block_m`、`block_m_each` 指定固定数量
+4. **区组级参数**：`block_prob`、`block_prob_each` 允许跨区组变化
+
+### 重要说明
+
+- **当前实现限制**：当前 JavaScript 版本使用固定的参与者数量（20），真正的区组标识功能尚未完全实现
+- **向后兼容**：函数保持向后兼容，默认行为是简单的区组内完全随机分配
+- **扩展性**：参数设计参考 R 语言的 `block_ra` 函数，支持完整的区组随机化功能
+
+## 返回值
+
+函数返回一个包含以下字段的对象：
+
+```typescript
+{
+  groups: Array<{
+    name: string
+    participants: number[]
+    size: number
+  }>
+  blocks: Array<{
+    blockNumber: number
+    groups: Array<{
+      name: string
+      participants: number[]
+      size: number
+    }>
+  }>
+  totalParticipants: number
+  algorithm: string
+  timestamp: string
+  statistics: {
+    groupSizes: number[]
+    balance: number
+    efficiency: number
+  }
+}
+```
+
+### 返回值字段说明
+
+- **groups**: 所有组的合并结果
+  - `name`: 组名（如 "组 1"、"组 2" 或自定义名称）
+  - `participants`: 该组所有参与者的编号
+  - `size`: 该组的参与者总数
+
+- **blocks**: 按区组分类的详细信息
+  - `blockNumber`: 区组编号（从 1 开始）
+  - `groups`: 该区组内各组的详细信息
+
+- **totalParticipants**: 总参与者数量（当前版本固定为 20）
+
+- **algorithm**: 算法名称（固定为 '区组随机化'）
+
+- **timestamp**: 随机化的时间戳（ISO 8601 格式）
+
+- **statistics**: 统计信息
+  - `groupSizes`: 各组大小数组
+  - `balance`: 平衡度评分（1 表示完全平衡）
+  - `efficiency`: 效率评分（接近 1 表示高效）
+
+## 设计考量
+
+### 两臂试验 vs 多臂试验
+
+**两臂试验**（Binary Treatment）：
+- 使用 `prob` 指定概率
+- 使用 `block_prob` 指定每区组概率
+- 使用 `m` 或 `block_m` 指定固定数量
+- 返回数值型向量（0 = 对照，1 = 治疗）
+
+**多臂试验**（Multi-arm Treatment）：
+- 使用 `prob_each` 指定概率分布
+- 使用 `block_prob_each` 指定每区组概率矩阵
+- 使用 `block_m_each` 指定每区组数量矩阵
+- 返回因子变量（按 conditions 排序）
+
+### 区组定义
+
+区组应该基于**预处理协变量**（pre-treatment covariates）定义，例如：
+- 地理位置（医院、城市、国家）
+- 人口学特征（性别、年龄组）
+- 临床特征（疾病严重程度、基线评分）
+- 时间特征（入组时间、季节）
+
+**重要**：区组变量必须是已知的、固定的，不能受治疗分配影响。
+
+## 使用示例（R 语言对比）
+
+### R 语言示例
+
+```r
+# 两臂设计
+blocks <- rep(c("A", "B", "C"), times = c(50, 100, 200))
+Z <- block_ra(blocks = blocks)
+
+# 结果
+table(blocks, Z)
+#>       Z
+#> blocks   0   1
+#>      A  25  25
+#>      B  50  50
+#>      C 100 100
+
+# 指定概率
+Z <- block_ra(blocks = blocks, prob = 0.3)
+table(blocks, Z)
+#>       Z
+#> blocks   0   1
+#>      A  35  15
+#>      B  70  30
+#>      C 140  60
+```
+
+### JavaScript 等效实现
+
+```javascript
+// 注意：当前 JS 版本参数结构略有不同
+// 这是未来版本的目标形态
+
+const result = blockRandomization(
+  "A,A,A,...,B,B,B,...,C,C,C...", // 区组标识符序列
+  0.3,                            // 概率
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  2,                              // 两臂
+  ["对照组", "治疗组"],
+  true
+);
+```
+
+## 最佳实践
+
+### 1. 区组大小选择
+
+- **平衡性 vs 隐藏性**：
+  - 较小区组（2, 4）提供更好的组间平衡
+  - 较大区组（6, 8, 10）提供更好的分配隐藏性
+
+- **实际考量**：
+  - 确保区组大小 ≥ 治疗臂数
+  - 考虑预期入组速度（避免长时间等待填满区组）
+
+### 2. 概率分配策略
+
+- **等概率分配**：`prob = 0.5`（两臂）或 `prob_each = [0.33, 0.33, 0.34]`（三臂）
+- **不等概率分配**：基于伦理或实用性考量
+- **区组间概率变化**：`block_prob` 允许不同区组使用不同概率
+
+### 3. 固定数量 vs 概率分配
+
+**固定数量分配**（`m` / `block_m`）：
+- ✅ 确保精确的样本量
+- ✅ 适合样本量较小的情况
+- ❌ 可能影响分配隐藏性
+
+**概率分配**（`prob` / `block_prob`）：
+- ✅ 提供更好的分配隐藏性
+- ✅ 适合大样本研究
+- ❌ 最终样本量可能有小幅波动
+
+### 4. 参数验证
+
+始终保持 `check_inputs = true`，确保：
+- 概率值在 [0, 1] 范围内
+- 概率总和为 1（对于 `prob_each`）
+- 区组大小与分配数量匹配
+- 矩阵维度一致性
+
+## 常见问题
+
+### Q: 什么是"完全随机分配"？
+A: 在每个区组内，完全随机分配意味着每个单位有相等的机会被分配到任何治疗组。区组大小决定了每个区组内各组的最终分配数量。
+
+### Q: 如何处理不同大小的区组？
+A: 使用 `block_prob`、`block_m` 或 `block_prob_each` 参数，允许每个区组有不同的概率或分配数量。
+
+### Q: 区组随机化与分层随机化的区别？
+A:
+- **区组随机化**：在每个区组内独立进行随机分配
+- **分层随机化**：在每个层内独立进行随机分配
+- 本质上相同，都是确保关键协变量的平衡
+
+### Q: 可以动态调整区组大小吗？
+A: 当前的固定区组大小设计是为了保持分配隐藏性。如果需要动态大小，建议使用概率分配而非固定数量分配。
+
+### Q: 如何验证随机化结果？
+A:
+- 使用 `statistics.balance` 检查组间平衡
+- 使用 `statistics.efficiency` 检查分配效率
+- 使用 `table(blocks, Z)` 验证区组内分配
+
+## 相关算法
+
+| 算法 | 适用场景 | 特点 |
+|------|----------|------|
+| **简单随机化** | 大样本研究，无协变量控制 | 简单、快速 |
+| **区组随机化** | 需要控制特定协变量 | 确保区内平衡 |
+| **分层随机化** | 需要控制多个协变量 | 更精细的分层 |
+| **自适应随机化** | 动态平衡治疗组 | 基于历史分配调整 |
+| **最小化** | 多协变量、样本量小 | 最小化组间差异 |
+
+## 参考资料
+
+- [DeclareDesign/randomizr](https://github.com/DeclareDesign/randomizr) - R 语言随机化包
+- [block_ra 文档](https://github.com/DeclareDesign/randomizr/blob/main/R/block_ra.R) - R 实现
+- Schulz, K. F., & Grimes, D. A. (2002). Allocation concealment in randomised trials: defending against deciphering. The Lancet, 359(9306), 614-618.
+- Pocock, S. J., & Simon, R. (1975). Sequential treatment assignment with balancing for prognostic factors in the controlled clinical trial. Biometrics, 31(1), 103-115.

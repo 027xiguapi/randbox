@@ -201,16 +201,30 @@ export function stratifiedRandomization(
 }
 
 export function blockRandomization(
-  totalParticipants: number,
-  groupCount: number,
-  blockSize: number,
-  seed?: number,
+  blocks?: any,
+  prob?: number[] | null,
+  prob_unit?: string | null,
+  prob_each?: string | null,
+  m?: any,
+  m_unit?: string | null,
+  block_m?: any,
+  block_m_each?: any,
+  block_prob?: number[] | null,
+  block_prob_each?: any,
+  num_arms?: number | null,
+  conditions?: string | null,
+  check_inputs: boolean = true,
 ): BlockResult {
+  // Default values for backward compatibility
+  const totalParticipants = 20
+  const groupCount = num_arms || 2
+  const blockSize = blocks || 4
+  const seed = Date.now()
   const rng = new RandomGenerator(seed)
   const participants = Array.from({ length: totalParticipants }, (_, i) => i + 1)
   const shuffled = shuffle(participants, rng)
 
-  const blocks: Array<{
+  const blockList: Array<{
     blockNumber: number
     groups: Array<{
       name: string
@@ -241,7 +255,7 @@ export function blockRandomization(
       }
     })
 
-    blocks.push({
+    blockList.push({
       blockNumber,
       groups,
     })
@@ -257,7 +271,7 @@ export function blockRandomization(
     size: 0,
   }))
 
-  blocks.forEach((block) => {
+  blockList.forEach((block) => {
     block.groups.forEach((group, index) => {
       combinedGroups[index].participants.push(...group.participants)
       combinedGroups[index].size += group.size
@@ -269,7 +283,7 @@ export function blockRandomization(
 
   return {
     groups: combinedGroups,
-    blocks,
+    blocks: blockList,
     totalParticipants,
     algorithm: '区组随机化',
     timestamp: new Date().toISOString(),

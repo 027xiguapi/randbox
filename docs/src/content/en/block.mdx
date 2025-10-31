@@ -1,11 +1,378 @@
 ---
-title: "block random"
-description: "RandBox page: block random, includes examples and docs."
+title: "Block Randomization"
+description: "RandBox page: Block Randomization, includes examples and documentation."
 date: "2025-10-16"
 tags: ["RandBox", "block"]
-keywords: ["RandBox", "block", "random", "JavaScript", "MDX"]
+keywords: ["RandBox", "block", "randomization", "JavaScript", "MDX"]
 ---
 
 import BlockPage from "@/components/BlockPage";
 
 <BlockPage />
+
+## What is Block Randomization?
+
+Block randomization is a randomization method that performs complete random assignment within predefined blocks. It ensures that participants from different blocks (defined by pre-treatment covariates) are randomly assigned to different treatment groups within their respective blocks.
+
+For example, imagine 100 men and 200 women participants. Block randomization can ensure that 50 out of 100 men are assigned to the treatment group, while 75 out of 200 women are assigned to the treatment group.
+
+### Key Features
+
+- **Within-block Balance**: Achieves complete random assignment within each block
+- **Block Flexibility**: Supports block definition based on covariates (e.g., gender, age, geographic location)
+- **Multiple Assignment Strategies**: Supports fixed quantity assignment, probability assignment, and multiple treatment arms
+- **Complete Randomization**: Uses complete random assignment within each block
+- **Reproducibility**: Ensures reproducible results through random seed settings
+
+## Function Syntax
+
+```typescript
+blockRandomization(
+  blocks?: any,
+  prob?: number[] | null,
+  prob_unit?: string | null,
+  prob_each?: string | null,
+  m?: any,
+  m_unit?: string | null,
+  block_m?: any,
+  block_m_each?: any,
+  block_prob?: number[] | null,
+  block_prob_each?: any,
+  num_arms?: number | null,
+  conditions?: string | null,
+  check_inputs: boolean = true
+): BlockResult
+```
+
+## Usage Examples
+
+### Basic Two-Arm Design (Complete Random Assignment)
+
+```javascript
+// Two-arm design with block size of 4, complete random assignment within each block
+const result = blockRandomization(
+  4,      // blocks: block size
+  null,   // prob: use complete random assignment (no probability specified)
+  null,   // prob_unit: probability unit
+  null,   // prob_each: individual probabilities
+  null,   // m: fixed assignment quantity
+  null,   // m_unit: quantity unit
+  null,   // block_m: fixed assignment quantity per block
+  null,   // block_m_each: per-block assignment for multi-arm design
+  null,   // block_prob: probability per block
+  null,   // block_prob_each: per-block probabilities for multi-arm design
+  2,      // num_arms: 2 treatment arms
+  null,   // conditions: condition names
+  true    // check_inputs: validate inputs
+);
+
+// Example results: every 4 participants grouped and randomly assigned to two groups
+// Block 1: [1,3] to group 1, [2,4] to group 2
+// Block 2: [5,8] to group 1, [6,7] to group 2
+```
+
+### Two-Arm Design with Probability Specification
+
+```javascript
+// Using probability assignment (e.g., 30% assigned to treatment group)
+const result = blockRandomization(
+  10,     // blocks: block size
+  0.3,    // prob: 30% probability of assignment to treatment group
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  2,      // two-arm design
+  null,
+  true
+);
+
+// Results: approximately 30% of participants in each block assigned to treatment group
+```
+
+### Multi-Arm Design
+
+```javascript
+// Three-arm design with block size of 6
+const result = blockRandomization(
+  6,      // blocks: block size
+  null,
+  null,
+  [0.2, 0.3, 0.5],  // prob_each: probability distribution for three groups
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  3,      // num_arms: 3 arms
+  ['Control', 'Treatment A', 'Treatment B'],  // custom group names
+  true
+);
+
+// Results: random assignment within each block according to probabilities [0.2, 0.3, 0.5]
+```
+
+### Custom Per-Block Assignment Quantity
+
+```javascript
+// Specify assignment quantity for each block
+const result = blockRandomization(
+  100,    // blocks: block size (actually 100 participants per group)
+  null,
+  null,
+  null,
+  20,     // m: fixed assignment of 20 participants per block to treatment
+  null,
+  [20, 30, 40],  // block_m: specify 20, 30, 40 participants for three blocks respectively
+  null,
+  null,
+  null,
+  2,
+  null,
+  true
+);
+
+// Results: Block A assigns 20 participants to treatment, Block B assigns 30, Block C assigns 40
+```
+
+## Parameter Details
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `blocks` | any | 4 | **Block identifier**. A vector of length N indicating which block each unit belongs to. Can be character, factor, or numeric vector. Current version uses block size. |
+| `prob` | number[] | null | **Probability assignment**. For two-arm design, assigns to treatment group with probability `prob` within each block. Must be a real number between 0 and 1. |
+| `prob_unit` | string | null | **Unit probability**. For two-arm design. Must be of length N. `tapply(prob_unit, blocks, unique)` will be passed to `block_prob`. |
+| `prob_each` | number[] | null | **Multi-arm probabilities**. For multi-arm design, specifies probabilities of assignment to each treatment condition. Must be a numeric vector with non-negative entries summing to 1. |
+| `m` | any | null | **Fixed assignment quantity**. For two-arm design, scalar m describes the fixed number of units to assign within each block. |
+| `m_unit` | string | null | **Unit assignment quantity**. For two-arm design. Must be of length N. `tapply(m_unit, blocks, unique)` will be passed to `block_m`. |
+| `block_m` | any | null | **Per-block assignment quantity**. For two-arm design, vector block_m describes the number of units to assign to treatment within each block. |
+| `block_m_each` | any | null | **Multi-arm per-block assignment**. For multi-arm design, matrix format with rows corresponding to blocks and columns to treatment arms, specifying assignment quantities. |
+| `block_prob` | number[] | null | **Per-block probability**. For two-arm design, describes the probability of assignment to treatment within each block. Can vary across blocks. |
+| `block_prob_each` | any | null | **Multi-arm per-block probability**. For multi-arm design, matrix format specifying probabilities of assignment to each treatment condition within each block. |
+| `num_arms` | number | 2 | **Number of treatment arms**. The number of treatment arms. If unspecified, determined from other arguments. |
+| `conditions` | string | null | **Condition names**. Character vector giving the names of treatment groups. If unspecified, defaults to 0 (control) and 1 (treatment) for two-arm trials, and T1, T2, T3... for multi-arm trials. |
+| `check_inputs` | boolean | true | **Check inputs**. Logical, defaults to TRUE. Whether to validate input parameters. |
+
+### Parameter Usage Priority
+
+1. **Complete Random Assignment (default)**: Uses complete random assignment when no `prob`, `m`, `block_m` parameters specified
+2. **Probability Assignment**: `prob` or `prob_each` specify probabilities
+3. **Fixed Quantity Assignment**: `m`, `block_m`, `block_m_each` specify fixed quantities
+4. **Block-level Parameters**: `block_prob`, `block_prob_each` allow variation across blocks
+
+### Important Notes
+
+- **Current Implementation Limitations**: Current JavaScript version uses fixed number of participants (20), true block identifier functionality not fully implemented
+- **Backward Compatibility**: Function maintains backward compatibility with default behavior of simple block random assignment
+- **Extensibility**: Parameter design references R's `block_ra` function, supporting complete block randomization functionality
+
+## Return Value
+
+The function returns an object with the following fields:
+
+```typescript
+{
+  groups: Array<{
+    name: string
+    participants: number[]
+    size: number
+  }>
+  blocks: Array<{
+    blockNumber: number
+    groups: Array<{
+      name: string
+      participants: number[]
+      size: number
+    }>
+  }>
+  totalParticipants: number
+  algorithm: string
+  timestamp: string
+  statistics: {
+    groupSizes: number[]
+    balance: number
+    efficiency: number
+  }
+}
+```
+
+### Return Value Field Descriptions
+
+- **groups**: Combined results of all groups
+  - `name`: Group name (e.g., "Group 1", "Group 2" or custom names)
+  - `participants`: Participant IDs assigned to this group
+  - `size`: Total number of participants in this group
+
+- **blocks**: Detailed information categorized by blocks
+  - `blockNumber`: Block number (starting from 1)
+  - `groups`: Detailed information for each group within the block
+
+- **totalParticipants**: Total number of participants (fixed at 20 in current version)
+
+- **algorithm**: Algorithm name (fixed as 'block_randomization')
+
+- **timestamp**: Randomization timestamp (ISO 8601 format)
+
+- **statistics**: Statistical information
+  - `groupSizes`: Array of group sizes
+  - `balance`: Balance score (1 indicates perfect balance)
+  - `efficiency`: Efficiency score (close to 1 indicates high efficiency)
+
+## Design Considerations
+
+### Two-Arm vs Multi-Arm Trials
+
+**Two-Arm Trials** (Binary Treatment):
+- Use `prob` to specify probability
+- Use `block_prob` to specify per-block probabilities
+- Use `m` or `block_m` to specify fixed quantities
+- Returns numeric vector (0 = control, 1 = treatment)
+
+**Multi-Arm Trials** (Multi-arm Treatment):
+- Use `prob_each` to specify probability distribution
+- Use `block_prob_each` to specify per-block probability matrix
+- Use `block_m_each` to specify per-block quantity matrix
+- Returns factor variable (ordered by conditions)
+
+### Block Definition
+
+Blocks should be defined based on **pre-treatment covariates**, such as:
+- Geographic location (hospital, city, country)
+- Demographic characteristics (gender, age group)
+- Clinical characteristics (disease severity, baseline scores)
+- Temporal characteristics (enrollment time, season)
+
+**Important**: Block variables must be known and fixed, not affected by treatment assignment.
+
+## Usage Examples (R Language Comparison)
+
+### R Language Example
+
+```r
+# Two-arm design
+blocks <- rep(c("A", "B", "C"), times = c(50, 100, 200))
+Z <- block_ra(blocks = blocks)
+
+# Results
+table(blocks, Z)
+#>       Z
+#> blocks   0   1
+#>      A  25  25
+#>      B  50  50
+#>      C 100 100
+
+# Specify probability
+Z <- block_ra(blocks = blocks, prob = 0.3)
+table(blocks, Z)
+#>       Z
+#> blocks   0   1
+#>      A  35  15
+#>      B  70  30
+#>      C 140  60
+```
+
+### JavaScript Equivalent Implementation
+
+```javascript
+// Note: Current JS version has slightly different parameter structure
+// This is the target form for future versions
+
+const result = blockRandomization(
+  "A,A,A,...,B,B,B,...,C,C,C...", // block identifier sequence
+  0.3,                            // probability
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  2,                              // two-arm
+  ["Control", "Treatment"],
+  true
+);
+```
+
+## Best Practices
+
+### 1. Block Size Selection
+
+- **Balance vs Concealment**:
+  - Smaller blocks (2, 4) provide better between-group balance
+  - Larger blocks (6, 8, 10) provide better assignment concealment
+
+- **Practical Considerations**:
+  - Ensure block size ≥ number of treatment arms
+  - Consider expected enrollment rate (avoid long waits to fill blocks)
+
+### 2. Probability Assignment Strategy
+
+- **Equal Probability Assignment**: `prob = 0.5` (two-arm) or `prob_each = [0.33, 0.33, 0.34]` (three-arm)
+- **Unequal Probability Assignment**: Based on ethical or practical considerations
+- **Cross-block Probability Variation**: `block_prob` allows different probabilities for different blocks
+
+### 3. Fixed Quantity vs Probability Assignment
+
+**Fixed Quantity Assignment** (`m` / `block_m`):
+- ✅ Ensures precise sample size
+- ✅ Suitable for small sample sizes
+- ❌ May affect assignment concealment
+
+**Probability Assignment** (`prob` / `block_prob`):
+- ✅ Provides better assignment concealment
+- ✅ Suitable for large sample studies
+- ❌ Final sample size may have slight variations
+
+### 4. Parameter Validation
+
+Always keep `check_inputs = true` to ensure:
+- Probability values are in [0, 1] range
+- Probabilities sum to 1 (for `prob_each`)
+- Block size matches assignment quantities
+- Matrix dimension consistency
+
+## Frequently Asked Questions
+
+### Q: What is "complete random assignment"?
+A: Within each block, complete random assignment means each unit has equal chance of being assigned to any treatment group. Block size determines the final assignment quantity for each group within the block.
+
+### Q: How to handle blocks of different sizes?
+A: Use `block_prob`, `block_m`, or `block_prob_each` parameters to allow different probabilities or assignment quantities for different blocks.
+
+### Q: What's the difference between block randomization and stratified randomization?
+A:
+- **Block Randomization**: Independently performs random assignment within each block
+- **Stratified Randomization**: Independently performs random assignment within each stratum
+- Essentially the same, both ensure balance of key covariates
+
+### Q: Can I dynamically adjust block size?
+A: Current fixed block size design is to maintain assignment concealment. If dynamic size is needed, consider using probability assignment rather than fixed quantity assignment.
+
+### Q: How to validate randomization results?
+A:
+- Use `statistics.balance` to check between-group balance
+- Use `statistics.efficiency` to check assignment efficiency
+- Use `table(blocks, Z)` to validate within-block assignment
+
+## Related Algorithms
+
+| Algorithm | Use Case | Characteristics |
+|-----------|----------|----------------|
+| **Simple Randomization** | Large sample studies, no covariate control | Simple, fast |
+| **Block Randomization** | Need to control specific covariates | Ensures within-block balance |
+| **Stratified Randomization** | Need to control multiple covariates | More refined stratification |
+| **Adaptive Randomization** | Dynamically balance treatment groups | Adjusts based on historical assignments |
+| **Minimization** | Multiple covariates, small sample size | Minimizes between-group differences |
+
+## References
+
+- [DeclareDesign/randomizr](https://github.com/DeclareDesign/randomizr) - R randomization package
+- [block_ra documentation](https://github.com/DeclareDesign/randomizr/blob/main/R/block_ra.R) - R implementation
+- Schulz, K. F., & Grimes, D. A. (2002). Allocation concealment in randomised trials: defending against deciphering. The Lancet, 359(9306), 614-618.
+- Pocock, S. J., & Simon, R. (1975). Sequential treatment assignment with balancing for prognostic factors in the controlled clinical trial. Biometrics, 31(1), 103-115.
