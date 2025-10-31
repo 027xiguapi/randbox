@@ -14,6 +14,57 @@ import { DiceGame } from '@randbox/react';
 import type { DiceGameProps, DiceGameResult } from '@randbox/react';
 ```
 
+## 🎯 类型定义
+
+### DiceGameProps
+
+```typescript
+interface DiceGameProps {
+  // 可选属性
+  diceCount?: number;                                // 骰子数量，默认1
+  sides?: number;                                    // 骰子面数，默认6
+  gameMode?: DiceGameMode;                           // 游戏模式，默认'simple'
+  targetSum?: number;                                // 目标总和（sum模式使用）
+
+  // 基础属性（继承自BaseGameProps）
+  className?: string;                                // CSS类名
+  style?: React.CSSProperties;                      // 内联样式
+  disabled?: boolean;                                // 是否禁用
+
+  // 回调函数
+  onGameStart?: () => void;                         // 游戏开始回调
+  onGameEnd?: (result: DiceGameResult) => void;    // 游戏结束回调
+  onResult?: (result: DiceGameResult) => void;     // 结果回调
+}
+```
+
+### DiceGameMode
+
+```typescript
+type DiceGameMode =
+  | 'simple'        // 简单模式，仅显示骰子结果
+  | 'sum'           // 总和模式，显示所有骰子点数之和
+  | 'bigSmall'      // 大小模式，猜大小
+  | 'guess'         // 猜点模式，猜测具体点数
+  | 'even_odd'      // 单双模式，猜单数或双数
+  | 'specific';     // 特定点模式，猜测是否有特定点数
+```
+
+### DiceGameResult
+
+```typescript
+interface DiceGameResult {
+  results: number[];     // 所有骰子的结果数组
+  total: number;         // 骰子点数总和
+  gameMode: string;      // 游戏模式
+  isWin?: boolean;       // 是否获胜（在对战模式下）
+  message: string;       // 结果描述信息
+  values: number[];      // 所有骰子的值（与results相同）
+  sum: number;           // 总和（与total相同）
+  description: string;   // 详细描述
+}
+```
+
 ## 🚀 基础用法
 
 ```typescript

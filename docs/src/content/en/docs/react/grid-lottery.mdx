@@ -14,6 +14,43 @@ import { GridLottery } from '@randbox/react';
 import type { GridLotteryProps, GridLotteryResult } from '@randbox/react';
 ```
 
+## 🎯 Type Definitions
+
+### GridLotteryProps
+
+```typescript
+interface GridLotteryProps {
+  // Required properties
+  prizes: string[];                               // Prize list
+
+  // Optional properties
+  weights?: number[];                             // Prize weights
+  gridSize?: number;                              // Grid size, default 9
+  animationDuration?: number;                     // Animation duration (ms), default 3000
+  buttonText?: string;                            // Button text, default "Start Lottery"
+
+  // Base properties (inherited from BaseGameProps)
+  className?: string;                             // CSS class name
+  style?: React.CSSProperties;                   // Inline styles
+  disabled?: boolean;                             // Whether disabled
+
+  // Callback functions
+  onGameStart?: () => void;                      // Game start callback
+  onGameEnd?: (result: GridLotteryResult) => void; // Game end callback
+  onResult?: (result: GridLotteryResult) => void; // Result callback
+}
+```
+
+### GridLotteryResult
+
+```typescript
+interface GridLotteryResult {
+  position: number;        // Win position index (0-8)
+  prize: string;           // Won prize
+  animation: number[];     // Animation path array
+}
+```
+
 ## 🚀 Basic Usage
 
 ```typescript

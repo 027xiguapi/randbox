@@ -176,6 +176,181 @@ interface GameTheme {
 }
 ```
 
+### 组件详细类型
+
+#### GridLottery（九宫格抽奖）
+
+```typescript
+interface GridLotteryProps {
+  prizes: string[];                    // 奖品列表
+  weights?: number[];                  // 奖品权重
+  gridSize?: number;                   // 网格大小，默认9
+  animationDuration?: number;          // 动画时长，默认3000
+  buttonText?: string;                 // 按钮文字
+  onResult?: (result) => void;        // 结果回调
+}
+
+interface GridLotteryResult {
+  position: number;    // 中奖位置（0-8）
+  prize: string;       // 中奖奖品
+  animation: number[]; // 动画路径
+}
+```
+
+#### SlotMachine（老虎机）
+
+```typescript
+interface SlotMachineProps {
+  reels: string[][];                    // 滚轴数组
+  weights?: number[][];                 // 权重配置
+  animationDuration?: number;           // 动画时长，默认3000
+  buttonText?: string;                  // 按钮文字
+  width?: number;                       // Canvas宽度
+  height?: number;                      // Canvas高度
+  onResult?: (result) => void;         // 结果回调
+}
+
+interface SlotMachineResult {
+  results: string[];    // 每个滚轴的结果
+  isJackpot: boolean;   // 是否中大奖
+  combination: string;  // 组合描述
+}
+```
+
+#### LuckyWheel（幸运大转盘）
+
+```typescript
+interface LuckyWheelProps {
+  prizes: string[];                     // 奖品列表
+  weights?: number[];                   // 奖品权重
+  colors?: string[];                    // 自定义颜色
+  animationDuration?: number;           // 动画时长，默认4000
+  buttonText?: string;                  // 按钮文字
+  onResult?: (result) => void;         // 结果回调
+}
+
+interface LuckyWheelResult {
+  prizeIndex: number;  // 中奖奖品索引
+  prize: string;       // 中奖奖品
+  angle: number;       // 最终旋转角度
+  round: number;       // 回合数
+}
+```
+
+#### DiceGame（骰子游戏）
+
+```typescript
+interface DiceGameProps {
+  diceCount?: number;                   // 骰子数量，默认1
+  sides?: number;                       // 骰子面数，默认6
+  gameMode?: DiceGameMode;              // 游戏模式
+  targetSum?: number;                   // 目标总和
+  onResult?: (result) => void;         // 结果回调
+}
+
+type DiceGameMode = 'simple' | 'sum' | 'bigSmall' | 'guess' | 'even_odd' | 'specific';
+
+interface DiceGameResult {
+  results: number[];    // 骰子结果数组
+  total: number;        // 点数总和
+  gameMode: string;     // 游戏模式
+  isWin?: boolean;      // 是否获胜
+  message: string;      // 结果描述
+}
+```
+
+#### ScratchCard（刮刮卡）
+
+```typescript
+interface ScratchCardProps {
+  rows?: number;                        // 行数，默认3
+  cols?: number;                        // 列数，默认3
+  symbols?: string[];                   // 符号数组
+  winProbability?: number;              // 中奖概率，默认0.3
+  width?: number;                       // Canvas宽度，默认300
+  height?: number;                      // Canvas高度，默认200
+  onScratch?: (result) => void;        // 刮开回调
+  onNewCard?: () => void;              // 新卡片回调
+}
+
+interface ScratchCardResult {
+  grid: string[][];                     // 卡片网格内容
+  isWinner: boolean;                    // 是否中奖
+  scratchProgress?: number;             // 刮开进度（0-1）
+  winningInfo?: {                       // 中奖信息
+    pattern: string[];
+    name: string;
+    prize: string;
+    positions: Array<{ row: number; col: number; }>;
+  };
+}
+```
+
+#### RockPaperScissors（石头剪刀布）
+
+```typescript
+interface RockPaperScissorsProps {
+  choices?: string[];                   // 可选择选项
+  emojis?: Record<string, string>;      // emoji图标
+  showStats?: boolean;                  // 是否显示统计，默认true
+  strategy?: RPSStrategy;               // AI策略，默认'random'
+  width?: number;                       // Canvas宽度
+  height?: number;                      // Canvas高度
+  onResult?: (result) => void;         // 结果回调
+}
+
+type RPSStrategy = 'random' | 'counter' | 'pattern';
+type RPSResultType = 'win' | 'lose' | 'tie';
+
+interface RPSResult {
+  playerChoice: string;      // 玩家选择
+  computerChoice: string;    // 电脑选择
+  result: RPSResultType;     // 游戏结果
+  message: string;           // 结果描述
+  emoji: {                   // emoji图标
+    player: string;
+    computer: string;
+  };
+  round: number;             // 回合数
+}
+
+interface RPSStats {
+  totalGames: number;  // 总游戏次数
+  wins: number;        // 获胜次数
+  losses: number;      // 失败次数
+  ties: number;        // 平局次数
+  winRate: string;     // 胜率（百分比）
+}
+```
+
+#### CoinFlip（抛硬币）
+
+```typescript
+interface CoinFlipProps {
+  animationDuration?: number;           // 动画时长，默认2000
+  showStats?: boolean;                  // 是否显示统计，默认true
+  width?: number;                       // Canvas宽度
+  height?: number;                      // Canvas高度
+  onResult?: (result) => void;         // 结果回调
+}
+
+type CoinSide = 'heads' | 'tails';
+
+interface CoinFlipResult {
+  result: CoinSide;   // 硬币结果
+  round: number;      // 回合数
+  timestamp: number;  // 时间戳
+}
+
+interface CoinFlipStats {
+  totalFlips: number;  // 总抛掷次数
+  heads: number;       // 正面次数
+  tails: number;       // 反面次数
+  headsRate: string;   // 正面概率
+  tailsRate: string;   // 反面概率
+}
+```
+
 每个组件还有自己特定的属性和类型定义，详见各组件的专门文档。
 
 ## 🎨 自定义样式

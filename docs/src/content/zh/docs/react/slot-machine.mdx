@@ -14,6 +14,44 @@ import { SlotMachine } from '@randbox/react';
 import type { SlotMachineProps, SlotMachineResult } from '@randbox/react';
 ```
 
+## 🎯 类型定义
+
+### SlotMachineProps
+
+```typescript
+interface SlotMachineProps {
+  // 必需属性
+  reels: string[][];                                 // 滚轴数组，每个滚轴包含多个符号
+
+  // 可选属性
+  weights?: number[][];                              // 每个滚轴符号的权重
+  animationDuration?: number;                        // 动画时长（毫秒），默认3000
+  buttonText?: string;                               // 按钮文字，默认"开始"
+  width?: number;                                    // Canvas 宽度
+  height?: number;                                   // Canvas 高度
+
+  // 基础属性（继承自BaseGameProps）
+  className?: string;                                // CSS类名
+  style?: React.CSSProperties;                      // 内联样式
+  disabled?: boolean;                                // 是否禁用
+
+  // 回调函数
+  onGameStart?: () => void;                         // 游戏开始回调
+  onGameEnd?: (result: SlotMachineResult) => void; // 游戏结束回调
+  onResult?: (result: SlotMachineResult) => void;  // 结果回调
+}
+```
+
+### SlotMachineResult
+
+```typescript
+interface SlotMachineResult {
+  results: string[];         // 每个滚轴的结果
+  isJackpot: boolean;        // 是否中大奖（所有符号相同）
+  combination: string;       // 组合描述
+}
+```
+
 ## 🚀 基础用法
 
 ```typescript

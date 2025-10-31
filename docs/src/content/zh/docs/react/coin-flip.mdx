@@ -58,6 +58,43 @@ interface CoinFlipStats {
 }
 ```
 
+## 📋 API参考
+
+### CoinFlipProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `animationDuration` | `number` | `2000` | 动画持续时间（毫秒） |
+| `showStats` | `boolean` | `true` | 是否显示统计信息 |
+| `className` | `string` | `''` | CSS类名 |
+| `style` | `React.CSSProperties` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
+| `onGameEnd` | `(result) => void` | `undefined` | 游戏结束回调 |
+| `onResult` | `(result) => void` | `undefined` | 结果回调 |
+
+### CoinFlipResult 结构
+
+```typescript
+{
+  result: "heads",        // "heads" 或 "tails"
+  round: 1,              // 当前回合数
+  timestamp: 1234567890  // 时间戳
+}
+```
+
+### CoinFlipStats 结构
+
+```typescript
+{
+  totalFlips: 10,        // 总抛掷次数
+  heads: 6,              // 正面次数
+  tails: 4,              // 反面次数
+  headsRate: "60.0",     // 正面概率（百分比）
+  tailsRate: "40.0"      // 反面概率（百分比）
+}
+```
+
 ## 🚀 基础用法
 
 ```typescript

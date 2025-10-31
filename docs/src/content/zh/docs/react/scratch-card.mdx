@@ -14,6 +14,54 @@ import { ScratchCard } from '@randbox/react';
 import type { ScratchCardProps, ScratchCardResult } from '@randbox/react';
 ```
 
+## 🎯 类型定义
+
+### ScratchCardProps
+
+```typescript
+interface ScratchCardProps {
+  // 可选属性
+  rows?: number;                                     // 行数，默认3
+  cols?: number;                                     // 列数，默认3
+  symbols?: string[];                                // 符号数组，用于填充卡片
+  winProbability?: number;                           // 中奖概率，0-1之间，默认0.3
+  width?: number;                                    // Canvas 宽度，默认300
+  height?: number;                                   // Canvas 高度，默认200
+
+  // 基础属性（继承自BaseGameProps）
+  className?: string;                                // CSS类名
+  style?: React.CSSProperties;                      // 内联样式
+  disabled?: boolean;                                // 是否禁用
+
+  // 回调函数
+  onGameStart?: () => void;                         // 游戏开始回调
+  onGameEnd?: (result: ScratchCardResult) => void; // 游戏结束回调
+  onScratch?: (result: ScratchCardResult) => void; // 刮开回调
+  onNewCard?: () => void;                           // 新卡片回调
+}
+```
+
+### ScratchCardResult
+
+```typescript
+interface ScratchCardResult {
+  grid: string[][];                // 卡片网格内容
+  isWinner: boolean;               // 是否中奖
+  scratchProgress?: number;        // 刮开进度（0-1）
+  winningInfo?: {                  // 中奖信息
+    pattern: string[];             // 中奖模式（连线类型）
+    name: string;                  // 中奖名称
+    prize: string;                 // 奖品名称
+    symbol?: string;               // 中奖符号
+    type?: 'row' | 'col' | 'diagonal'; // 中奖类型：行/列/对角线
+    positions: Array<{             // 中奖位置数组
+      row: number;
+      col: number;
+    }>;
+  };
+}
+```
+
 ## 🚀 基础用法
 
 ```typescript

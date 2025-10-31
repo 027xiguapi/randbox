@@ -14,6 +14,75 @@ import { RockPaperScissors } from '@randbox/react';
 import type { RockPaperScissorsProps, RPSResult, RPSStats } from '@randbox/react';
 ```
 
+## 🎯 Type Definitions
+
+### RockPaperScissorsProps
+
+```typescript
+interface RockPaperScissorsProps {
+  // Optional properties
+  choices?: string[];                                // Available choices, default ['rock', 'paper', 'scissors']
+  emojis?: Record<string, string>;                   // Emoji icons for choices
+  showStats?: boolean;                               // Whether to show statistics, default true
+  strategy?: RPSStrategy;                            // AI strategy, default 'random'
+  width?: number;                                    // Canvas width
+  height?: number;                                   // Canvas height
+
+  // Base properties (inherited from BaseGameProps)
+  className?: string;                                // CSS class name
+  style?: React.CSSProperties;                      // Inline styles
+  disabled?: boolean;                                // Whether disabled
+
+  // Callback functions
+  onGameStart?: () => void;                        // Game start callback
+  onGameEnd?: (result: RPSResult) => void;         // Game end callback
+  onResult?: (result: RPSResult) => void;          // Result callback
+}
+```
+
+### RPSStrategy
+
+```typescript
+type RPSStrategy =
+  | 'random';    // Random strategy
+  | 'counter';   // Counter strategy (counter player's last choice)
+  | 'pattern';   // Pattern strategy (follow or break player's pattern)
+```
+
+### RPSResultType
+
+```typescript
+type RPSResultType = 'win' | 'lose' | 'tie';
+```
+
+### RPSResult
+
+```typescript
+interface RPSResult {
+  playerChoice: string;         // Player's choice
+  computerChoice: string;       // Computer's choice
+  result: RPSResultType;        // Game result
+  message: string;              // Result description
+  emoji: {                      // Emoji icons
+    player: string;             // Player's emoji
+    computer: string;           // Computer's emoji
+  };
+  round: number;                // Round number
+}
+```
+
+### RPSStats
+
+```typescript
+interface RPSStats {
+  totalGames: number;     // Total games played
+  wins: number;           // Wins
+  losses: number;         // Losses
+  ties: number;           // Ties
+  winRate: string;        // Win rate (percentage string)
+}
+```
+
 ## 🚀 Basic Usage
 
 ```typescript

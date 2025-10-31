@@ -52,6 +52,44 @@ interface LuckyWheelResult {
 }
 ```
 
+### LuckyWheelStats
+
+```typescript
+interface LuckyWheelStats {
+  totalSpins: number;              // 总抽奖次数
+  prizeHistory: Record<string, number>; // 奖品历史记录
+}
+```
+
+## 📋 API参考
+
+### LuckyWheelProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `prizes` | `string[]` | **必需** | 奖品列表，建议4-12个奖品 |
+| `weights` | `number[]` | `undefined` | 权重数组，控制每个奖品的中奖概率 |
+| `colors` | `string[]` | 默认渐变色 | 自定义扇形颜色，建议与奖品数量相同 |
+| `animationDuration` | `number` | `4000` | 动画持续时间（毫秒） |
+| `buttonText` | `string` | `'开始抽奖'` | 中心按钮文字 |
+| `className` | `string` | `''` | CSS类名 |
+| `style` | `React.CSSProperties` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
+| `onGameEnd` | `(result) => void` | `undefined` | 游戏结束回调 |
+| `onResult` | `(result) => void` | `undefined` | 结果回调 |
+
+### LuckyWheelResult 结构
+
+```typescript
+{
+  prizeIndex: 0,              // 中奖奖品索引（0开始）
+  prize: "iPhone 15 Pro",     // 中奖奖品名称
+  angle: 12.566370614359172,  // 最终旋转角度（弧度）
+  round: 1                    // 当前回合数
+}
+```
+
 ## 🚀 基础用法
 
 ```typescript

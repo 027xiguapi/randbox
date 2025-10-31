@@ -1,0 +1,138 @@
+---
+title: 'CoinFlip - Coin Flip Game'
+description: 'Canvas-based 3D coin flip game component with animation effects and statistics features'
+---
+
+# CoinFlip - Coin Flip Game
+
+`CoinFlip` is a Canvas-based 3D coin flip game component that provides realistic coin flipping animations and statistical functionality.
+
+## 📦 Import
+
+```typescript
+import { CoinFlip } from '@randbox/react';
+import type { CoinFlipProps, CoinFlipResult, CoinFlipStats } from '@randbox/react';
+```
+
+## 🎯 Type Definitions
+
+### CoinFlipProps
+
+```typescript
+interface CoinFlipProps {
+  // Optional properties
+  animationDuration?: number;                      // Animation duration (ms), default 2000
+  showStats?: boolean;                             // Whether to show statistics, default true
+
+  // Base properties (inherited from BaseGameProps)
+  className?: string;                              // CSS class name
+  style?: React.CSSProperties;                    // Inline styles
+  disabled?: boolean;                              // Whether disabled
+
+  // Callback functions
+  onGameStart?: () => void;                       // Game start callback
+  onGameEnd?: (result: CoinFlipResult) => void;  // Game end callback
+  onResult?: (result: CoinFlipResult) => void;   // Result callback
+}
+```
+
+### CoinFlipResult
+
+```typescript
+interface CoinFlipResult {
+  result: 'heads' | 'tails';  // Coin result: heads or tails
+  round: number;              // Round number
+  timestamp: number;          // Timestamp
+}
+```
+
+### CoinFlipStats
+
+```typescript
+interface CoinFlipStats {
+  totalFlips: number;    // Total number of flips
+  heads: number;         // Number of heads
+  tails: number;         // Number of tails
+  headsRate: string;     // Heads rate (percentage)
+  tailsRate: string;     // Tails rate (percentage)
+}
+```
+
+## 🚀 Basic Usage
+
+```typescript
+import React from 'react';
+import { CoinFlip } from '@randbox/react';
+
+function BasicCoinFlip() {
+  const handleResult = (result) => {
+    console.log('Flip result:', result);
+    alert(`Result: ${result.result === 'heads' ? 'Heads' : 'Tails'}`);
+  };
+
+  return (
+    <CoinFlip onResult={handleResult} />
+  );
+}
+```
+
+## 🎨 Advanced Usage
+
+### Custom Animation Duration
+
+```typescript
+function FastCoinFlip() {
+  return (
+    <div>
+      <h3>Fast Mode (1 second)</h3>
+      <CoinFlip animationDuration={1000} />
+
+      <h3>Slow Mode (3 seconds)</h3>
+      <CoinFlip animationDuration={3000} />
+    </div>
+  );
+}
+```
+
+## 📋 API Reference
+
+### CoinFlipProps
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `animationDuration` | `number` | `2000` | Animation duration (milliseconds) |
+| `showStats` | `boolean` | `true` | Whether to show statistics |
+| `className` | `string` | `''` | CSS class name |
+| `style` | `React.CSSProperties` | `{}` | Inline styles |
+| `disabled` | `boolean` | `false` | Whether disabled |
+| `onGameStart` | `() => void` | `undefined` | Game start callback |
+| `onGameEnd` | `(result) => void` | `undefined` | Game end callback |
+| `onResult` | `(result) => void` | `undefined` | Result callback |
+
+### CoinFlipResult Structure
+
+```typescript
+{
+  result: "heads",        // "heads" or "tails"
+  round: 1,              // Current round number
+  timestamp: 1234567890  // Timestamp
+}
+```
+
+### CoinFlipStats Structure
+
+```typescript
+{
+  totalFlips: 10,        // Total number of flips
+  heads: 6,              // Number of heads
+  tails: 4,              // Number of tails
+  headsRate: "60.0",     // Heads rate (percentage)
+  tailsRate: "40.0"      // Tails rate (percentage)
+}
+```
+
+## 🔗 Related Links
+
+- [DiceGame - Dice Game](/en/docs/react/dice-game)
+- [RockPaperScissors - Rock Paper Scissors](/en/docs/react/rock-paper-scissors)
+- [RandBox Core Library](/en/docs/basics)

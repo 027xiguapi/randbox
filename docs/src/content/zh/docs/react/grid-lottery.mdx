@@ -14,6 +14,43 @@ import { GridLottery } from '@randbox/react';
 import type { GridLotteryProps, GridLotteryResult } from '@randbox/react';
 ```
 
+## 🎯 类型定义
+
+### GridLotteryProps
+
+```typescript
+interface GridLotteryProps {
+  // 必需属性
+  prizes: string[];                               // 奖品列表
+
+  // 可选属性
+  weights?: number[];                             // 奖品权重
+  gridSize?: number;                              // 网格大小，默认9
+  animationDuration?: number;                     // 动画时长（毫秒），默认3000
+  buttonText?: string;                            // 按钮文字，默认"开始抽奖"
+
+  // 基础属性（继承自BaseGameProps）
+  className?: string;                             // CSS类名
+  style?: React.CSSProperties;                   // 内联样式
+  disabled?: boolean;                             // 是否禁用
+
+  // 回调函数
+  onGameStart?: () => void;                      // 游戏开始回调
+  onGameEnd?: (result: GridLotteryResult) => void; // 游戏结束回调
+  onResult?: (result: GridLotteryResult) => void; // 结果回调
+}
+```
+
+### GridLotteryResult
+
+```typescript
+interface GridLotteryResult {
+  position: number;        // 中奖位置索引（0-8）
+  prize: string;           // 中奖奖品
+  animation: number[];     // 动画路径数组
+}
+```
+
 ## 🚀 基础用法
 
 ```typescript
@@ -170,13 +207,13 @@ function FullConfigGridLottery() {
 | `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
 | `onGameEnd` | `(result: GridLotteryResult) => void` | `undefined` | 游戏结束回调 |
 
-### GridLotteryResult
+### GridLotteryResult 结构
 
 ```typescript
-interface GridLotteryResult {
-  position: number;        // 中奖位置索引（0-8）
-  prize: string;          // 中奖奖品
-  animation: number[];    // 动画路径数组
+{
+  position: 0,           // 中奖位置索引（0-8）
+  prize: "iPhone 15",   // 中奖奖品
+  animation: [1, 2, 3]  // 动画路径数组
 }
 ```
 

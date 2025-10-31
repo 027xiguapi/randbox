@@ -107,6 +107,181 @@ interface BaseGameProps {
 }
 ```
 
+### Component Detailed Types
+
+#### GridLottery (Grid Lottery)
+
+```typescript
+interface GridLotteryProps {
+  prizes: string[];                    // Prize list
+  weights?: number[];                  // Prize weights
+  gridSize?: number;                   // Grid size, default 9
+  animationDuration?: number;          // Animation duration, default 3000
+  buttonText?: string;                 // Button text
+  onResult?: (result) => void;        // Result callback
+}
+
+interface GridLotteryResult {
+  position: number;    // Win position (0-8)
+  prize: string;       // Won prize
+  animation: number[]; // Animation path
+}
+```
+
+#### SlotMachine (Slot Machine)
+
+```typescript
+interface SlotMachineProps {
+  reels: string[][];                    // Reel arrays
+  weights?: number[][];                 // Weight configuration
+  animationDuration?: number;           // Animation duration, default 3000
+  buttonText?: string;                  // Button text
+  width?: number;                       // Canvas width
+  height?: number;                      // Canvas height
+  onResult?: (result) => void;         // Result callback
+}
+
+interface SlotMachineResult {
+  results: string[];    // Results from each reel
+  isJackpot: boolean;   // Whether it's a jackpot
+  combination: string;  // Combination description
+}
+```
+
+#### LuckyWheel (Lucky Wheel)
+
+```typescript
+interface LuckyWheelProps {
+  prizes: string[];                     // Prize list
+  weights?: number[];                   // Prize weights
+  colors?: string[];                    // Custom colors
+  animationDuration?: number;           // Animation duration, default 4000
+  buttonText?: string;                  // Button text
+  onResult?: (result) => void;         // Result callback
+}
+
+interface LuckyWheelResult {
+  prizeIndex: number;  // Won prize index
+  prize: string;       // Won prize
+  angle: number;       // Final rotation angle
+  round: number;       // Round number
+}
+```
+
+#### DiceGame (Dice Game)
+
+```typescript
+interface DiceGameProps {
+  diceCount?: number;                   // Number of dice, default 1
+  sides?: number;                       // Number of sides on dice, default 6
+  gameMode?: DiceGameMode;              // Game mode
+  targetSum?: number;                   // Target sum
+  onResult?: (result) => void;         // Result callback
+}
+
+type DiceGameMode = 'simple' | 'sum' | 'bigSmall' | 'guess' | 'even_odd' | 'specific';
+
+interface DiceGameResult {
+  results: number[];    // Dice results array
+  total: number;        // Sum of dice values
+  gameMode: string;     // Game mode
+  isWin?: boolean;      // Whether won
+  message: string;      // Result description
+}
+```
+
+#### ScratchCard (Scratch Card)
+
+```typescript
+interface ScratchCardProps {
+  rows?: number;                        // Number of rows, default 3
+  cols?: number;                        // Number of columns, default 3
+  symbols?: string[];                   // Symbol array
+  winProbability?: number;              // Win probability, default 0.3
+  width?: number;                       // Canvas width, default 300
+  height?: number;                      // Canvas height, default 200
+  onScratch?: (result) => void;        // Scratch callback
+  onNewCard?: () => void;              // New card callback
+}
+
+interface ScratchCardResult {
+  grid: string[][];                     // Card grid content
+  isWinner: boolean;                    // Whether winner
+  scratchProgress?: number;             // Scratch progress (0-1)
+  winningInfo?: {                       // Win information
+    pattern: string[];
+    name: string;
+    prize: string;
+    positions: Array<{ row: number; col: number; }>;
+  };
+}
+```
+
+#### RockPaperScissors (Rock Paper Scissors)
+
+```typescript
+interface RockPaperScissorsProps {
+  choices?: string[];                   // Available choices
+  emojis?: Record<string, string>;      // Emoji icons
+  showStats?: boolean;                  // Show statistics, default true
+  strategy?: RPSStrategy;               // AI strategy, default 'random'
+  width?: number;                       // Canvas width
+  height?: number;                      // Canvas height
+  onResult?: (result) => void;         // Result callback
+}
+
+type RPSStrategy = 'random' | 'counter' | 'pattern';
+type RPSResultType = 'win' | 'lose' | 'tie';
+
+interface RPSResult {
+  playerChoice: string;      // Player's choice
+  computerChoice: string;    // Computer's choice
+  result: RPSResultType;     // Game result
+  message: string;           // Result description
+  emoji: {                   // Emoji icons
+    player: string;
+    computer: string;
+  };
+  round: number;             // Round number
+}
+
+interface RPSStats {
+  totalGames: number;  // Total games played
+  wins: number;        // Wins
+  losses: number;      // Losses
+  ties: number;        // Ties
+  winRate: string;     // Win rate (percentage)
+}
+```
+
+#### CoinFlip (Coin Flip)
+
+```typescript
+interface CoinFlipProps {
+  animationDuration?: number;           // Animation duration, default 2000
+  showStats?: boolean;                  // Show statistics, default true
+  width?: number;                       // Canvas width
+  height?: number;                      // Canvas height
+  onResult?: (result) => void;         // Result callback
+}
+
+type CoinSide = 'heads' | 'tails';
+
+interface CoinFlipResult {
+  result: CoinSide;   // Coin result
+  round: number;      // Round number
+  timestamp: number;  // Timestamp
+}
+
+interface CoinFlipStats {
+  totalFlips: number;  // Total flips
+  heads: number;       // Heads count
+  tails: number;       // Tails count
+  headsRate: string;   // Heads rate
+  tailsRate: string;   // Tails rate
+}
+```
+
 Each component also has its own specific properties and type definitions. See the dedicated documentation for each component.
 
 ## 🎨 Custom Styling

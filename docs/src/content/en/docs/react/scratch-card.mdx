@@ -14,6 +14,54 @@ import { ScratchCard } from '@randbox/react';
 import type { ScratchCardProps, ScratchCardResult } from '@randbox/react';
 ```
 
+## 🎯 Type Definitions
+
+### ScratchCardProps
+
+```typescript
+interface ScratchCardProps {
+  // Optional properties
+  rows?: number;                                     // Number of rows, default 3
+  cols?: number;                                     // Number of columns, default 3
+  symbols?: string[];                                // Symbol array for filling cards
+  winProbability?: number;                           // Win probability (0-1), default 0.3
+  width?: number;                                    // Canvas width, default 300
+  height?: number;                                   // Canvas height, default 200
+
+  // Base properties (inherited from BaseGameProps)
+  className?: string;                                // CSS class name
+  style?: React.CSSProperties;                      // Inline styles
+  disabled?: boolean;                                // Whether disabled
+
+  // Callback functions
+  onGameStart?: () => void;                        // Game start callback
+  onGameEnd?: (result: ScratchCardResult) => void; // Game end callback
+  onScratch?: (result: ScratchCardResult) => void; // Scratch callback
+  onNewCard?: () => void;                          // New card callback
+}
+```
+
+### ScratchCardResult
+
+```typescript
+interface ScratchCardResult {
+  grid: string[][];                // Card grid content
+  isWinner: boolean;               // Whether winner
+  scratchProgress?: number;         // Scratch progress (0-1)
+  winningInfo?: {                  // Win information
+    pattern: string[];             // Win pattern (line type)
+    name: string;                 // Win name
+    prize: string;                 // Prize name
+    symbol?: string;               // Win symbol
+    type?: 'row' | 'col' | 'diagonal'; // Win type: row/column/diagonal
+    positions: Array<{             // Win position array
+      row: number;
+      col: number;
+    }>;
+  };
+}
+```
+
 ## 🚀 Basic Usage
 
 ```typescript

@@ -14,6 +14,44 @@ import { SlotMachine } from '@randbox/react';
 import type { SlotMachineProps, SlotMachineResult } from '@randbox/react';
 ```
 
+## 🎯 Type Definitions
+
+### SlotMachineProps
+
+```typescript
+interface SlotMachineProps {
+  // Required properties
+  reels: string[][];                                // Reel arrays
+
+  // Optional properties
+  weights?: number[][];                             // Symbol weights for each reel
+  animationDuration?: number;                       // Animation duration (ms), default 3000
+  buttonText?: string;                              // Button text, default "Start"
+  width?: number;                                   // Canvas width
+  height?: number;                                  // Canvas height
+
+  // Base properties (inherited from BaseGameProps)
+  className?: string;                               // CSS class name
+  style?: React.CSSProperties;                     // Inline styles
+  disabled?: boolean;                               // Whether disabled
+
+  // Callback functions
+  onGameStart?: () => void;                        // Game start callback
+  onGameEnd?: (result: SlotMachineResult) => void; // Game end callback
+  onResult?: (result: SlotMachineResult) => void;  // Result callback
+}
+```
+
+### SlotMachineResult
+
+```typescript
+interface SlotMachineResult {
+  results: string[];      // Results from each reel
+  isJackpot: boolean;     // Whether it's a jackpot (all symbols same)
+  combination: string;    // Combination description
+}
+```
+
 ## 🚀 Basic Usage
 
 ```typescript

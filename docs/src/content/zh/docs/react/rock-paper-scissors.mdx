@@ -14,6 +14,75 @@ import { RockPaperScissors } from '@randbox/react';
 import type { RockPaperScissorsProps, RPSResult, RPSStats } from '@randbox/react';
 ```
 
+## 🎯 类型定义
+
+### RockPaperScissorsProps
+
+```typescript
+interface RockPaperScissorsProps {
+  // 可选属性
+  choices?: string[];                                // 可选择的选项，默认['rock', 'paper', 'scissors']
+  emojis?: Record<string, string>;                   // 选项对应的 emoji 图标
+  showStats?: boolean;                               // 是否显示统计信息，默认true
+  strategy?: RPSStrategy;                            // AI 策略，默认'random'
+  width?: number;                                    // Canvas 宽度
+  height?: number;                                   // Canvas 高度
+
+  // 基础属性（继承自BaseGameProps）
+  className?: string;                                // CSS类名
+  style?: React.CSSProperties;                      // 内联样式
+  disabled?: boolean;                                // 是否禁用
+
+  // 回调函数
+  onGameStart?: () => void;                         // 游戏开始回调
+  onGameEnd?: (result: RPSResult) => void;         // 游戏结束回调
+  onResult?: (result: RPSResult) => void;          // 结果回调
+}
+```
+
+### RPSStrategy
+
+```typescript
+type RPSStrategy =
+  | 'random';    // 随机策略
+  | 'counter';   // 反制策略（针对玩家上次的选择）
+  | 'pattern';   // 模式策略（跟随或打破玩家的模式）
+```
+
+### RPSResultType
+
+```typescript
+type RPSResultType = 'win' | 'lose' | 'tie';
+```
+
+### RPSResult
+
+```typescript
+interface RPSResult {
+  playerChoice: string;         // 玩家的选择
+  computerChoice: string;       // 电脑的选择
+  result: RPSResultType;        // 游戏结果
+  message: string;              // 结果描述信息
+  emoji: {                      // emoji 图标
+    player: string;             // 玩家的 emoji
+    computer: string;           // 电脑的 emoji
+  };
+  round: number;                // 回合数
+}
+```
+
+### RPSStats
+
+```typescript
+interface RPSStats {
+  totalGames: number;     // 总游戏次数
+  wins: number;           // 获胜次数
+  losses: number;         // 失败次数
+  ties: number;           // 平局次数
+  winRate: string;        // 胜率（百分比字符串）
+}
+```
+
 ## 🚀 基础用法
 
 ```typescript

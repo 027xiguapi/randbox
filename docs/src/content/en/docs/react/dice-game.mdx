@@ -14,6 +14,57 @@ import { DiceGame } from '@randbox/react';
 import type { DiceGameProps, DiceGameResult } from '@randbox/react';
 ```
 
+## 🎯 Type Definitions
+
+### DiceGameProps
+
+```typescript
+interface DiceGameProps {
+  // Optional properties
+  diceCount?: number;                          // Number of dice, default 1
+  sides?: number;                              // Number of sides on dice, default 6
+  gameMode?: DiceGameMode;                     // Game mode, default 'simple'
+  targetSum?: number;                          // Target sum (for sum mode)
+
+  // Base properties (inherited from BaseGameProps)
+  className?: string;                         // CSS class name
+  style?: React.CSSProperties;               // Inline styles
+  disabled?: boolean;                         // Whether disabled
+
+  // Callback functions
+  onGameStart?: () => void;                  // Game start callback
+  onGameEnd?: (result: DiceGameResult) => void; // Game end callback
+  onResult?: (result: DiceGameResult) => void; // Result callback
+}
+```
+
+### DiceGameMode
+
+```typescript
+type DiceGameMode =
+  | 'simple'        // Simple mode, only shows dice results
+  | 'sum'           // Sum mode, shows sum of all dice
+  | 'bigSmall'      // Big/Small mode, guess big or small
+  | 'guess'         // Guess mode, guess specific number
+  | 'even_odd'      // Even/Odd mode, guess odd or even
+  | 'specific';     // Specific mode, guess if specific number appears
+```
+
+### DiceGameResult
+
+```typescript
+interface DiceGameResult {
+  results: number[];    // Array of all dice results
+  total: number;        // Sum of dice values
+  gameMode: string;     // Game mode
+  isWin?: boolean;      // Whether won (in competitive mode)
+  message: string;      // Result description
+  values: number[];     // All dice values (same as results)
+  sum: number;          // Sum (same as total)
+  description: string;   // Detailed description
+}
+```
+
 ## 🚀 Basic Usage
 
 ```typescript

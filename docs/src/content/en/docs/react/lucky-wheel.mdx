@@ -1,0 +1,169 @@
+---
+title: 'LuckyWheel - Lucky Wheel'
+description: 'Canvas-based lucky wheel component with support for custom prizes, weights, colors configuration and smooth rotation animations'
+---
+
+# LuckyWheel - Lucky Wheel
+
+`LuckyWheel` is a Canvas-based lucky wheel component that provides a classic turntable lottery experience. It supports custom prizes, weights, colors configuration, animation effects, and many other rich features.
+
+## 📦 Import
+
+```typescript
+import { LuckyWheel } from '@randbox/react';
+import type { LuckyWheelProps, LuckyWheelResult } from '@randbox/react';
+```
+
+## 🎯 Type Definitions
+
+### LuckyWheelProps
+
+```typescript
+interface LuckyWheelProps {
+  // Required properties
+  prizes: string[];                                    // Prize list
+
+  // Optional properties
+  weights?: number[];                                  // Prize weights
+  colors?: string[];                                   // Custom colors
+  animationDuration?: number;                          // Animation duration (ms), default 4000
+  buttonText?: string;                                 // Button text, default "Start Lottery"
+
+  // Base properties (inherited from BaseGameProps)
+  className?: string;                                  // CSS class name
+  style?: React.CSSProperties;                        // Inline styles
+  disabled?: boolean;                                  // Whether disabled
+
+  // Callback functions
+  onGameStart?: () => void;                           // Game start callback
+  onGameEnd?: (result: LuckyWheelResult) => void;    // Game end callback
+  onResult?: (result: LuckyWheelResult) => void;     // Result callback
+}
+```
+
+### LuckyWheelResult
+
+```typescript
+interface LuckyWheelResult {
+  prizeIndex: number;    // Won prize index
+  prize: string;         // Won prize
+  angle: number;         // Final rotation angle
+  round: number;         // Round number
+}
+```
+
+### LuckyWheelStats
+
+```typescript
+interface LuckyWheelStats {
+  totalSpins: number;              // Total number of spins
+  prizeHistory: Record<string, number>; // Prize history record
+}
+```
+
+## 🚀 Basic Usage
+
+```typescript
+import React from 'react';
+import { LuckyWheel } from '@randbox/react';
+
+function BasicLuckyWheel() {
+  const prizes = ['First Prize', 'Second Prize', 'Third Prize', 'Fourth Prize', 'Fifth Prize', 'Sixth Prize'];
+
+  const handleResult = (result) => {
+    console.log('Lottery result:', result);
+    alert(`Congratulations! You won: ${result.prize}`);
+  };
+
+  return (
+    <LuckyWheel
+      prizes={prizes}
+      onResult={handleResult}
+    />
+  );
+}
+```
+
+## 🎨 Advanced Usage
+
+### Weighted and Custom Colors
+
+```typescript
+function CustomLuckyWheel() {
+  const prizes = [
+    'iPhone 15 Pro',
+    'iPad Air',
+    'AirPods Pro',
+    'Apple Watch',
+    'Coupon',
+    'Points',
+    'Voucher',
+    'Thank you for playing'
+  ];
+
+  // Higher weights = higher probability
+  const weights = [1, 3, 5, 8, 15, 20, 25, 23];
+
+  // Custom colors (blue-purple theme)
+  const colors = [
+    '#A8B9F5',
+    '#C9D5F7',
+    '#A8B9F5',
+    '#C9D5F7',
+    '#A8B9F5',
+    '#C9D5F7',
+    '#A8B9F5',
+    '#C9D5F7'
+  ];
+
+  return (
+    <LuckyWheel
+      prizes={prizes}
+      weights={weights}
+      colors={colors}
+      animationDuration={5000}
+      buttonText="Start Spin"
+      onResult={(result) => {
+        if (result.prizeIndex < 4) {
+          alert(`🎉 Congratulations! You won ${result.prize}!`);
+        }
+      }}
+    />
+  );
+}
+```
+
+## 📋 API Reference
+
+### LuckyWheelProps
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `prizes` | `string[]` | **Required** | Prize list, recommended 4-12 prizes |
+| `weights` | `number[]` | `undefined` | Weight array for controlling win probability |
+| `colors` | `string[]` | Default gradient | Custom sector colors, should match prize count |
+| `animationDuration` | `number` | `4000` | Animation duration (milliseconds) |
+| `buttonText` | `string` | `'Start Lottery'` | Center button text |
+| `className` | `string` | `''` | CSS class name |
+| `style` | `React.CSSProperties` | `{}` | Inline styles |
+| `disabled` | `boolean` | `false` | Whether disabled |
+| `onGameStart` | `() => void` | `undefined` | Game start callback |
+| `onGameEnd` | `(result) => void` | `undefined` | Game end callback |
+| `onResult` | `(result) => void` | `undefined` | Result callback |
+
+### LuckyWheelResult Structure
+
+```typescript
+{
+  prizeIndex: 0,              // Won prize index (0-based)
+  prize: "iPhone 15 Pro",     // Won prize name
+  angle: 12.566370614359172,  // Final rotation angle (radians)
+  round: 1                    // Current round number
+}
+```
+
+## 🔗 Related Links
+
+- [GridLottery - Grid Lottery](/en/docs/react/grid-lottery)
+- [SlotMachine - Slot Machine](/en/docs/react/slot-machine)
+- [RandBox Core Library](/en/docs/basics)
