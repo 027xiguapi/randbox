@@ -1,11 +1,235 @@
 ---
-title: "simple random"
-description: "RandBox page: simple random, includes examples and docs."
-date: "2025-10-16"
+title: "Simple Randomization"
+description: "RandBox page: Simple randomization with examples and documentation."
+date: "2025-10-31"
 tags: ["RandBox", "simple"]
-keywords: ["RandBox", "simple", "random", "JavaScript", "MDX"]
+keywords: ["RandBox", "simple", "randomization", "JavaScript", "MDX"]
 ---
 
 import SimplePage from "@/components/SimplePage";
 
 <SimplePage />
+
+## Overview
+
+Simple randomization is a fundamental method for random group assignment that uses the Fisher-Yates shuffle algorithm to randomly distribute participants into different groups. This method ensures that each participant has an equal probability of being assigned to any group, making it one of the most commonly used randomization methods in clinical trials and other research studies.
+
+## Parameters
+
+### Core Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `N` | number | ✅ | 100 | Total number of participants |
+| `num_arms` | number | ✅ | 2 | Number of randomization groups |
+| `seed` | number | ❌ | - | Random seed for reproducible results |
+| `prob` | number[] | ❌ | - | Probability array for each group, e.g., `[0.3, 0.7]` |
+| `prob_unit` | string | ❌ | - | Probability unit type (`equal`, `ratio`, etc.) |
+| `prob_each` | number[] | ❌ | - | Exact probability for each condition |
+| `conditions` | string | ❌ | - | Group names separated by commas, e.g., `"Treatment,Control"` |
+| `check_inputs` | boolean | ❌ | true | Whether to validate input parameters |
+| `simple` | boolean | ❌ | true | Whether to use simplified algorithm |
+
+### Type Definitions
+
+```typescript
+interface RandomizationResult {
+  groups: Array<{
+    name: string           // Group name
+    participants: number[] // List of participant IDs
+    size: number          // Group size
+  }>
+  totalParticipants: number       // Total number of participants
+  algorithm: string              // Algorithm name
+  timestamp: string              // Timestamp of generation
+  statistics: {
+    groupSizes: number[]         // Array of group sizes
+    balance: number              // Balance metric (0-1)
+    efficiency: number           // Efficiency metric (0-1)
+  }
+}
+```
+
+## Usage Examples
+
+### Example 1: Basic Randomization (Two Equal Groups)
+
+Randomly divide 100 participants into 2 groups:
+
+```typescript
+import { simpleRandomization } from '@randbox/react'
+
+const result = simpleRandomization(
+  N: 100,        // 100 participants
+  numArms: 2,    // Divide into 2 groups
+  seed: 12345    // Optional: use seed for reproducible results
+)
+
+console.log(result.groups[0].participants.length) // ~50 people
+console.log(result.groups[1].participants.length) // ~50 people
+```
+
+### Example 2: Multi-Group Randomization (Three Groups)
+
+Randomly divide 90 participants into 3 groups:
+
+```typescript
+const result = simpleRandomization(
+  N: 90,
+  numArms: 3,
+  conditions: "Group A,Group B,Group C",  // Custom group names
+  seed: 20241015
+)
+
+// Results:
+// Group A: 30 people
+// Group B: 30 people
+// Group C: 30 people
+```
+
+### Example 3: Probabilistic Allocation (Unequal Ratio)
+
+Divide 100 participants into two groups with a 3:7 ratio:
+
+```typescript
+const result = simpleRandomization(
+  N: 100,
+  numArms: 2,
+  prob: [0.3, 0.7],           // 30% for first group, 70% for second
+  conditions: "Treatment,Control",
+  seed: 99999
+)
+
+// Expected results:
+// Treatment: ~30 people
+// Control: ~70 people
+```
+
+### Example 4: Complex Probabilistic Allocation (Three Groups with Different Probabilities)
+
+```typescript
+const result = simpleRandomization(
+  N: 200,
+  numArms: 3,
+  prob: [0.2, 0.3, 0.5],      // 20%, 30%, 50%
+  conditions: "Low Dose,Medium Dose,High Dose",
+  seed: 88888
+)
+
+// Expected results:
+// Low Dose: ~40 people
+// Medium Dose: ~60 people
+// High Dose: ~100 people
+```
+
+## Algorithm Principles
+
+### Fisher-Yates Shuffle Algorithm
+
+Simple randomization is based on the Fisher-Yates shuffle algorithm, which works as follows:
+
+1. **Initialization**: Create an array containing all participant IDs `[1, 2, 3, ..., N]`
+2. **Shuffle**: Starting from the end of the array, swap the current element with a randomly positioned element
+3. **Assignment**: Assign the shuffled array to groups in order
+
+Pseudocode:
+```
+for i from N-1 down to 1:
+  j = random integer between 0 and i
+  swap array[i] and array[j]
+```
+
+### Probabilistic Allocation Mechanism
+
+When the `prob` parameter is provided, the system uses cumulative probabilities for allocation:
+
+1. Calculate cumulative probabilities: `[p1, p1+p2, p1+p2+p3, ...]`
+2. Generate a random number `r ∈ [0, 1)` for each participant
+3. Determine the group based on which interval `r` falls into
+
+Example:
+- Probabilities `[0.3, 0.7]`
+- Cumulative probabilities `[0.3, 1.0]`
+- `r < 0.3` → Group 1
+- `0.3 ≤ r < 1.0` → Group 2
+
+## Statistical Metrics
+
+### Balance
+
+Measures the equilibrium between group sizes:
+
+```
+balance = 1 - (max(size) - min(size)) / max(size)
+```
+
+- Values closer to 1 indicate better balance
+- Perfect balance: `balance = 1.0`
+
+### Efficiency
+
+Represents the efficiency of the randomization process, typically calculated based on algorithm complexity:
+
+- Simple randomization: `efficiency ≈ 0.95`
+- Stratified randomization: `efficiency ≈ 0.98`
+- Block randomization: `efficiency ≈ 0.99`
+
+## Important Notes
+
+### 1. Input Validation
+
+- `N` must be greater than 0
+- `num_arms` must be greater than 0 and not exceed `N`
+- If `prob` is provided, its sum should equal 1.0
+- If `conditions` is provided, the count should equal `num_arms`
+
+### 2. Probabilistic Allocation
+
+- When `prob` is not provided, groups are allocated equally
+- Using probabilistic allocation may result in imperfect balance (this is normal)
+- Recommended to use probabilistic allocation with sufficiently large sample sizes
+
+### 3. Random Seed
+
+- Seeds can be used to reproduce identical results
+- When no seed is provided, current timestamp is used
+- Same seed + Same parameters = Same results
+
+### 4. Performance Considerations
+
+- Time complexity: O(N)
+- Space complexity: O(N)
+- Suitable for medium-scale data (≤ 10,000)
+
+## Application Scenarios
+
+✅ **Suitable scenarios:**
+- Initial randomization in clinical trials
+- A/B testing group assignment
+- Educational experiment design
+- Psychology experiment grouping
+
+❌ **Not suitable scenarios:**
+- Research requiring stratified control (should use stratified randomization)
+- Research requiring block balance (should use block randomization)
+- Ultra-large-scale data (> 100,000)
+
+## Best Practices
+
+1. **Determine sample size**: Ensure the total sample size is sufficiently large
+2. **Reasonable grouping**: Determine the number and proportion of groups according to research objectives
+3. **Use seeds**: Record seed values in research reports
+4. **Validate results**: Check whether basic characteristics of groups are balanced
+5. **Document**: Record randomization parameters and processes in detail
+
+## Further Reading
+
+- [Stratified Randomization](./stratified): Randomization method for known confounding factors
+- [Block Randomization](./block): Balanced randomization method
+- [Randomization History](./history): View and manage randomization records
+
+---
+
+**Author:** RandBox Development Team
+**Last Updated:** 2025-10-31
+**Version:** v1.0

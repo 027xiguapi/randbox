@@ -1,11 +1,235 @@
 ---
 title: "简单随机化"
 description: "RandBox 页面：简单随机化，包含示例与说明。"
-date: "2025-10-16"
+date: "2025-10-31"
 tags: ["RandBox", "simple"]
-keywords: ["RandBox", "simple", "随机", "JavaScript", "MDX"]
+keywords: ["RandBox", "simple", "随机", "简单随机化", "简单随机化"]
 ---
 
 import SimplePage from "@/components/SimplePage";
 
 <SimplePage />
+
+## 概述
+
+简单随机化是一种基础的随机分组方法，通过 Fisher-Yates 洗牌算法将参与者随机分配到不同组别。该方法确保每个参与者被分配到任何组的概率相等，是临床试验和其他研究中最常用的随机化方法之一。
+
+## 参数说明
+
+### 核心参数
+
+| 参数名 | 类型 | 必需 | 默认值 | 说明 |
+|--------|------|------|--------|------|
+| `N` | number | ✅ | 100 | 总参与者数量 |
+| `num_arms` | number | ✅ | 2 | 随机化组别数量 |
+| `seed` | number | ❌ | - | 随机种子，用于结果可重现 |
+| `prob` | number[] | ❌ | - | 各组概率数组，如 `[0.3, 0.7]` |
+| `prob_unit` | string | ❌ | - | 概率单位类型 (`equal`, `ratio` 等) |
+| `prob_each` | number[] | ❌ | - | 每个条件的确切概率 |
+| `conditions` | string | ❌ | - | 组别名称，用逗号分隔，如 `"Treatment,Control"` |
+| `check_inputs` | boolean | ❌ | true | 是否检查输入参数有效性 |
+| `simple` | boolean | ❌ | true | 是否使用简化算法 |
+
+### 类型定义
+
+```typescript
+interface RandomizationResult {
+  groups: Array<{
+    name: string           // 组别名称
+    participants: number[] // 参与者ID列表
+    size: number          // 组别大小
+  }>
+  totalParticipants: number       // 总参与者数
+  algorithm: string              // 算法名称
+  timestamp: string              // 生成时间戳
+  statistics: {
+    groupSizes: number[]         // 各组大小数组
+    balance: number              // 平衡度 (0-1)
+    efficiency: number           // 效率 (0-1)
+  }
+}
+```
+
+## 使用示例
+
+### 示例 1：基本随机化（两组平分）
+
+将 100 名参与者随机分为 2 组：
+
+```typescript
+import { simpleRandomization } from '@randbox/react'
+
+const result = simpleRandomization(
+  N: 100,        // 100 名参与者
+  numArms: 2,    // 分为 2 组
+  seed: 12345    // 可选：使用种子确保结果可重现
+)
+
+console.log(result.groups[0].participants.length) // 约 50 人
+console.log(result.groups[1].participants.length) // 约 50 人
+```
+
+### 示例 2：多组随机化（三组）
+
+将 90 名参与者随机分为 3 组：
+
+```typescript
+const result = simpleRandomization(
+  N: 90,
+  numArms: 3,
+  conditions: "A组,B组,C组",  // 自定义组名
+  seed: 20241015
+)
+
+// 结果：
+// A组: 30 人
+// B组: 30 人
+// C组: 30 人
+```
+
+### 示例 3：概率分配（不等比例）
+
+将 100 名参与者按 3:7 的比例分为两组：
+
+```typescript
+const result = simpleRandomization(
+  N: 100,
+  numArms: 2,
+  prob: [0.3, 0.7],           // 第一组 30%，第二组 70%
+  conditions: "实验组,对照组",
+  seed: 99999
+)
+
+// 预期结果：
+// 实验组: ~30 人
+// 对照组: ~70 人
+```
+
+### 示例 4：复杂概率分配（三组不同概率）
+
+```typescript
+const result = simpleRandomization(
+  N: 200,
+  numArms: 3,
+  prob: [0.2, 0.3, 0.5],      // 20%, 30%, 50%
+  conditions: "低剂量,中剂量,高剂量",
+  seed: 88888
+)
+
+// 预期结果：
+// 低剂量: ~40 人
+// 中剂量: ~60 人
+// 高剂量: ~100 人
+```
+
+## 算法原理
+
+### Fisher-Yates 洗牌算法
+
+简单随机化基于 Fisher-Yates 洗牌算法，其工作原理如下：
+
+1. **初始化**：创建包含所有参与者ID的数组 `[1, 2, 3, ..., N]`
+2. **洗牌**：从数组末尾开始，将当前元素与随机位置的元素交换
+3. **分配**：将洗牌后的数组按顺序分配给各组
+
+伪代码：
+```
+for i from N-1 down to 1:
+  j = random integer between 0 and i
+  swap array[i] and array[j]
+```
+
+### 概率分配机制
+
+当提供 `prob` 参数时，系统使用累积概率进行分配：
+
+1. 计算累积概率：`[p1, p1+p2, p1+p2+p3, ...]`
+2. 对每个参与者生成随机数 `r ∈ [0, 1)`
+3. 根据 `r` 落在哪个区间决定组别
+
+示例：
+- 概率 `[0.3, 0.7]`
+- 累积概率 `[0.3, 1.0]`
+- `r < 0.3` → 组 1
+- `0.3 ≤ r < 1.0` → 组 2
+
+## 统计指标
+
+### 平衡度 (Balance)
+
+衡量各组大小之间的均衡程度：
+
+```
+balance = 1 - (max(size) - min(size)) / max(size)
+```
+
+- 值越接近 1 表示越均衡
+- 完全均衡时 `balance = 1.0`
+
+### 效率 (Efficiency)
+
+表示随机化过程的效率，通常基于算法复杂度计算：
+
+- 简单随机化：`efficiency ≈ 0.95`
+- 分层随机化：`efficiency ≈ 0.98`
+- 区组随机化：`efficiency ≈ 0.99`
+
+## 注意事项
+
+### 1. 输入验证
+
+- `N` 必须大于 0
+- `num_arms` 必须大于 0 且不超过 `N`
+- 如果提供 `prob`，其和应等于 1.0
+- 如果提供 `conditions`，数量应等于 `num_arms`
+
+### 2. 概率分配
+
+- 当 `prob` 未提供时，各组平均分配
+- 使用概率分配可能导致不完全均衡（这是正常现象）
+- 建议在样本量足够大时使用概率分配
+
+### 3. 随机种子
+
+- 种子可用于重现相同结果
+- 不提供种子时使用当前时间戳
+- 相同种子 + 相同参数 = 相同结果
+
+### 4. 性能考虑
+
+- 时间复杂度：O(N)
+- 空间复杂度：O(N)
+- 适用于中等规模数据（≤ 10,000）
+
+## 应用场景
+
+✅ **适合的场景：**
+- 临床试验的初始随机化
+- A/B 测试分组
+- 教学实验设计
+- 心理学实验分组
+
+❌ **不适合的场景：**
+- 需要分层控制的研究（应使用分层随机化）
+- 需要区组平衡的研究（应使用区组随机化）
+- 超大规模数据（> 100,000）
+
+## 最佳实践
+
+1. **确定样本量**：确保总样本量足够大
+2. **合理分组**：根据研究目的确定组别数量和比例
+3. **使用种子**：在研究报告中记录种子值
+4. **验证结果**：检查各组基本特征是否均衡
+5. **文档记录**：详细记录随机化参数和过程
+
+## 扩展阅读
+
+- [分层随机化](./stratified)：针对已知混杂因素的随机化方法
+- [区组随机化](./block)：确保平衡的随机化方法
+- [随机化历史](./history)：查看和管理随机化记录
+
+---
+
+**作者：** RandBox 开发团队
+**更新时间：** 2025-10-31
+**版本：** v1.0

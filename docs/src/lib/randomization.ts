@@ -59,35 +59,75 @@ function shuffle<T>(array: T[], rng: RandomGenerator): T[] {
   const result = [...array]
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(rng.next() * (i + 1))
-		;[result[i], result[j]] = [result[j], result[i]]
+    ;[result[i], result[j]] = [result[j], result[i]]
   }
   return result
 }
 
-export function simpleRandomization(totalParticipants: number, groupCount: number, seed?: number): RandomizationResult {
+export function simpleRandomization(
+  N: number,
+  numArms: number,
+  seed?: number,
+  prob?: number[],
+  _prob_unit?: string,
+  _prob_each?: string,
+  conditions?: string,
+  _check_inputs: boolean = true,
+  _simple: boolean = true,
+): RandomizationResult {
   const rng = new RandomGenerator(seed)
-  const participants = Array.from({ length: totalParticipants }, (_, i) => i + 1)
+  const participants = Array.from({ length: N }, (_, _i) => _i + 1)
   const shuffled = shuffle(participants, rng)
 
-  const groups = Array.from({ length: groupCount }, (_, i) => ({
-    name: `组 ${i + 1}`,
+  // Parse conditions if provided
+  const groupNames = conditions
+    ? conditions.split(',').map(c => c.trim())
+    : Array.from({ length: numArms }, (_, _i) => `组 ${_i + 1}`)
+
+  const groups = groupNames.map((name, _i) => ({
+    name,
     participants: [] as number[],
     size: 0,
   }))
 
-  // Distribute participants evenly
-  shuffled.forEach((participant, index) => {
-    const groupIndex = index % groupCount
-    groups[groupIndex].participants.push(participant)
-    groups[groupIndex].size++
-  })
+  // Use probability-based assignment if prob is provided
+  if (prob && prob.length > 0) {
+    // Calculate cumulative probabilities
+    const cumulativeProbs = prob.reduce<number[]>((acc, p, i) => {
+      acc.push((acc[i - 1] || 0) + p)
+      return acc
+    }, [])
+
+    shuffled.forEach((participant) => {
+      const random = rng.next()
+      let groupIndex = 0
+
+      for (let i = 0; i < cumulativeProbs.length; i++) {
+        if (random <= cumulativeProbs[i]) {
+          groupIndex = i
+          break
+        }
+      }
+
+      groups[groupIndex].participants.push(participant)
+      groups[groupIndex].size++
+    })
+  }
+  else {
+    // Distribute participants evenly
+    shuffled.forEach((participant, index) => {
+      const groupIndex = index % numArms
+      groups[groupIndex].participants.push(participant)
+      groups[groupIndex].size++
+    })
+  }
 
   const groupSizes = groups.map((g) => g.size)
   const balance = 1 - (Math.max(...groupSizes) - Math.min(...groupSizes)) / Math.max(...groupSizes)
 
   return {
     groups,
-    totalParticipants,
+    totalParticipants: N,
     algorithm: '简单随机化',
     timestamp: new Date().toISOString(),
     statistics: {

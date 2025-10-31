@@ -14,8 +14,14 @@ import { simpleRandomization } from '@/lib/randomization'
 
 export default function SimpleRandomizationPage() {
   const { t, currentLocale } = useLocale()
-  const [totalParticipants, setTotalParticipants] = useState<number>(20)
-  const [groupCount, setGroupCount] = useState<number>(2)
+  const [N, setN] = useState<number>(100)
+  const [prob, setProb] = useState<string>('')
+  const [probUnit, setProbUnit] = useState<string>('')
+  const [probEach, setProbEach] = useState<string>('')
+  const [numArms, setNumArms] = useState<number>(2)
+  const [conditions, setConditions] = useState<string>('')
+  const [checkInputs, setCheckInputs] = useState<boolean>(true)
+  const [simple, setSimple] = useState<boolean>(true)
   const [seed, setSeed] = useState<string>('')
   const [result, setResult] = useState<RandomizationResult | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -27,19 +33,35 @@ export default function SimpleRandomizationPage() {
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     const seedValue = seed ? Number.parseInt(seed) : undefined
-    const randomizationResult = simpleRandomization(totalParticipants, groupCount, seedValue)
+    const randomizationResult = simpleRandomization(
+      N,
+      numArms,
+      seedValue,
+      prob ? prob.split(',').map(p => parseFloat(p.trim())) : undefined,
+      probUnit || undefined,
+      probEach ? probEach.split(',').map(p => parseFloat(p.trim())).join(',') : undefined,
+      conditions || undefined,
+      checkInputs,
+      simple,
+    )
     setResult(randomizationResult)
 
     // Save to history
     RandomizationHistory.saveRecord('simple', {
-      totalParticipants,
-      groupCount,
+      N,
+      prob,
+      probUnit,
+      probEach,
+      numArms,
+      conditions,
+      checkInputs,
+      simple,
       seed,
     }, randomizationResult)
     setIsLoading(false)
   }
 
-  const isValidInput = totalParticipants > 0 && groupCount > 0 && groupCount <= totalParticipants
+  const isValidInput = N > 0 && numArms > 0 && numArms <= N
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
@@ -64,31 +86,113 @@ export default function SimpleRandomizationPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="participants">{t('simplePage.inputPanel.totalParticipants')}</Label>
+                <Label htmlFor="n">N (参与者数量)</Label>
                 <Input
-                  id="participants"
+                  id="n"
                   type="number"
-                  value={totalParticipants}
-                  onChange={(e) => setTotalParticipants(Number.parseInt(e.target.value) || 0)}
+                  value={N}
+                  onChange={(e) => setN(Number.parseInt(e.target.value) || 0)}
                   min="1"
                   max="10000"
                   className="text-lg"
                 />
-                <p className="text-sm text-slate-500">{t('simplePage.inputPanel.totalParticipantsHint')}</p>
+                <p className="text-sm text-slate-500">总参与者数量</p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="groups">{t('simplePage.inputPanel.groupCount')}</Label>
+                <Label htmlFor="prob">概率 (prob)</Label>
                 <Input
-                  id="groups"
+                  id="prob"
+                  type="text"
+                  value={prob}
+                  onChange={(e) => setProb(e.target.value)}
+                  placeholder="例如: 0.3, 0.7 或留空"
+                  className="text-lg"
+                />
+                <p className="text-sm text-slate-500">每组的概率，用逗号分隔（例如：0.3,0.7）</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="probUnit">概率单位 (prob_unit)</Label>
+                <Input
+                  id="probUnit"
+                  type="text"
+                  value={probUnit}
+                  onChange={(e) => setProbUnit(e.target.value)}
+                  placeholder="例如: equal, ratio"
+                  className="text-lg"
+                />
+                <p className="text-sm text-slate-500">概率单位类型</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="probEach">每个概率 (prob_each)</Label>
+                <Input
+                  id="probEach"
+                  type="text"
+                  value={probEach}
+                  onChange={(e) => setProbEach(e.target.value)}
+                  placeholder="例如: 0.5, 0.5 或留空"
+                  className="text-lg"
+                />
+                <p className="text-sm text-slate-500">每个条件的确切概率</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="numArms">组别数量 (num_arms)</Label>
+                <Input
+                  id="numArms"
                   type="number"
-                  value={groupCount}
-                  onChange={(e) => setGroupCount(Number.parseInt(e.target.value) || 0)}
+                  value={numArms}
+                  onChange={(e) => setNumArms(Number.parseInt(e.target.value) || 0)}
                   min="2"
                   max="20"
                   className="text-lg"
                 />
-                <p className="text-sm text-slate-500">{t('simplePage.inputPanel.groupCountHint')}</p>
+                <p className="text-sm text-slate-500">随机化组别数量</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="conditions">条件 (conditions)</Label>
+                <Input
+                  id="conditions"
+                  type="text"
+                  value={conditions}
+                  onChange={(e) => setConditions(e.target.value)}
+                  placeholder="例如: Treatment, Control"
+                  className="text-lg"
+                />
+                <p className="text-sm text-slate-500">各组条件名称，用逗号分隔</p>
+              </div>
+
+              <div className="space-y-4 pt-4 border-t">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="checkInputs"
+                    checked={checkInputs}
+                    onChange={(e) => setCheckInputs(e.target.checked)}
+                    className="h-4 w-4"
+                  />
+                  <Label htmlFor="checkInputs" className="text-sm font-medium">
+                    检查输入 (check_inputs)
+                  </Label>
+                </div>
+                <p className="text-sm text-slate-500 ml-6">启用输入参数验证</p>
+
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="simple"
+                    checked={simple}
+                    onChange={(e) => setSimple(e.target.checked)}
+                    className="h-4 w-4"
+                  />
+                  <Label htmlFor="simple" className="text-sm font-medium">
+                    简单模式 (simple)
+                  </Label>
+                </div>
+                <p className="text-sm text-slate-500 ml-6">使用简化算法</p>
               </div>
 
               <div className="space-y-2">
@@ -115,7 +219,7 @@ export default function SimpleRandomizationPage() {
 
               {!isValidInput && (
                 <p className="text-sm text-red-500 text-center">
-                  {t('simplePage.inputPanel.validationError', { maxGroups: totalParticipants })}
+                  {t('simplePage.inputPanel.validationError', { maxGroups: N })}
                 </p>
               )}
             </CardContent>
@@ -137,9 +241,9 @@ export default function SimpleRandomizationPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                       <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                        {result.totalParticipants}
+                        {N}
                       </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">{t('simplePage.resultsPanel.totalParticipantsLabel')}</div>
+                      <div className="text-sm text-slate-600 dark:text-slate-400">N (参与者数量)</div>
                     </div>
                     <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                       <div className="text-2xl font-bold text-green-600 dark:text-green-400">
@@ -194,6 +298,59 @@ export default function SimpleRandomizationPage() {
                         </span>
                       </div>
                     </div>
+
+                    <Separator />
+
+                    <h4 className="font-medium text-sm text-slate-700 dark:text-slate-300">参数配置</h4>
+                    <div className="grid grid-cols-1 gap-2 text-xs bg-slate-50 dark:bg-slate-800 p-3 rounded-lg">
+                      <div className="flex justify-between">
+                        <span className="text-slate-600 dark:text-slate-400">N:</span>
+                        <span className="font-mono">{N}</span>
+                      </div>
+                      {prob && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-600 dark:text-slate-400">prob:</span>
+                          <span className="font-mono">{prob}</span>
+                        </div>
+                      )}
+                      {probUnit && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-600 dark:text-slate-400">prob_unit:</span>
+                          <span className="font-mono">{probUnit}</span>
+                        </div>
+                      )}
+                      {probEach && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-600 dark:text-slate-400">prob_each:</span>
+                          <span className="font-mono">{probEach}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between">
+                        <span className="text-slate-600 dark:text-slate-400">num_arms:</span>
+                        <span className="font-mono">{numArms}</span>
+                      </div>
+                      {conditions && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-600 dark:text-slate-400">conditions:</span>
+                          <span className="font-mono">{conditions}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between">
+                        <span className="text-slate-600 dark:text-slate-400">check_inputs:</span>
+                        <span className="font-mono">{checkInputs ? 'true' : 'false'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-600 dark:text-slate-400">simple:</span>
+                        <span className="font-mono">{simple ? 'true' : 'false'}</span>
+                      </div>
+                      {seed && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-600 dark:text-slate-400">seed:</span>
+                          <span className="font-mono">{seed}</span>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="text-xs text-slate-500">
                       {t('simplePage.resultsPanel.generateTime')}
                       {new Date(result.timestamp).toLocaleString(currentLocale === 'zh' ? 'zh-CN' : 'en-US')}
