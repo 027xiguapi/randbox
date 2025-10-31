@@ -82,56 +82,9 @@ export const GridLottery: React.FC<GridLotteryProps> = ({
   }, [actualPrizes, gridSize, cellSize, padding]);
 
   /**
-   * 绘制单个单元格
-   */
-  const drawCell = (
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    size: number,
-    prize: string,
-    isActive: boolean
-  ) => {
-    // 绘制背景
-    ctx.save();
-    if (isActive) {
-      // 活跃状态 - 发光效果
-      ctx.shadowColor = '#667eea';
-      ctx.shadowBlur = 20;
-      ctx.fillStyle = '#667eea';
-    } else {
-      ctx.fillStyle = '#ffffff';
-    }
-
-    drawRoundedRect(ctx, x + 5, y + 5, size - 10, size - 10, 15);
-    ctx.fill();
-    ctx.restore();
-
-    // 绘制边框
-    ctx.strokeStyle = isActive ? '#667eea' : '#e9ecef';
-    ctx.lineWidth = isActive ? 4 : 2;
-    drawRoundedRect(ctx, x + 5, y + 5, size - 10, size - 10, 15);
-    ctx.stroke();
-
-    // 绘制奖品文本
-    ctx.fillStyle = isActive ? '#ffffff' : '#333333';
-    ctx.font = 'bold 18px Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    const lines = wrapText(ctx, prize, size - 20);
-    const lineHeight = 25;
-    const startY = y + size / 2 - (lines.length - 1) * lineHeight / 2;
-
-    lines.forEach((line, index) => {
-      ctx.fillText(line, x + size / 2, startY + index * lineHeight);
-    });
-  };
-
-  /**
    * 绘制圆角矩形
    */
-  const drawRoundedRect = (
+  const roundedRect = (
     ctx: CanvasRenderingContext2D,
     x: number,
     y: number,
@@ -153,25 +106,96 @@ export const GridLottery: React.FC<GridLotteryProps> = ({
   };
 
   /**
-   * 文本换行
+   * 绘制单个小方块
    */
-  const wrapText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] => {
-    const words = text.split(' ');
-    const lines: string[] = [];
-    let currentLine = words[0];
+  const drawCell = (
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    size: number,
+    prize: string,
+    isActive: boolean
+  ) => {
+    const radius = 15;
+    const shadowColor = 'rgba(0, 0, 0, 0.3)';
+    const bgColor = isActive ? '#667eea' : '#ffffff';
+    const txtColor = isActive ? '#ffffff' : '#333333';
+    const txtSize = 'bold 20px Arial, sans-serif';
 
-    for (let i = 1; i < words.length; i++) {
-      const word = words[i];
-      const width = ctx.measureText(currentLine + ' ' + word).width;
-      if (width < maxWidth) {
-        currentLine += ' ' + word;
+    // 绘制方块（带阴影）
+    ctx.save();
+    ctx.fillStyle = bgColor;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 4;
+    ctx.shadowBlur = isActive ? 20 : 8;
+    ctx.shadowColor = isActive ? '#667eea' : shadowColor;
+    roundedRect(ctx, x + 5, y + 5, size - 10, size - 10, radius);
+    ctx.fill();
+    ctx.restore();
+
+    // 绘制边框
+    ctx.save();
+    ctx.strokeStyle = isActive ? '#667eea' : '#e9ecef';
+    ctx.lineWidth = isActive ? 4 : 2;
+    roundedRect(ctx, x + 5, y + 5, size - 10, size - 10, radius);
+    ctx.stroke();
+    ctx.restore();
+
+    // 绘制奖品文本或图片
+    if (prize) {
+      // 检查是否为图片（以 'img-' 开头）
+      if (prize.substr(0, 3) === 'img') {
+        const textFormat = prize.replace('img-', '');
+        const image = new Image();
+        image.src = textFormat;
+
+        // 图片绘制函数
+        const drawImage = () => {
+          try {
+            ctx.drawImage(
+              image,
+              x + (size * 0.2 / 2),
+              y + (size * 0.2 / 2),
+              size * 0.8,
+              size * 0.8
+            );
+          } catch (error) {
+            console.warn('Failed to draw image:', error);
+          }
+        };
+
+        // 如果图片已经加载完成，直接绘制
+        if (image.complete) {
+          drawImage();
+        } else {
+          // 否则等待加载完成再绘制
+          image.onload = drawImage;
+          image.onerror = () => {
+            console.warn('Failed to load image:', textFormat);
+          };
+        }
       } else {
-        lines.push(currentLine);
-        currentLine = word;
+        // 绘制文字
+        ctx.save();
+        ctx.fillStyle = txtColor;
+        ctx.font = txtSize;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // 计算居中位置
+        const centerX = x + size / 2;
+        const centerY = y + size / 2;
+
+        // 测量文本宽度以确保居中
+        const textWidth = ctx.measureText(prize).width;
+        const translateX = centerX - textWidth / 2;
+        const translateY = centerY + 6; // 微调垂直位置
+
+        ctx.translate(translateX, translateY);
+        ctx.fillText(prize, 0, 0);
+        ctx.restore();
       }
     }
-    lines.push(currentLine);
-    return lines;
   };
 
   /**

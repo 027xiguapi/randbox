@@ -33,6 +33,7 @@ export const ScratchCard: React.FC<ScratchCardProps> = ({
   const [isRevealed, setIsRevealed] = useState(false);
   const [scratchProgress, setScratchProgress] = useState(0);
   const [result, setResult] = useState<ScratchCardResult | null>(null);
+  const [lastScratchPoint, setLastScratchPoint] = useState<{ x: number; y: number } | null>(null);
 
   // Canvas配置
   const canvasWidth = 600;
@@ -302,16 +303,28 @@ export const ScratchCard: React.FC<ScratchCardProps> = ({
     ctx.lineJoin = 'round';
 
     if (isScratching) {
-      ctx.beginPath();
-      ctx.arc(x, y, 15, 0, Math.PI * 2);
-      ctx.fill();
+      if (lastScratchPoint) {
+        // 绘制连续路径，支持平滑刮除
+        ctx.beginPath();
+        ctx.moveTo(lastScratchPoint.x, lastScratchPoint.y);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      } else {
+        // 首次刮除，绘制圆形
+        ctx.beginPath();
+        ctx.arc(x, y, 15, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
     ctx.restore();
 
+    // 更新最后刮除点
+    setLastScratchPoint({ x, y });
+
     // 计算刮开进度
     calculateScratchProgress();
-  }, [isScratching, isRevealed]);
+  }, [isScratching, isRevealed, lastScratchPoint]);
 
   /**
    * 计算刮开进度
@@ -351,6 +364,7 @@ export const ScratchCard: React.FC<ScratchCardProps> = ({
 
     setIsRevealed(true);
     setScratchProgress(1);
+    setLastScratchPoint(null); // 重置刮除点
 
     // 清除涂层
     const canvas = overlayCanvasRef.current;
@@ -384,6 +398,7 @@ export const ScratchCard: React.FC<ScratchCardProps> = ({
     setIsRevealed(false);
     setScratchProgress(0);
     setResult(null);
+    setLastScratchPoint(null); // 重置刮除点
 
     // 重新绘制 - 使用 setTimeout 确保状态更新后再绘制
     setTimeout(() => {
@@ -414,6 +429,7 @@ export const ScratchCard: React.FC<ScratchCardProps> = ({
 
   /**
    * 获取鼠标/触摸位置
+   * 使用 pageX/pageY 而不是 clientX/clientY，以支持页面滚动
    */
   const getPointerPosition = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = overlayCanvasRef.current;
@@ -424,15 +440,17 @@ export const ScratchCard: React.FC<ScratchCardProps> = ({
     const scaleY = canvas.height / rect.height;
 
     if ('touches' in e) {
-      const touch = e.touches[0] || e.changedTouches[0];
+      // 使用 changedTouches 获取最后一个触摸点（与 Vue 代码一致）
+      const touch = e.changedTouches[e.changedTouches.length - 1];
       return {
-        x: (touch.clientX - rect.left) * scaleX,
-        y: (touch.clientY - rect.top) * scaleY,
+        x: (touch.pageX - rect.left) * scaleX,
+        y: (touch.pageY - rect.top) * scaleY,
       };
     } else {
+      // 使用 pageX/pageY 获取相对于整个渲染页面的坐标
       return {
-        x: (e.clientX - rect.left) * scaleX,
-        y: (e.clientY - rect.top) * scaleY,
+        x: (e.pageX - rect.left) * scaleX,
+        y: (e.pageY - rect.top) * scaleY,
       };
     }
   };
@@ -498,6 +516,7 @@ export const ScratchCard: React.FC<ScratchCardProps> = ({
           onMouseDown={(e) => {
             if (!isRevealed && !disabled) {
               setIsScratching(true);
+              setLastScratchPoint(null); // 重置刮除点，支持新路径
               const pos = getPointerPosition(e);
               scratch(pos.x, pos.y);
             }
@@ -508,12 +527,19 @@ export const ScratchCard: React.FC<ScratchCardProps> = ({
               scratch(pos.x, pos.y);
             }
           }}
-          onMouseUp={() => setIsScratching(false)}
-          onMouseLeave={() => setIsScratching(false)}
+          onMouseUp={() => {
+            setIsScratching(false);
+            setLastScratchPoint(null); // 结束刮除时重置
+          }}
+          onMouseLeave={() => {
+            setIsScratching(false);
+            setLastScratchPoint(null); // 结束刮除时重置
+          }}
           onTouchStart={(e) => {
             e.preventDefault();
             if (!isRevealed && !disabled) {
               setIsScratching(true);
+              setLastScratchPoint(null); // 重置刮除点，支持新路径
               const pos = getPointerPosition(e);
               scratch(pos.x, pos.y);
             }
@@ -528,6 +554,7 @@ export const ScratchCard: React.FC<ScratchCardProps> = ({
           onTouchEnd={(e) => {
             e.preventDefault();
             setIsScratching(false);
+            setLastScratchPoint(null); // 结束刮除时重置
           }}
         />
       </div>
