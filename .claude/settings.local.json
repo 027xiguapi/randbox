@@ -32,7 +32,9 @@
       "Bash(pnpm dev:*)",
       "Bash(pnpm list:*)",
       "Bash(pnpm install:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(head -15 \"$file\")"
     ],
     "deny": [],
     "ask": []
