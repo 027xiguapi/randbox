@@ -36,8 +36,9 @@
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
-    "docs:build": "pnpm --filter @randbox/docs build",
-    "docs:dev": "pnpm --filter @randbox/docs dev"
+    "docs:build": "pnpm --filter randbox-docs build",
+    "docs:dev": "pnpm --filter randbox-docs dev",
+    "docs:start": "pnpm --filter randbox-docs start"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
