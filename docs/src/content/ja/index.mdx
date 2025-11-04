@@ -1,0 +1,200 @@
+---
+title: "RandBox ドキュメント"
+description: "RandBox ページ：RandBox ドキュメント、示例と説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "index.mdx"]
+keywords: ["RandBox", "index.mdx", "ランダム", "JavaScript", "MDX"]
+---
+
+import HomepageHero from "@/components/HomepageHero";
+
+<HomepageHero />
+
+# RandBox ドキュメント
+
+RandBox は様々な種類のランダムデータを生成するための豊富な API を提供する、強力な JavaScript ランダムデータ生成ライブラリです。このドキュメントは RandBox の全機能モジュールと使用方法をカバーしています。
+
+## usage - 使用方法
+
+RandBox を様々な環境でインストールして使用する：
+
+1. **[bower.mdx](/ja/docs/usage/bower)** - Bower パッケージマネージャーによるインストールと使用方法
+2. **[browser.mdx](/ja/docs/usage/browser)** - ブラウザ環境での使用方法（シンプル、中級、上級レベル）
+3. **[requirejs.mdx](/ja/docs/usage/requirejs)** - RequireJS モジュールローディング方式
+4. **[node.mdx](/ja/docs/usage/node)** - Node.js 環境でのインストールと使用（npm、yarn、ES6）
+5. **[function.mdx](/ja/docs/usage/function)** - カスタムランダム関数の使用説明
+6. **[cli.mdx](/ja/docs/usage/cli)** - コマンドラインツールのインストールと使用方法
+7. **[seed.mdx](/ja/docs/usage/seed)** - シード機能の詳説（数字、文字列、マルチパラメーターシード）
+
+## basics - 基本データ型
+
+基本データ型生成機能：
+
+1. **[bool.mdx](/ja/docs/basics/bool)** - ランダムブール値を生成、確率指定をサポート
+2. **[character.mdx](/ja/docs/basics/character)** - ランダム文字を生成、文字、数字、記号等のオプションをサポート
+3. **[falsy.mdx](/ja/docs/basics/falsy)** - JavaScript の falsy 値を生成
+4. **[floating.mdx](/ja/docs/basics/floating)** - ランダム浮動小数点数を生成、範囲と精度設定をサポート
+5. **[integer.mdx](/ja/docs/basics/integer)** - ランダム整数を生成、最小値と最大値設定をサポート
+6. **[letter.mdx](/ja/docs/basics/letter)** - ランダム文字を生成、大小文字制御をサポート
+7. **[natural.mdx](/ja/docs/basics/natural)** - 自然数（非負整数）を生成
+8. **[prime.mdx](/ja/docs/basics/prime)** - ランダム素数を生成
+9. **[string.mdx](/ja/docs/basics/string)** - ランダム文字列を生成、長さ、文字プール、大小文字等の複数のオプションをサポート
+10. **[template.mdx](/ja/docs/basics/template)** - テンプレートベースの文字列生成、プレースホルダー置換をサポート
+
+## finance - 金融データ
+
+金融関連データ生成機能：
+
+1. **[cc.mdx](/ja/docs/finance/cc)** - Luhn アルゴリズムに準拠するランダムクレジットカード番号を生成、カードタイプ指定をサポート
+2. **[cc_type.mdx](/ja/docs/finance/cc_type)** - クレジットカードタイプ情報を取得、正式名称と略称を含む
+3. **[currency.mdx](/ja/docs/finance/currency)** - ランダム通貨コードまたは名称を生成
+4. **[currency_pair.mdx](/ja/docs/finance/currency_pair)** - ランダム通貨ペアを生成
+5. **[dollar.mdx](/ja/docs/finance/dollar)** - ランダムドル額を生成、最大値設定をサポート
+6. **[euro.mdx](/ja/docs/finance/euro)** - ランダムユーロ額を生成、最大値設定をサポート
+7. **[exp.mdx](/ja/docs/finance/exp)** - クレジットカード有効期限（MM/YY 形式）を生成
+8. **[exp_month.mdx](/ja/docs/finance/exp_month)** - クレジットカード有効期限月（01-12）を生成
+9. **[exp_year.mdx](/ja/docs/finance/exp_year)** - クレジットカード有効期限年を生成、2桁または4桁形式をサポート
+
+## helpers - ヘルパー
+
+実用的なヘルパー機能とデータ操作ツール：
+
+1. **[capitalize.mdx](/ja/docs/helpers/capitalize)** - 単語の頭文字を大文字化
+2. **[pick.mdx](/ja/docs/helpers/pick)** - 推奨されなくなった選択機能、pickone と pickset の使用を推奨
+3. **[pickset.mdx](/ja/docs/helpers/pickset)** - 配列から複数のランダム要素を選択
+4. **[pickone.mdx](/ja/docs/helpers/pickone)** - 配列から1つのランダム要素を選択
+5. **[shuffle.mdx](/ja/docs/helpers/shuffle)** - 配列順序をシャッフル
+6. **[pad.mdx](/ja/docs/helpers/pad)** - 数値パディング機能
+7. **[set.mdx](/ja/docs/helpers/set)** - デフォルトデータセットをオーバーライド
+8. **[mixin.mdx](/ja/docs/helpers/mixin)** - ミックスイン機能、RandBox の拡張に使用
+
+## location - 地理的位置
+
+地理的位置とアドレス関連データ生成：
+
+1. **[address.mdx](/ja/docs/location/address)** - ランダムストリートアドレスを生成
+2. **[altitude.mdx](/ja/docs/location/altitude)** - ランダム標高を生成
+3. **[areacode.mdx](/ja/docs/location/areacode)** - ランダム市外局番（米国）を生成
+4. **[city.mdx](/ja/docs/location/city)** - ランダム都市名を生成
+5. **[coordinates.mdx](/ja/docs/location/coordinates)** - ランダム座標（緯度と経度）を生成
+6. **[country.mdx](/ja/docs/location/country)** - ランダム国コードまたは完全名称を生成
+7. **[depth.mdx](/ja/docs/location/depth)** - ランダム深度（負数）を生成
+8. **[geohash.mdx](/ja/docs/location/geohash)** - ランダム地理ハッシュを生成
+9. **[latitude.mdx](/ja/docs/location/latitude)** - ランダム緯度を生成
+10. **[locale.mdx](/ja/docs/location/locale)** - ランダム言語コードまたは地域コードを生成
+11. **[longitude.mdx](/ja/docs/location/longitude)** - ランダム経度を生成
+12. **[phone.mdx](/ja/docs/location/phone)** - ランダム電話番号を生成（米国、英国、フランスをサポート）
+13. **[postal.mdx](/ja/docs/location/postal)** - カナダ郵便番号を生成
+14. **[postcode.mdx](/ja/docs/location/postcode)** - 英国郵便番号を生成
+15. **[province.mdx](/ja/docs/location/province)** - ランダム州/ Province（カナダ、イタリアをサポート）を生成
+16. **[state.mdx](/ja/docs/location/state)** - ランダム州（米国、イタリアをサポート）を生成
+17. **[street.mdx](/ja/docs/location/street)** - ランダムストリート名を生成
+18. **[zip.mdx](/ja/docs/location/zip)** - 米国郵便番号を生成
+
+## miscellaneous - その他ツール
+
+様々な実用的なランダムデータ生成ツール：
+
+1. **[coin.mdx](/ja/docs/miscellaneous/coin)** - コイン投げ機能
+2. **[dice.mdx](/ja/docs/miscellaneous/dice)** - サイコロ機能（d4、d6、d8、d10、d12、d20、d30、d100）
+3. **[file_with_content.mdx](/ja/docs/miscellaneous/file_with_content)** - ランダム内容付きのファイルを生成
+4. **[guid.mdx](/ja/docs/miscellaneous/guid)** - ランダム GUID（バージョン4と5）を生成
+5. **[hash.mdx](/ja/docs/miscellaneous/hash)** - ランダム十六進ハッシュを生成
+6. **[hidden.mdx](/ja/docs/miscellaneous/hidden)** - 内部ヘルパーメソッド（クレジットカードタイプ、メルセンヌツイスター、月など）
+7. **[n.mdx](/ja/docs/miscellaneous/n)** - 指定数のランダムアイテム配列を生成
+8. **[normal.mdx](/ja/docs/miscellaneous/normal)** - 正規分布ランダム数生成
+9. **[radio.mdx](/ja/docs/miscellaneous/radio)** - ランダムラジオコールサインを生成
+10. **[rpg.mdx](/ja/docs/miscellaneous/rpg)** - RPG サイコロシステム（3d10など）
+11. **[tv.mdx](/ja/docs/miscellaneous/tv)** - テレビ局コールサインを生成（radio のエイリアス）
+12. **[unique.mdx](/ja/docs/miscellaneous/unique)** - 一意アイテム配列を生成
+13. **[weighted.mdx](/ja/docs/miscellaneous/weighted)** - 重み付きランダム選択
+
+## mobile - モバイルデバイス
+
+モバイルデバイス関連識別子生成：
+
+1. **[android_id.mdx](/ja/docs/mobile/android_id)** - ランダム GCM 登録 ID を生成
+2. **[apple_token.mdx](/ja/docs/mobile/apple_token)** - ランダム Apple プッシュトークンを生成
+3. **[bb_pin.mdx](/ja/docs/mobile/bb_pin)** - ランダム BlackBerry デバイス PIN を生成
+4. **[wp7_anid.mdx](/ja/docs/mobile/wp7_anid)** - ランダム Windows Phone 7 ANID を生成
+5. **[wp8_anid2.mdx](/ja/docs/mobile/wp8_anid2)** - ランダム Windows Phone 8 ANID2 を生成
+
+## music - 音楽
+
+音楽関連データ生成：
+
+1. **[music_genre.mdx](/ja/docs/music/music_genre)** - ランダム音楽ジャンル、22の主要ジャンルと600以上のサブジャンルを生成
+2. **[note.mdx](/ja/docs/music/note)** - ランダム音符を生成、複数のオプション（.flat、#、自然音符など）をサポート
+3. **[tempo.mdx](/ja/docs/music/tempo)** - ランダムテンポ（デフォルト 40-320 BPM）を生成
+
+## person - 個人情報
+
+個人情報と身分関連データ生成：
+
+1. **[aadhar.mdx](/ja/docs/person/aadhar)** - インド身分証明書番号（Aadhar）を生成
+2. **[age.mdx](/ja/docs/person/age)** - ランダム年齢を生成、異なるタイプ（子供、思春期大人、老年人）をサポート
+3. **[birthday.mdx](/ja/docs/person/birthday)** - ランダム誕生日を生成、複数の形式とタイプをサポート
+4. **[cf.mdx](/ja/docs/person/cf)** - イタリア社会保障番号（Codice Fiscale）を生成
+5. **[cpf.mdx](/ja/docs/person/cpf)** - ブラジル税番号を生成
+6. **[first.mdx](/ja/docs/person/first)** - ランダム名を生成、性別と国籍制限をサポート
+7. **[gender.mdx](/ja/docs/person/gender)** - ランダム性別を生成、追加性別オプションをサポート
+8. **[last.mdx](/ja/docs/person/last)** - ランダム姓を生成、複数の国籍をサポート
+9. **[name.mdx](/ja/docs/person/name)** - 完全ランダム姓名を生成、中間名、前綴、後綴等のオプションをサポート
+10. **[prefix.mdx](/ja/docs/person/prefix)** - ランダム姓名前綴（Mr.、Mrs.など）を生成
+11. **[ssn.mdx](/ja/docs/person/ssn)** - 米国社会保障番号を生成
+12. **[suffix.mdx](/ja/docs/person/suffix)** - ランダム姓名後綴（Jr.、Sr.など）を生成
+13. **[zodiac.mdx](/ja/docs/person/zodiac)** - ランダム星座を生成
+
+## text - テキスト生成
+
+テキストと言語関連コンテンツ生成：
+
+1. **[emoji.mdx](/ja/docs/text/emoji)** - ランダム絵文字を生成、カテゴリーと長さ指定をサポート
+2. **[paragraph.mdx](/ja/docs/text/paragraph)** - ランダム段落を生成、半発音可能な無意味な単語で構成、文数と改行オプションをサポート
+3. **[sentence.mdx](/ja/docs/text/sentence)** - ランダム文を生成、半発音可能な無意味な単語で構成、単語数指定をサポート
+4. **[syllable.mdx](/ja/docs/text/syllable)** - 半発音可能な音節を生成、単語の構成ブロックとして使用
+5. **[word.mdx](/ja/docs/text/word)** - 半発音可能なランダム単語を生成、音節数または長さ指定をサポート（相互排他オプション）
+
+## thing - 実体オブジェクト
+
+様々な実体オブジェクトの生成：
+
+1. **[animal.mdx](/ja/docs/thing/animal)** - ランダム動物名を生成、特定のタイプ指定をサポート（海、砂漠、草原、森、動物園、ペット）
+
+## time - 時間日付
+
+時間と日付関連データ生成：
+
+1. **[ampm.mdx](/ja/docs/time/ampm)** - 午前または午後識別子を生成
+2. **[date.mdx](/ja/docs/time/date)** - ランダム日付を生成、複数の形式と指定コンポーネントをサポート
+3. **[hammertime.mdx](/ja/docs/time/hammertime)** - ミリ秒付き Unix タイムスタンプを生成
+4. **[hour.mdx](/ja/docs/time/hour)** - ランダム時間（12時間制または24時間制）を生成
+5. **[millisecond.mdx](/ja/docs/time/millisecond)** - 0-999 のランダムミリ秒を生成
+6. **[minute.mdx](/ja/docs/time/minute)** - 0-59 のランダム分を生成
+7. **[month.mdx](/ja/docs/time/month)** - ランダム月を生成、生的オブジェクト形式をサポート
+8. **[second.mdx](/ja/docs/time/second)** - 0-59 のランダム秒を生成
+9. **[timestamp.mdx](/ja/docs/time/timestamp)** - 標準 Unix タイムスタンプを生成
+10. **[timezone.mdx](/ja/docs/time/timezone)** - ランダムタイムゾーン情報オブジェクトを生成
+11. **[weekday.mdx](/ja/docs/time/weekday)** - 曜日を生成、営業日制限をサポート
+12. **[year.mdx](/ja/docs/time/year)** - ランダム年を生成、範囲制限をサポート
+
+## web - Web関連
+
+Webとインターネット関連データ生成：
+
+1. **[avatar.mdx](/ja/docs/web/avatar)** - Gravatar アバター URL を生成
+2. **[color.mdx](/ja/docs/web/color)** - 色、支持 6 種類の色形式（hex、rgb、rgbaなど）を生成
+3. **[company.mdx](/ja/docs/web/company)** - ランダム会社名を生成
+4. **[domain.mdx](/ja/docs/web/domain)** - ランダムドメイン名を生成
+5. **[email.mdx](/ja/docs/web/email)** - ランダムメールアドレスを生成
+6. **[fbid.mdx](/ja/docs/web/fbid)** - Facebook ID を生成
+7. **[google_analytics.mdx](/ja/docs/web/google_analytics)** - Google Analytics トラッキングコードを生成
+8. **[hashtag.mdx](/ja/docs/web/hashtag)** - ランダムハッシュタグを生成
+9. **[ip.mdx](/ja/docs/web/ip)** - ランダム IP アドレスを生成
+10. **[ipv6.mdx](/ja/docs/web/ipv6)** - ランダム IPv6 アドレスを生成
+11. **[klout.mdx](/ja/docs/web/klout)** - Klout スコアを生成
+12. **[mac.mdx](/ja/docs/web/mac)** - MAC アドレスを生成
+13. **[profession.mdx](/ja/docs/web/profession)** - ランダム職業を生成、職位オプションをサポート
+14. **[tld.mdx](/ja/docs/web/tld)** - トップレベルドメインを生成
+15. **[twitter.mdx](/ja/docs/web/twitter)** - Twitter ユーザー名を生成
+16. **[url.mdx](/ja/docs/web/url)** - URL を生成、複数のカスタムオプションをサポート

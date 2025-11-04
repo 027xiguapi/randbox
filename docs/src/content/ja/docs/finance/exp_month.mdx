@@ -1,0 +1,33 @@
+---
+title: "exp_month"
+description: "RandBox ページ：exp_month、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "finance", "exp_month"]
+keywords: ["RandBox", "finance", "exp_month", "ランダム", "JavaScript", "MDX"]
+---
+
+# exp_month
+
+```js
+// 使い方
+randBox.exp_month()
+randBox.exp_month({future: true})
+```
+
+ランダムなクレジットカード有効期限月を生成します。
+
+```js
+randBox.exp_month();
+=> '01'
+```
+
+必要に応じて、現在よりも後の月である必要があることを指定できます。
+
+```js
+randBox.exp_month({future: true});
+=> '10'
+```
+
+したがって、6月に呼び出した場合、7月から12月のランダムな月を返します。10月に呼び出した場合、11月または12月を返します。
+
+これは、多くのクレジットカード沙箱環境で有効期限が現在の日付より後でなければならないためです。したがって、現在の年の有効期限を生成する場合、現在よりも後の月を生成する必要があります。

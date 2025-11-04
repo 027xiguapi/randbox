@@ -1,0 +1,49 @@
+---
+title: "integer"
+description: "RandBox ページ：integer、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "basics", "integer"]
+keywords: ["RandBox", "basics", "integer", "ランダム", "JavaScript", "MDX"]
+---
+
+# integer
+
+```js
+// 使い方
+randBox.integer()
+randBox.integer({ min: -20, max: 20 })
+```
+
+<p class="pullquote">9007199254740991 は 2^53 - 1 であり、JavaScript における最大数値です</p>
+
+ランダムな整数を返します。
+
+_範囲：-9007199254740991 から 9007199254740991_
+
+参照：[JavaScript の最大数](http://vq.io/16qnIYj)
+
+```js
+randBox.integer();
+=> -1293235
+```
+
+必要に応じて min と max を指定できます。
+
+```js
+randBox.integer({ min: -20, max: 20 })
+=> -7
+```
+
+これらの min と max は包括的であり、範囲内に含まれます。これは、
+```js
+randBox.integer({ min: -2, max: 2 })
+```
+が -2、-1、0、1、または 2 のいずれかを返すことを意味します：
+
+```js
+// 具体情况
+-2 <= ランダム数 <= 2
+
+// 一般状況
+min <= ランダム数 <= max
+```

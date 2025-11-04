@@ -1,0 +1,425 @@
+---
+title: 'LuckyWheel - 幸运大转盘'
+description: '基于Canvas的幸运大转盘组件，支持自定义奖品、权重、颜色配置和流畅的旋转动画'
+---
+
+# LuckyWheel - 幸运大转盘
+
+`LuckyWheel` 是一个基于Canvas的幸运大转盘组件，提供经典的转盘抽奖体验。支持自定义奖品、权重、颜色配置、动画效果等丰富功能。
+
+## 📦 导入
+
+```typescript
+import { LuckyWheel } from '@randbox/react';
+import type { LuckyWheelProps, LuckyWheelResult } from '@randbox/react';
+```
+
+## 🎯 类型定义
+
+### LuckyWheelProps
+
+```typescript
+interface LuckyWheelProps {
+  // 必需属性
+  prizes: string[];                                    // 奖品列表
+
+  // 可选属性
+  weights?: number[];                                  // 奖品权重
+  colors?: string[];                                   // 自定义颜色
+  animationDuration?: number;                          // 动画时长（毫秒），默认4000
+  buttonText?: string;                                 // 按钮文字，默认"开始抽奖"
+
+  // 基础属性（继承自BaseGameProps）
+  className?: string;                                  // CSS类名
+  style?: React.CSSProperties;                        // 内联样式
+  disabled?: boolean;                                  // 是否禁用
+
+  // 回调函数
+  onGameStart?: () => void;                           // 游戏开始回调
+  onGameEnd?: (result: LuckyWheelResult) => void;    // 游戏结束回调
+  onResult?: (result: LuckyWheelResult) => void;     // 结果回调
+}
+```
+
+### LuckyWheelResult
+
+```typescript
+interface LuckyWheelResult {
+  prizeIndex: number;    // 中奖奖品索引
+  prize: string;         // 中奖奖品
+  angle: number;         // 最终旋转角度
+  round: number;         // 回合数
+}
+```
+
+### LuckyWheelStats
+
+```typescript
+interface LuckyWheelStats {
+  totalSpins: number;              // 总抽奖次数
+  prizeHistory: Record<string, number>; // 奖品历史记录
+}
+```
+
+## 📋 API参考
+
+### LuckyWheelProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `prizes` | `string[]` | **必需** | 奖品列表，建议4-12个奖品 |
+| `weights` | `number[]` | `undefined` | 权重数组，控制每个奖品的中奖概率 |
+| `colors` | `string[]` | 默认渐变色 | 自定义扇形颜色，建议与奖品数量相同 |
+| `animationDuration` | `number` | `4000` | 动画持续时间（毫秒） |
+| `buttonText` | `string` | `'开始抽奖'` | 中心按钮文字 |
+| `className` | `string` | `''` | CSS类名 |
+| `style` | `React.CSSProperties` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
+| `onGameEnd` | `(result) => void` | `undefined` | 游戏结束回调 |
+| `onResult` | `(result) => void` | `undefined` | 结果回调 |
+
+### LuckyWheelResult 结构
+
+```typescript
+{
+  prizeIndex: 0,              // 中奖奖品索引（0开始）
+  prize: "iPhone 15 Pro",     // 中奖奖品名称
+  angle: 12.566370614359172,  // 最终旋转角度（弧度）
+  round: 1                    // 当前回合数
+}
+```
+
+## 🚀 基础用法
+
+```typescript
+import React from 'react';
+import { LuckyWheel } from '@randbox/react';
+
+function BasicLuckyWheel() {
+  const prizes = ['一等奖', '二等奖', '三等奖', '四等奖', '五等奖', '六等奖'];
+
+  const handleResult = (result) => {
+    console.log('抽奖结果:', result);
+    alert(`恭喜！您抽中了：${result.prize}`);
+  };
+
+  return (
+    <LuckyWheel
+      prizes={prizes}
+      onResult={handleResult}
+    />
+  );
+}
+```
+
+## 🎨 高级用法
+
+### 带权重和自定义颜色
+
+```typescript
+function CustomLuckyWheel() {
+  const prizes = [
+    'iPhone 15 Pro',
+    'iPad Air',
+    'AirPods Pro',
+    'Apple Watch',
+    '优惠券',
+    '积分',
+    '代金券',
+    '谢谢参与'
+  ];
+
+  // 权重越高，中奖概率越大
+  const weights = [1, 3, 5, 8, 15, 20, 25, 23];
+
+  // 自定义颜色（蓝紫色系）
+  const colors = [
+    '#A8B9F5',
+    '#C9D5F7',
+    '#A8B9F5',
+    '#C9D5F7',
+    '#A8B9F5',
+    '#C9D5F7',
+    '#A8B9F5',
+    '#C9D5F7'
+  ];
+
+  return (
+    <LuckyWheel
+      prizes={prizes}
+      weights={weights}
+      colors={colors}
+      animationDuration={5000}
+      buttonText="开始转动"
+      onResult={(result) => {
+        if (result.prizeIndex < 4) {
+          alert(`🎉 恭喜您中了${result.prize}！`);
+        }
+      }}
+    />
+  );
+}
+```
+
+### 完整配置示例
+
+```typescript
+function FullConfigLuckyWheel() {
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [history, setHistory] = useState<LuckyWheelResult[]>([]);
+
+  const prizes = [
+    '🎁 超级大奖',
+    '🏆 一等奖',
+    '💎 二等奖',
+    '⭐ 三等奖',
+    '🎯 四等奖',
+    '🎪 五等奖',
+    '🎨 六等奖',
+    '🎊 谢谢参与'
+  ];
+
+  const weights = [1, 2, 5, 10, 15, 20, 25, 22];
+
+  const colors = [
+    '#FF6B6B',
+    '#4ECDC4',
+    '#45B7D1',
+    '#FFA07A',
+    '#98D8C8',
+    '#F7DC6F',
+    '#BB8FCE',
+    '#85C1E2'
+  ];
+
+  const handleGameStart = () => {
+    setIsSpinning(true);
+    console.log('转盘开始旋转...');
+  };
+
+  const handleGameEnd = (result: LuckyWheelResult) => {
+    setIsSpinning(false);
+    setHistory(prev => [result, ...prev.slice(0, 4)]);
+    console.log('转盘停止:', result);
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <LuckyWheel
+        prizes={prizes}
+        weights={weights}
+        colors={colors}
+        animationDuration={4500}
+        buttonText={isSpinning ? '旋转中...' : '点击抽奖'}
+        className="my-lucky-wheel"
+        style={{ margin: '20px auto' }}
+        disabled={isSpinning}
+        onGameStart={handleGameStart}
+        onGameEnd={handleGameEnd}
+        onResult={(result) => {
+          console.log('实时结果:', result);
+        }}
+      />
+
+      {/* 抽奖历史 */}
+      {history.length > 0 && (
+        <div style={{ marginTop: '30px' }}>
+          <h3>最近抽奖记录：</h3>
+          {history.map((result, index) => (
+            <div
+              key={index}
+              style={{
+                padding: '10px',
+                backgroundColor: '#f5f5f5',
+                margin: '5px 0',
+                borderRadius: '5px'
+              }}
+            >
+              第 {result.round} 轮：{result.prize} (位置: {result.prizeIndex + 1})
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## 📋 API参考
+
+### 属性说明
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `prizes` | `string[]` | **必需** | 奖品列表，建议4-12个奖品 |
+| `weights` | `number[]` | `undefined` | 权重数组，控制每个奖品的中奖概率 |
+| `colors` | `string[]` | 默认渐变色 | 自定义扇形颜色，建议与奖品数量相同 |
+| `animationDuration` | `number` | `4000` | 动画持续时间（毫秒） |
+| `buttonText` | `string` | `'开始抽奖'` | 中心按钮文字 |
+| `className` | `string` | `''` | CSS类名 |
+| `style` | `React.CSSProperties` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
+| `onGameEnd` | `(result) => void` | `undefined` | 游戏结束回调 |
+| `onResult` | `(result) => void` | `undefined` | 结果回调 |
+
+### LuckyWheelResult 结构
+
+```typescript
+{
+  prizeIndex: 0,              // 中奖奖品索引（0开始）
+  prize: "iPhone 15 Pro",     // 中奖奖品名称
+  angle: 12.566370614359172,  // 最终旋转角度（弧度）
+  round: 1                    // 当前回合数
+}
+```
+
+## 🎨 样式定制
+
+### 容器样式
+
+```css
+.my-lucky-wheel {
+  border: 4px solid #7A95D6;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(90, 125, 191, 0.2);
+}
+
+.my-lucky-wheel:hover {
+  box-shadow: 0 8px 30px rgba(90, 125, 191, 0.3);
+  transition: box-shadow 0.3s ease;
+}
+```
+
+### 颜色方案
+
+```typescript
+// 温暖色系
+const warmColors = ['#FF6B6B', '#FF8E53', '#FFA07A', '#FFD93D'];
+
+// 清凉色系
+const coolColors = ['#4ECDC4', '#45B7D1', '#5DADE2', '#85C1E2'];
+
+// 彩虹色系
+const rainbowColors = ['#FF6B6B', '#FFD93D', '#6BCF7F', '#4ECDC4', '#A78BFA', '#F472B6'];
+
+<LuckyWheel prizes={prizes} colors={warmColors} />
+```
+
+## 🔧 高级功能
+
+### 动态更新奖品
+
+```typescript
+function DynamicLuckyWheel() {
+  const [prizes, setPrizes] = useState([
+    '奖品A', '奖品B', '奖品C', '奖品D', '奖品E', '奖品F'
+  ]);
+
+  const updatePrizes = () => {
+    setPrizes(prev => prev.map((prize, i) =>
+      i === 0 ? `新奖品 ${Date.now()}` : prize
+    ));
+  };
+
+  return (
+    <div>
+      <button onClick={updatePrizes}>更新奖品</button>
+      <LuckyWheel prizes={prizes} />
+    </div>
+  );
+}
+```
+
+### 抽奖次数限制
+
+```typescript
+function LimitedLuckyWheel() {
+  const [remainingSpins, setRemainingSpins] = useState(3);
+
+  const handleGameEnd = (result: LuckyWheelResult) => {
+    setRemainingSpins(prev => Math.max(0, prev - 1));
+  };
+
+  return (
+    <div>
+      <p>剩余抽奖次数：{remainingSpins}</p>
+      <LuckyWheel
+        prizes={['大奖', '中奖', '小奖', '谢谢参与']}
+        disabled={remainingSpins === 0}
+        buttonText={remainingSpins > 0 ? '开始抽奖' : '次数已用完'}
+        onGameEnd={handleGameEnd}
+      />
+    </div>
+  );
+}
+```
+
+## 🎯 最佳实践
+
+### 1. 奖品数量建议
+
+```typescript
+// 推荐：4-12个奖品，视觉效果最佳
+const idealPrizes = ['奖品1', '奖品2', '奖品3', '奖品4', '奖品5', '奖品6'];
+
+// 避免：太少或太多的奖品
+const tooFew = ['奖品1', '奖品2'];  // 视觉效果差
+const tooMany = Array(20).fill('奖品');  // 文字可能重叠
+```
+
+### 2. 权重配置建议
+
+```typescript
+// 合理的权重分配（总和为100，便于计算概率）
+const prizes = ['特等奖', '一等奖', '二等奖', '三等奖', '优惠券', '谢谢参与'];
+const weights = [1, 5, 10, 20, 30, 34];  // 总和100
+
+// 计算每个奖品的中奖概率
+const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+weights.forEach((weight, index) => {
+  const probability = (weight / totalWeight * 100).toFixed(2);
+  console.log(`${prizes[index]}: ${probability}%`);
+});
+```
+
+### 3. 响应式设计
+
+```typescript
+function ResponsiveLuckyWheel() {
+  return (
+    <div style={{
+      width: '100%',
+      maxWidth: '500px',
+      margin: '0 auto',
+      padding: '20px'
+    }}>
+      <LuckyWheel
+        prizes={['奖品1', '奖品2', '奖品3', '奖品4']}
+        style={{ width: '100%' }}
+      />
+    </div>
+  );
+}
+```
+
+## 🐛 常见问题
+
+### Q: 如何确保抽奖的公平性？
+A: 使用权重配置，确保权重值合理分配。RandBox使用Mersenne Twister算法保证随机性。
+
+### Q: 转盘可以自定义样式吗？
+A: 可以通过`colors`属性自定义扇形颜色，通过`className`和`style`自定义容器样式。
+
+### Q: 如何实现指定中奖？
+A: 不建议这样做，因为这违反了抽奖的公平性原则。如需特殊场景，可调整权重实现。
+
+### Q: 转盘的旋转速度可以调整吗？
+A: 可以，通过`animationDuration`属性调整，单位为毫秒。建议3000-6000ms之间。
+
+## 🔗 相关链接
+
+- [GridLottery - 九宫格抽奖](/zh/docs/react/grid-lottery)
+- [SlotMachine - 老虎机](/zh/docs/react/slot-machine)
+- [RandBox 核心库](/zh/docs/basics)

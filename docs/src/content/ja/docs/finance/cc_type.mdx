@@ -1,0 +1,49 @@
+---
+title: "cc_type"
+description: "RandBox ページ：cc_type、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "finance", "cc_type"]
+keywords: ["RandBox", "finance", "cc_type", "ランダム", "JavaScript", "MDX"]
+---
+
+# cc_type
+
+```js
+// 使い方
+randBox.cc_type()
+randBox.cc_type({raw: true})
+```
+
+ランダムなクレジットカードタイプを返します。
+
+```js
+randBox.cc_type();
+=> 'Visa'
+```
+
+デフォルトでは名前のみ返します。オブジェクト全体（名前、略称、数字プレフィックス、長さ）を返すには、raw フラグを指定してください。
+
+```js
+randBox.cc_type({raw: true});
+=> {name: 'Discover Card', short_name: 'discover', prefix: '6011', length: 16}
+```
+
+使用可能なタイプは以下の通りです（名前 - *略称*）：
+
+* American Express - *amex*
+* Bankcard - *bankcard*
+* China UnionPay - *chinaunion*
+* Diners Club Carte Blanche - *dccarte*
+* Diners Club enRoute - *dcenroute*
+* Diners Club International - *dcintl*
+* Diners Club United States & Canada - *dcusc*
+* Discover Card - *discover*
+* InstaPayment - *instapay*
+* JCB - *jcb*
+* Laser - *laser*
+* Maestro - *maestro*
+* Mastercard - *mc*
+* Solo - *solo*
+* Switch - *switch*
+* Visa - *visa*
+* Visa Electron - *electron*

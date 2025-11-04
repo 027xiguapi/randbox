@@ -1,0 +1,30 @@
+---
+title: "falsy"
+description: "RandBox ページ：falsy、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "basics", "falsy"]
+keywords: ["RandBox", "basics", "falsy", "ランダム", "JavaScript", "MDX"]
+---
+
+# falsy
+
+```js
+// 使い方
+randBox.falsy()
+randBox.falsy({ pool: [ NaN, undefined ] })
+```
+ランダムな偽値（`false`、`null`、`undefined`、`0`、`NaN`、`''`）を返します。
+
+```js
+randBox.falsy();
+=> false
+```
+
+必要に応じて値プールをカスタマイズできます：
+
+```js
+randBox.falsy({ pool: [ NaN, undefined ] });
+=> NaN
+```
+
+

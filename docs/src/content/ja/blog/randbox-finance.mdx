@@ -1,0 +1,48 @@
+---
+title: "RandBox 模块导览（2/12）：finance - 金融数据"
+description: "详解 RandBox 金融数据模块：信用卡（Luhn）、到期信息、货币与金额、货币对等；含示例、常见问题与参考出处，适配支付与账单测试的 SEO 内容。"
+date: "2025-10-16"
+tags: ["RandBox", "金融数据", "信用卡", "Luhn", "货币", "金额"]
+keywords: ["RandBox", "金融", "随机信用卡", "Luhn 算法", "随机金额", "货币对"]
+---
+
+# RandBox 模块导览（2/12）：finance - 金融数据
+
+金融模块支持信用卡号（遵循 Luhn 校验）、到期信息与货币相关生成。更多函数清单参见 `/zh/docs/index` 与 `/zh/docs/finance/`。
+
+**模块概览**
+- 信用卡：`cc`（可指定类型）、`cc_type`（类型信息）、`exp/exp_month/exp_year`（有效期）。
+- 金额与货币：`dollar/euro`（金额）、`currency`（代码或名称）、`currency_pair`（货币对）。
+- 适用：支付表单测试、账单造数、风控策略演示。
+
+**示例**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const card = rb.cc?.({ type: 'visa' })
+const exp = rb.exp?.()
+const amount = rb.dollar?.({ max: 999 })
+const pair = rb.currency_pair?.()
+```
+
+**文档与链接**
+- 中文索引：`/zh/docs/index`
+- 模块索引：`/zh/docs/finance/`
+- 条目示例：`/zh/docs/finance/cc`、`/zh/docs/finance/exp`、`/zh/docs/finance/currency`
+
+## Q&A 常见问题（FAQ）
+
+- 随机信用卡是否可用于真实支付？
+  - 不可。生成值仅用于测试与演示，尽管遵循 Luhn 校验，但并非真实账户。
+- 如何指定信用卡类型？
+  - 在 `cc({ type })` 中传入如 `visa/mastercard/amex`，具体支持见 `cc_type` 文档。
+- 金额是否支持小数位？
+  - 可通过 `dollar/euro` 的选项控制取值范围与格式（视实现）。
+
+## 参考与出处（References）
+
+- RandBox 中文文档索引：`/zh/docs/index`
+- Finance 模块文档：`/zh/docs/finance/index.mdx`
+- 相关 API 页：`/zh/docs/finance/cc`、`/zh/docs/finance/currency`、`/zh/docs/finance/exp`
+
+

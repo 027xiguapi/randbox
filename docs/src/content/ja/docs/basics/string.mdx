@@ -1,0 +1,83 @@
+---
+title: "string"
+description: "RandBox ページ：string、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "basics", "string"]
+keywords: ["RandBox", "basics", "string", "ランダム", "JavaScript", "MDX"]
+---
+
+# string
+
+```js
+// 使い方
+randBox.string()
+randBox.string({ length: 5 })
+randBox.string({ min: 5 })
+randBox.string({ max: 50 })
+randBox.string({ min: 5, max: 20 })
+randBox.string({ pool: 'abcde' })
+randBox.string({ alpha: true })
+randBox.string({ numeric: true })
+randBox.string({ casing: 'lower' })
+randBox.string({ symbols: true })
+```
+
+ランダムな文字列を返します。
+
+```js
+  randBox.string();
+  => 'Z&Q78&fqkPq'
+```
+
+デフォルトでは、5-20 文字のランダムな長さの文字列を返し、以下の任意の文字を含みます。
+
+```js
+  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()[]'
+```
+
+必要に応じて長さを指定でき、文字列は正確にその長さになります。
+
+```js
+  randBox.string({ length: 5 });
+  => 'YN%fG'
+```
+
+必要に応じて最小長さを指定でき、文字列はその最小長さを持ちます
+
+```js
+  randBox.string({ min: 5 });
+  => '6(Ow1wF)qjUm%W)B2[Q]'
+```
+
+必要に応じて最大長さを指定でき、文字列はその最大長さを持ちます
+
+```js
+  randBox.string({ max: 20 });
+  => 'k7fubkfMS@gs#E'
+```
+
+必要に応じて文字プールを指定でき、文字列はその文字プール内の文字のみを使用して生成されます。
+
+```js
+  randBox.string({ pool: 'abcde' });
+  => 'cccdeeabedebb'
+```
+
+もちろん、これらのオプションは length または min と max を組み合わせて使用できます。
+
+```js
+  randBox.string({ length: 5, pool: 'abcde' });
+  => 'cbbdc'
+```
+
+```js
+  randBox.string({ min: 5, max: 20, pool: 'abcde' });
+  => 'ebddceaaceeda'
+```
+
+[randBox.character()](./character.md) のすべてのオプションをサポートしています：
+
+```js
+  randBox.string({ length: 8, casing: 'upper', alpha: true, numeric: true });
+  => '3THK7GB1'
+```

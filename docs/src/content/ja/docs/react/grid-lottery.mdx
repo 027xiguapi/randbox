@@ -1,0 +1,417 @@
+---
+title: 'GridLottery - 九宫格抽奖'
+description: '基于Canvas的九宫格抽奖组件，支持自定义奖品、权重配置和流畅的抽奖动画'
+---
+
+# GridLottery - 九宫格抽奖
+
+`GridLottery` 是一个基于Canvas的九宫格抽奖组件，提供经典的转盘抽奖体验。支持自定义奖品、权重配置、动画效果等丰富功能。
+
+## 📦 导入
+
+```typescript
+import { GridLottery } from '@randbox/react';
+import type { GridLotteryProps, GridLotteryResult } from '@randbox/react';
+```
+
+## 🎯 类型定义
+
+### GridLotteryProps
+
+```typescript
+interface GridLotteryProps {
+  // 必需属性
+  prizes: string[];                               // 奖品列表
+
+  // 可选属性
+  weights?: number[];                             // 奖品权重
+  gridSize?: number;                              // 网格大小，默认9
+  animationDuration?: number;                     // 动画时长（毫秒），默认3000
+  buttonText?: string;                            // 按钮文字，默认"开始抽奖"
+
+  // 基础属性（继承自BaseGameProps）
+  className?: string;                             // CSS类名
+  style?: React.CSSProperties;                   // 内联样式
+  disabled?: boolean;                             // 是否禁用
+
+  // 回调函数
+  onGameStart?: () => void;                      // 游戏开始回调
+  onGameEnd?: (result: GridLotteryResult) => void; // 游戏结束回调
+  onResult?: (result: GridLotteryResult) => void; // 结果回调
+}
+```
+
+### GridLotteryResult
+
+```typescript
+interface GridLotteryResult {
+  position: number;        // 中奖位置索引（0-8）
+  prize: string;           // 中奖奖品
+  animation: number[];     // 动画路径数组
+}
+```
+
+## 🚀 基础用法
+
+```typescript
+import React from 'react';
+import { GridLottery } from '@randbox/react';
+
+function BasicGridLottery() {
+  const prizes = [
+    '一等奖', '二等奖', '三等奖',
+    '四等奖', '五等奖', '六等奖',
+    '七等奖', '八等奖', '谢谢参与'
+  ];
+
+  const handleResult = (result) => {
+    console.log('抽奖结果:', result);
+  };
+
+  return (
+    <GridLottery
+      prizes={prizes}
+      onResult={handleResult}
+    />
+  );
+}
+```
+
+## 🎯 高级用法
+
+### 带权重的抽奖
+
+```typescript
+function WeightedGridLottery() {
+  const prizes = [
+    'iPhone 15 Pro', 'iPad', 'AirPods',
+    'Apple Watch', '优惠券', '积分',
+    '代金券', '红包', '谢谢参与'
+  ];
+
+  // 权重越高，中奖概率越大
+  const weights = [1, 3, 5, 8, 15, 20, 25, 20, 3];
+
+  return (
+    <GridLottery
+      prizes={prizes}
+      weights={weights}
+      animationDuration={3000}
+      onResult={(result) => {
+        if (result.prize !== '谢谢参与') {
+          alert(`恭喜您中奖了：${result.prize}！`);
+        }
+      }}
+    />
+  );
+}
+```
+
+### 自定义网格大小
+
+```typescript
+function CustomGridLottery() {
+  // 4x4网格，共16个奖品
+  const prizes = Array.from({ length: 16 }, (_, i) => `奖品${i + 1}`);
+
+  return (
+    <GridLottery
+      prizes={prizes}
+      gridSize={16}
+      onResult={(result) => console.log(result)}
+    />
+  );
+}
+```
+
+### 完整配置示例
+
+```typescript
+function FullConfigGridLottery() {
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [results, setResults] = useState([]);
+
+  const prizes = [
+    '🎁 超级大奖', '🏆 一等奖', '💎 二等奖',
+    '⭐ 三等奖', '🎯 四等奖', '🎪 五等奖',
+    '🎨 六等奖', '🎭 七等奖', '🎊 谢谢参与'
+  ];
+
+  const weights = [1, 2, 5, 10, 15, 20, 25, 20, 2];
+
+  const handleGameStart = () => {
+    setIsDrawing(true);
+    console.log('开始抽奖...');
+  };
+
+  const handleGameEnd = (result) => {
+    setIsDrawing(false);
+    setResults(prev => [result, ...prev.slice(0, 4)]);
+    console.log('抽奖结束:', result);
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <GridLottery
+        prizes={prizes}
+        weights={weights}
+        gridSize={9}
+        animationDuration={2500}
+        buttonText={isDrawing ? '抽奖中...' : '开始抽奖'}
+        className="my-lottery"
+        style={{ margin: '20px auto' }}
+        disabled={isDrawing}
+        onGameStart={handleGameStart}
+        onGameEnd={handleGameEnd}
+        onResult={(result) => {
+          console.log('实时结果:', result);
+        }}
+      />
+
+      {/* 历史记录 */}
+      {results.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <h3>最近抽奖记录：</h3>
+          {results.map((result, index) => (
+            <div key={index} style={{ padding: '5px', backgroundColor: '#f5f5f5', margin: '5px 0' }}>
+              第 {result.position + 1} 位：{result.prize}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## 📋 API参考
+
+### GridLotteryProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `prizes` | `string[]` | **必需** | 奖品列表，数组长度应匹配gridSize |
+| `weights` | `number[]` | `undefined` | 权重数组，控制每个奖品的中奖概率 |
+| `gridSize` | `number` | `9` | 网格大小（奖品数量） |
+| `animationDuration` | `number` | `3000` | 动画持续时间（毫秒） |
+| `buttonText` | `string` | `'开始抽奖'` | 抽奖按钮文字 |
+| `onResult` | `(result: GridLotteryResult) => void` | `undefined` | 抽奖结果回调 |
+
+### 继承的BaseGameProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `className` | `string` | `''` | CSS类名 |
+| `style` | `React.CSSProperties` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
+| `onGameEnd` | `(result: GridLotteryResult) => void` | `undefined` | 游戏结束回调 |
+
+### GridLotteryResult 结构
+
+```typescript
+{
+  position: 0,           // 中奖位置索引（0-8）
+  prize: "iPhone 15",   // 中奖奖品
+  animation: [1, 2, 3]  // 动画路径数组
+}
+```
+
+## 🎨 样式定制
+
+### 容器样式
+
+```css
+.my-lottery {
+  border: 3px solid #ff6b6b;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+}
+
+.my-lottery:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+```
+
+### 响应式设计
+
+```typescript
+function ResponsiveGridLottery() {
+  const [containerSize, setContainerSize] = useState({ width: 400, height: 400 });
+
+  useEffect(() => {
+    const updateSize = () => {
+      const width = Math.min(window.innerWidth - 40, 500);
+      setContainerSize({ width, height: width });
+    };
+
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  return (
+    <div style={{ width: containerSize.width, height: containerSize.height }}>
+      <GridLottery
+        prizes={['奖品1', '奖品2', '奖品3', '奖品4', '奖品5', '奖品6', '奖品7', '奖品8', '谢谢参与']}
+      />
+    </div>
+  );
+}
+```
+
+## 🔧 高级功能
+
+### 动态更新奖品
+
+```typescript
+function DynamicGridLottery() {
+  const [prizes, setPrizes] = useState([
+    '奖品A', '奖品B', '奖品C',
+    '奖品D', '奖品E', '奖品F',
+    '奖品G', '奖品H', '谢谢参与'
+  ]);
+
+  const updatePrizes = () => {
+    const newPrizes = prizes.map((prize, index) =>
+      index === 0 ? `新奖品${Date.now()}` : prize
+    );
+    setPrizes(newPrizes);
+  };
+
+  return (
+    <div>
+      <button onClick={updatePrizes}>更新奖品</button>
+      <GridLottery
+        prizes={prizes}
+        onResult={(result) => console.log('中奖:', result.prize)}
+      />
+    </div>
+  );
+}
+```
+
+### 抽奖次数限制
+
+```typescript
+function LimitedGridLottery() {
+  const [remainingTries, setRemainingTries] = useState(3);
+  const [canDraw, setCanDraw] = useState(true);
+
+  const handleGameStart = () => {
+    if (remainingTries <= 0) {
+      setCanDraw(false);
+      return;
+    }
+  };
+
+  const handleGameEnd = (result) => {
+    setRemainingTries(prev => prev - 1);
+    if (remainingTries <= 1) {
+      setCanDraw(false);
+    }
+  };
+
+  return (
+    <div>
+      <p>剩余抽奖次数：{remainingTries}</p>
+      <GridLottery
+        prizes={['大奖', '小奖', '谢谢参与', '再来一次', '优惠券', '积分', '红包', '礼品', '空奖']}
+        disabled={!canDraw}
+        buttonText={canDraw ? '开始抽奖' : '今日抽奖已用完'}
+        onGameStart={handleGameStart}
+        onGameEnd={handleGameEnd}
+      />
+    </div>
+  );
+}
+```
+
+## 🎯 最佳实践
+
+### 1. 权重配置建议
+
+```typescript
+// 合理的权重分配
+const prizes = ['特等奖', '一等奖', '二等奖', '三等奖', '优惠券', '积分', '代金券', '红包', '谢谢参与'];
+const weights = [1, 3, 8, 15, 20, 25, 20, 5, 3]; // 总和为100，便于计算概率
+```
+
+### 2. 错误处理
+
+```typescript
+function SafeGridLottery() {
+  const [error, setError] = useState(null);
+
+  const prizes = ['奖品1', '奖品2', '奖品3', '奖品4', '奖品5', '奖品6', '奖品7', '奖品8', '谢谢参与'];
+  const weights = [10, 10, 10, 10, 15, 15, 15, 10, 5];
+
+  // 验证奖品和权重数量匹配
+  if (prizes.length !== weights.length) {
+    return <div>配置错误：奖品数量与权重数量不匹配</div>;
+  }
+
+  const handleError = (error) => {
+    setError(error.message);
+    console.error('抽奖错误:', error);
+  };
+
+  return (
+    <div>
+      {error && <div style={{ color: 'red' }}>错误：{error}</div>}
+      <GridLottery
+        prizes={prizes}
+        weights={weights}
+        onResult={(result) => {
+          setError(null);
+          console.log('抽奖成功:', result);
+        }}
+      />
+    </div>
+  );
+}
+```
+
+### 3. 性能优化
+
+```typescript
+// 使用useMemo优化大数据量
+function OptimizedGridLottery() {
+  const prizes = useMemo(() =>
+    Array.from({ length: 100 }, (_, i) => `奖品${i + 1}`)
+  , []);
+
+  const weights = useMemo(() =>
+    Array.from({ length: 100 }, () => Math.random() * 10 + 1)
+  , []);
+
+  return (
+    <GridLottery
+      prizes={prizes.slice(0, 9)} // 只显示前9个
+      weights={weights.slice(0, 9)}
+    />
+  );
+}
+```
+
+## 🐛 常见问题
+
+### Q: 为什么抽奖结果不够随机？
+A: 请确保安装了 `randbox` 依赖，它提供了高质量的随机数生成算法。
+
+### Q: 如何实现公平的抽奖？
+A: 使用权重配置，确保权重总和合理，避免某个奖品权重过高。
+
+### Q: 组件大小如何自适应？
+A: 组件会自动适应容器大小，通过设置容器的宽高来控制组件尺寸。
+
+### Q: 可以禁用动画吗？
+A: 将 `animationDuration` 设置为 0 可以禁用动画效果。
+
+## 🔗 相关链接
+
+- [SlotMachine - 滚动抽奖](/zh/docs/react/slot-machine)
+- [ScratchCard - 刮刮卡](/zh/docs/react/scratch-card)
+- [DiceGame - 骰子游戏](/zh/docs/react/dice-game)
+- [RandBox 核心库](/zh/docs/basics)

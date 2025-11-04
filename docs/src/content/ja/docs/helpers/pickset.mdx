@@ -1,0 +1,28 @@
+---
+title: "pickset"
+description: "RandBox ページ：pickset。使用例と説明が含まれています。"
+date: "2025-10-16"
+tags: ["RandBox", "helpers", "pickset"]
+keywords: ["RandBox", "helpers", "pickset", "ランダム", "JavaScript", "MDX"]
+---
+
+# pickset
+
+```js
+// 使い方
+randBox.pickset(array, quantity)
+```
+
+指定された配列からいくつかのランダムな要素を選択し、新しい配列把它们返します
+
+```js
+randBox.pickset(['alpha', 'bravo', 'charlie', 'delta', 'echo'], 3);
+=> ['echo', 'alpha', 'bravo']
+```
+
+オプションで数量パラメータを省略して、長さが 1 のセットを取得できます
+
+```js
+randBox.pickset(['alpha', 'bravo', 'charlie', 'delta', 'echo']);
+=> ['delta']
+```

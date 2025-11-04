@@ -69,6 +69,7 @@ export async function generateMetadata({
       languages: {
         en: '/en',
         zh: '/zh',
+        ja: '/ja',
         'x-default': '/en',
       },
     },
@@ -198,6 +199,7 @@ export default async function RootLayout({
             i18n={[
               { locale: 'en', name: 'English' },
               { locale: 'zh', name: '简体中文' },
+              { locale: 'ja', name: '日本語' },
             ]}
             toc={{
               backToTop: t('backToTop'),

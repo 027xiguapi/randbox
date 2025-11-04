@@ -1,0 +1,36 @@
+---
+title: "bool"
+description: "RandBox ページ：bool、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "basics", "bool"]
+keywords: ["RandBox", "basics", "bool", "ランダム", "JavaScript", "MDX"]
+---
+
+import RandBoxTemp from "@/components/RandBoxTemp";
+
+# bool
+
+```js
+    // 使い方
+    randBox.bool()
+    randBox.bool({ likelihood: 30 })
+```
+ランダムな真偽値（`true` または `false`）を返します。
+
+```js
+randBox.bool();
+=> true
+```
+
+デフォルトでは、成功（`true` を返す）確率は 50% です。
+必要に応じてパーセンテージ確率を指定できます：
+
+```js
+randBox.bool({likelihood: 30});
+=> false
+```
+
+この場合、`true` が返される確率は 30%、`false` が返される確率は 70% です。
+
+
+<RandBoxTemp text={'ランダム'} funcName={'bool'} module={'basics'} option={{ likelihood: 30 }} />

@@ -37,7 +37,7 @@ async function getPagePaths(locale: string): Promise<string[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const locales = ['en', 'zh']
+  const locales = ['en', 'zh', 'ja']
   const currentDate = new Date().toISOString()
   const documentationPages: MetadataRoute.Sitemap = []
 

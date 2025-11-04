@@ -22,7 +22,7 @@ export default withNextra({
   reactStrictMode: true,
   cleanDistDir: true,
   i18n: {
-    locales: ['zh', 'en'],
+    locales: ['zh', 'en', 'ja'],
     defaultLocale: 'en',
   },
   sassOptions: {

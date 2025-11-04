@@ -1,0 +1,37 @@
+---
+title: "dollar"
+description: "RandBox ページ：dollar、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "finance", "dollar"]
+keywords: ["RandBox", "finance", "dollar", "ランダム", "JavaScript", "MDX"]
+---
+
+# dollar
+
+```js
+// 使い方
+randBox.dollar()
+randBox.dollar({max: 250})
+```
+
+<p class="pullquote" data-pullquote="Dolla, dolla, bill ya'll" markdown="1"></p>
+
+ランダムなドル額を返します。
+
+```js
+randBox.dollar();
+=> "$2560.27"
+
+randBox.dollar();
+=> "$750.99"
+```
+
+デフォルトでは 10000 を超えないドル額を返します。必要に応じて max パラメータを指定して、より大きく（または小さく）することができます。
+
+```js
+randBox.dollar({max: 20});
+=> "$15.23"
+
+randBox.dollar({max: 10000000})
+=> "$5051205.49"
+```

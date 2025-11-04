@@ -1,0 +1,47 @@
+---
+title: "emoji"
+description: "RandBox 页面：emoji，包含示例与说明。"
+date: "2025-10-16"
+tags: ["RandBox", "text", "emoji"]
+keywords: ["RandBox", "text", "emoji", "随机", "JavaScript", "MDX"]
+---
+
+# emoji
+
+```js
+// 用法
+randBox.emoji();
+randBox.emoji({ category: "smileys_and_emotions" });
+randBox.emoji({ length: 5 });
+```
+
+返回一个随机表情符号。
+
+```js
+  randBox.emoji();
+  => '😀'
+```
+
+默认是从随机选择的类别中获取单个随机表情符号。
+
+可选择指定长度以增加来自单个随机选择类别的表情符号数量。
+
+```js
+  randBox.emoji({ length: 5 });
+  => '🍈🍍🫐🫒🌽'
+```
+
+可选择指定表情符号的类别。
+
+```js
+  randBox.emoji({ category: "symbols" });
+  => '🚾'
+```
+
+可用的表情符号类别有：
+
+```
+"smileys_and_emotion", "people_and_body", "animals_and_nature", "food_and_drink", "travel_and_places", "activities", "objects", "symbols", "flags"
+```
+
+默认类别 `"all"` 将导致从上述选项中随机选择一个类别。

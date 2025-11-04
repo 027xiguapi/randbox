@@ -1,0 +1,44 @@
+---
+title: "cc"
+description: "RandBox ページ：cc、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "finance", "cc"]
+keywords: ["RandBox", "finance", "cc", "ランダム", "JavaScript", "MDX"]
+---
+
+# cc
+
+```js
+// 使い方
+randBox.cc()
+randBox.cc({type: 'Mastercard'})
+```
+
+<p class="pullquote" data-pullquote='明白な警告：この機能を実際の決済ゲートウェイに使用しないでください...' markdown="1"></p>
+
+ランダムなクレジットカード番号を生成します。このカード番号は[Luhn アルゴリズム][Luhn]で検証され、法的なカード番号のように見えます。
+
+```js
+randBox.cc();
+=> '6304038511073827'
+```
+
+必要に応じて、返すカードの特定のタイプを指定できます：
+
+```js
+randBox.cc({type: 'Mastercard'});
+=> '5171206237468496'
+```
+
+ 타입はフルネームまたは略称で指定できます：
+
+```js
+randBox.cc({type: 'mc'});
+=> '5103820202214116'
+```
+
+
+[タイプ][types]は以下に列出されています。
+
+[Luhn]: http://en.wikipedia.org/wiki/Luhn_algorithm
+[types]: #cc_type

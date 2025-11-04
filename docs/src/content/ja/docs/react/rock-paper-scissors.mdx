@@ -1,0 +1,859 @@
+---
+title: 'RockPaperScissors - 石头剪刀布'
+description: '经典的石头剪刀布游戏组件，支持多种AI策略、统计功能和自定义游戏规则'
+---
+
+# RockPaperScissors - 石头剪刀布
+
+`RockPaperScissors` 是一个经典的石头剪刀布游戏组件，提供多种AI策略、游戏统计和自定义选项。支持传统三选项模式以及扩展的五选项模式。
+
+## 📦 导入
+
+```typescript
+import { RockPaperScissors } from '@randbox/react';
+import type { RockPaperScissorsProps, RPSResult, RPSStats } from '@randbox/react';
+```
+
+## 🎯 类型定义
+
+### RockPaperScissorsProps
+
+```typescript
+interface RockPaperScissorsProps {
+  // 可选属性
+  choices?: string[];                                // 可选择的选项，默认['rock', 'paper', 'scissors']
+  emojis?: Record<string, string>;                   // 选项对应的 emoji 图标
+  showStats?: boolean;                               // 是否显示统计信息，默认true
+  strategy?: RPSStrategy;                            // AI 策略，默认'random'
+  width?: number;                                    // Canvas 宽度
+  height?: number;                                   // Canvas 高度
+
+  // 基础属性（继承自BaseGameProps）
+  className?: string;                                // CSS类名
+  style?: React.CSSProperties;                      // 内联样式
+  disabled?: boolean;                                // 是否禁用
+
+  // 回调函数
+  onGameStart?: () => void;                         // 游戏开始回调
+  onGameEnd?: (result: RPSResult) => void;         // 游戏结束回调
+  onResult?: (result: RPSResult) => void;          // 结果回调
+}
+```
+
+### RPSStrategy
+
+```typescript
+type RPSStrategy =
+  | 'random';    // 随机策略
+  | 'counter';   // 反制策略（针对玩家上次的选择）
+  | 'pattern';   // 模式策略（跟随或打破玩家的模式）
+```
+
+### RPSResultType
+
+```typescript
+type RPSResultType = 'win' | 'lose' | 'tie';
+```
+
+### RPSResult
+
+```typescript
+interface RPSResult {
+  playerChoice: string;         // 玩家的选择
+  computerChoice: string;       // 电脑的选择
+  result: RPSResultType;        // 游戏结果
+  message: string;              // 结果描述信息
+  emoji: {                      // emoji 图标
+    player: string;             // 玩家的 emoji
+    computer: string;           // 电脑的 emoji
+  };
+  round: number;                // 回合数
+}
+```
+
+### RPSStats
+
+```typescript
+interface RPSStats {
+  totalGames: number;     // 总游戏次数
+  wins: number;           // 获胜次数
+  losses: number;         // 失败次数
+  ties: number;           // 平局次数
+  winRate: string;        // 胜率（百分比字符串）
+}
+```
+
+## 🚀 基础用法
+
+```typescript
+import React from 'react';
+import { RockPaperScissors } from '@randbox/react';
+
+function BasicRockPaperScissors() {
+  const handleResult = (result) => {
+    console.log('游戏结果:', result);
+    alert(`你出了${result.emoji.player}，电脑出了${result.emoji.computer}\n${result.message}`);
+  };
+
+  return (
+    <RockPaperScissors
+      onResult={handleResult}
+    />
+  );
+}
+```
+
+## 🎯 高级用法
+
+### 多种AI策略模式
+
+```typescript
+function StrategyRockPaperScissors() {
+  const [strategy, setStrategy] = useState('random');
+  const [gameHistory, setGameHistory] = useState([]);
+
+  const strategies = {
+    random: '随机策略',
+    counter: '反制策略',
+    pattern: '模式识别'
+  };
+
+  const handleResult = (result) => {
+    setGameHistory(prev => [result, ...prev.slice(0, 9)]);
+
+    let message = result.message;
+    if (strategy === 'counter') {
+      message += '\n(AI正在分析你的出招模式)';
+    } else if (strategy === 'pattern') {
+      message += '\n(AI基于历史模式进行预测)';
+    }
+
+    setTimeout(() => alert(message), 500);
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <label>AI策略: </label>
+        <select value={strategy} onChange={(e) => setStrategy(e.target.value)}>
+          {Object.entries(strategies).map(([key, name]) => (
+            <option key={key} value={key}>{name}</option>
+          ))}
+        </select>
+      </div>
+
+      <RockPaperScissors
+        strategy={strategy}
+        showStats={true}
+        onResult={handleResult}
+      />
+
+      {/* 最近游戏记录 */}
+      {gameHistory.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <h3>最近对战记录:</h3>
+          {gameHistory.map((result, index) => (
+            <div
+              key={index}
+              style={{
+                padding: '10px',
+                margin: '5px 0',
+                backgroundColor:
+                  result.result === 'win' ? '#d4edda' :
+                  result.result === 'lose' ? '#f8d7da' : '#fff3cd',
+                borderRadius: '5px',
+                display: 'flex',
+                justifyContent: 'space-between'
+              }}
+            >
+              <span>第{result.round}轮</span>
+              <span>{result.emoji.player} vs {result.emoji.computer}</span>
+              <span style={{ fontWeight: 'bold' }}>
+                {result.result === 'win' ? '胜利' :
+                 result.result === 'lose' ? '失败' : '平局'}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### 扩展五选项模式
+
+```typescript
+function ExtendedRockPaperScissors() {
+  // 包含蜥蜴和史波克的扩展模式
+  const extendedChoices = ['rock', 'paper', 'scissors', 'lizard', 'spock'];
+  const extendedEmojis = {
+    rock: '🪨',
+    paper: '📄',
+    scissors: '✂️',
+    lizard: '🦎',
+    spock: '🖖'
+  };
+
+  const [wins, setWins] = useState(0);
+  const [losses, setLosses] = useState(0);
+  const [ties, setTies] = useState(0);
+
+  const handleResult = (result) => {
+    // 更新统计
+    if (result.result === 'win') setWins(prev => prev + 1);
+    else if (result.result === 'lose') setLosses(prev => prev + 1);
+    else setTies(prev => prev + 1);
+
+    // 显示扩展规则说明
+    const rules = {
+      'rock-lizard': '石头压扁蜥蜴',
+      'rock-scissors': '石头砸碎剪刀',
+      'paper-rock': '纸包石头',
+      'paper-spock': '纸反驳史波克',
+      'scissors-paper': '剪刀剪纸',
+      'scissors-lizard': '剪刀砍蜥蜴',
+      'lizard-spock': '蜥蜴毒死史波克',
+      'lizard-paper': '蜥蜴吃纸',
+      'spock-scissors': '史波克砸剪刀',
+      'spock-rock': '史波克汽化石头'
+    };
+
+    const combination = `${result.playerChoice}-${result.computerChoice}`;
+    const rule = rules[combination];
+
+    alert(
+      `你: ${extendedEmojis[result.playerChoice]} vs 电脑: ${extendedEmojis[result.computerChoice]}\n` +
+      `${result.message}${rule ? `\n规则: ${rule}` : ''}`
+    );
+  };
+
+  const totalGames = wins + losses + ties;
+  const winRate = totalGames > 0 ? ((wins / totalGames) * 100).toFixed(1) : '0.0';
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+        <h3>大爆炸理论版石头剪刀布</h3>
+        <div style={{ fontSize: '0.9em', color: '#666' }}>
+          包含蜥蜴🦎和史波克🖖的扩展版本
+        </div>
+      </div>
+
+      {/* 统计面板 */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: '10px',
+        marginBottom: '20px',
+        textAlign: 'center'
+      }}>
+        <div style={{ padding: '10px', backgroundColor: '#d4edda', borderRadius: '5px' }}>
+          <div>胜利</div>
+          <div style={{ fontSize: '1.5em', fontWeight: 'bold' }}>{wins}</div>
+        </div>
+        <div style={{ padding: '10px', backgroundColor: '#f8d7da', borderRadius: '5px' }}>
+          <div>失败</div>
+          <div style={{ fontSize: '1.5em', fontWeight: 'bold' }}>{losses}</div>
+        </div>
+        <div style={{ padding: '10px', backgroundColor: '#fff3cd', borderRadius: '5px' }}>
+          <div>平局</div>
+          <div style={{ fontSize: '1.5em', fontWeight: 'bold' }}>{ties}</div>
+        </div>
+        <div style={{ padding: '10px', backgroundColor: '#d1ecf1', borderRadius: '5px' }}>
+          <div>胜率</div>
+          <div style={{ fontSize: '1.5em', fontWeight: 'bold' }}>{winRate}%</div>
+        </div>
+      </div>
+
+      <RockPaperScissors
+        choices={extendedChoices}
+        emojis={extendedEmojis}
+        strategy="pattern"
+        onResult={handleResult}
+      />
+
+      {/* 规则说明 */}
+      <div style={{ marginTop: '20px', fontSize: '0.8em', color: '#666' }}>
+        <h4>游戏规则:</h4>
+        <div style={{ columns: 2, columnGap: '20px' }}>
+          <div>• 石头 → 蜥蜴、剪刀</div>
+          <div>• 纸 → 石头、史波克</div>
+          <div>• 剪刀 → 纸、蜥蜴</div>
+          <div>• 蜥蜴 → 史波克、纸</div>
+          <div>• 史波克 → 剪刀、石头</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+### 锦标赛模式
+
+```typescript
+function TournamentRockPaperScissors() {
+  const [tournament, setTournament] = useState({
+    currentRound: 1,
+    maxRounds: 5,
+    playerScore: 0,
+    computerScore: 0,
+    rounds: []
+  });
+  const [isGameOver, setIsGameOver] = useState(false);
+
+  const handleResult = (result) => {
+    const newRound = {
+      round: tournament.currentRound,
+      player: result.playerChoice,
+      computer: result.computerChoice,
+      result: result.result,
+      playerEmoji: result.emoji.player,
+      computerEmoji: result.emoji.computer
+    };
+
+    setTournament(prev => {
+      const newTournament = {
+        ...prev,
+        rounds: [...prev.rounds, newRound],
+        currentRound: prev.currentRound + 1,
+        playerScore: prev.playerScore + (result.result === 'win' ? 1 : 0),
+        computerScore: prev.computerScore + (result.result === 'lose' ? 1 : 0)
+      };
+
+      // 检查锦标赛是否结束
+      if (newTournament.currentRound > newTournament.maxRounds) {
+        setIsGameOver(true);
+      }
+
+      return newTournament;
+    });
+  };
+
+  const resetTournament = () => {
+    setTournament({
+      currentRound: 1,
+      maxRounds: 5,
+      playerScore: 0,
+      computerScore: 0,
+      rounds: []
+    });
+    setIsGameOver(false);
+  };
+
+  const winner = tournament.playerScore > tournament.computerScore ? 'player' :
+                 tournament.computerScore > tournament.playerScore ? 'computer' : 'tie';
+
+  return (
+    <div style={{ padding: '20px' }}>
+      {/* 锦标赛状态 */}
+      <div style={{
+        textAlign: 'center',
+        marginBottom: '20px',
+        padding: '20px',
+        backgroundColor: '#f8f9fa',
+        borderRadius: '10px'
+      }}>
+        <h2>锦标赛模式</h2>
+        {!isGameOver ? (
+          <div>
+            <div style={{ fontSize: '1.2em', marginBottom: '10px' }}>
+              第 {tournament.currentRound} / {tournament.maxRounds} 轮
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '40px' }}>
+              <div>
+                <div>玩家</div>
+                <div style={{ fontSize: '2em', color: '#007bff' }}>{tournament.playerScore}</div>
+              </div>
+              <div>VS</div>
+              <div>
+                <div>电脑</div>
+                <div style={{ fontSize: '2em', color: '#dc3545' }}>{tournament.computerScore}</div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <h3>锦标赛结束!</h3>
+            <div style={{ fontSize: '1.5em', margin: '10px 0' }}>
+              {winner === 'player' ? '🎉 恭喜获胜!' :
+               winner === 'computer' ? '😢 很遗憾失败!' : '🤝 平局!'}
+            </div>
+            <div>最终比分: {tournament.playerScore} - {tournament.computerScore}</div>
+            <button
+              onClick={resetTournament}
+              style={{
+                marginTop: '15px',
+                padding: '10px 20px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer'
+              }}
+            >
+              重新开始锦标赛
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* 游戏区域 */}
+      {!isGameOver && (
+        <RockPaperScissors
+          strategy="counter"
+          onResult={handleResult}
+        />
+      )}
+
+      {/* 比赛记录 */}
+      {tournament.rounds.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <h3>比赛记录:</h3>
+          <div style={{ display: 'grid', gap: '8px' }}>
+            {tournament.rounds.map((round) => (
+              <div
+                key={round.round}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '10px',
+                  backgroundColor:
+                    round.result === 'win' ? '#d4edda' :
+                    round.result === 'lose' ? '#f8d7da' : '#fff3cd',
+                  borderRadius: '5px'
+                }}
+              >
+                <span>第{round.round}轮</span>
+                <span style={{ fontSize: '1.2em' }}>
+                  {round.playerEmoji} vs {round.computerEmoji}
+                </span>
+                <span style={{ fontWeight: 'bold' }}>
+                  {round.result === 'win' ? '玩家胜' :
+                   round.result === 'lose' ? '电脑胜' : '平局'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### 实时对战模式
+
+```typescript
+function RealTimeRockPaperScissors() {
+  const [countdown, setCountdown] = useState(0);
+  const [isCountingDown, setIsCountingDown] = useState(false);
+  const [gameSpeed, setGameSpeed] = useState('normal');
+  const [autoPlay, setAutoPlay] = useState(false);
+  const [streak, setStreak] = useState({ current: 0, best: 0 });
+
+  const speeds = {
+    slow: { time: 5, label: '慢速 (5秒)' },
+    normal: { time: 3, label: '正常 (3秒)' },
+    fast: { time: 1, label: '快速 (1秒)' }
+  };
+
+  const handleResult = (result) => {
+    // 更新连胜记录
+    setStreak(prev => {
+      const newCurrent = result.result === 'win' ? prev.current + 1 : 0;
+      return {
+        current: newCurrent,
+        best: Math.max(prev.best, newCurrent)
+      };
+    });
+
+    if (result.result === 'win' && streak.current + 1 > 3) {
+      alert(`🔥 连胜 ${streak.current + 1} 场！`);
+    }
+  };
+
+  const startCountdown = () => {
+    setIsCountingDown(true);
+    const time = speeds[gameSpeed].time;
+    setCountdown(time);
+
+    const interval = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setIsCountingDown(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // 自动游戏
+  useEffect(() => {
+    let interval;
+    if (autoPlay) {
+      interval = setInterval(() => {
+        if (!isCountingDown) {
+          startCountdown();
+        }
+      }, (speeds[gameSpeed].time + 2) * 1000);
+    }
+    return () => clearInterval(interval);
+  }, [autoPlay, gameSpeed, isCountingDown]);
+
+  return (
+    <div style={{ padding: '20px' }}>
+      {/* 游戏控制面板 */}
+      <div style={{
+        marginBottom: '20px',
+        padding: '15px',
+        backgroundColor: '#f8f9fa',
+        borderRadius: '10px'
+      }}>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '10px' }}>
+          <div>
+            <label>游戏速度: </label>
+            <select value={gameSpeed} onChange={(e) => setGameSpeed(e.target.value)}>
+              {Object.entries(speeds).map(([key, config]) => (
+                <option key={key} value={key}>{config.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <label>
+            <input
+              type="checkbox"
+              checked={autoPlay}
+              onChange={(e) => setAutoPlay(e.target.checked)}
+            />
+            自动模式
+          </label>
+
+          <button
+            onClick={startCountdown}
+            disabled={isCountingDown || autoPlay}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: isCountingDown || autoPlay ? 'not-allowed' : 'pointer'
+            }}
+          >
+            开始倒计时
+          </button>
+        </div>
+
+        {/* 连胜统计 */}
+        <div style={{ display: 'flex', gap: '20px' }}>
+          <div>当前连胜: <strong>{streak.current}</strong></div>
+          <div>最佳连胜: <strong>{streak.best}</strong></div>
+        </div>
+      </div>
+
+      {/* 倒计时显示 */}
+      {isCountingDown && (
+        <div style={{
+          textAlign: 'center',
+          fontSize: '3em',
+          color: countdown <= 1 ? '#dc3545' : '#007bff',
+          marginBottom: '20px',
+          animation: countdown <= 1 ? 'pulse 0.5s infinite' : 'none'
+        }}>
+          {countdown > 0 ? countdown : 'GO!'}
+        </div>
+      )}
+
+      <RockPaperScissors
+        strategy="random"
+        disabled={isCountingDown}
+        onResult={handleResult}
+      />
+
+      <style jsx>{`
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
+      `}</style>
+    </div>
+  );
+}
+```
+
+## 📋 API参考
+
+### RockPaperScissorsProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `choices` | `string[]` | `['rock', 'paper', 'scissors']` | 可选择的选项数组 |
+| `emojis` | `Record<string, string>` | `{rock: '🪨', paper: '📄', scissors: '✂️'}` | 选项对应的表情符号 |
+| `showStats` | `boolean` | `false` | 是否显示统计信息 |
+| `strategy` | `'random' \| 'counter' \| 'pattern'` | `'random'` | AI策略模式 |
+| `onResult` | `(result: RPSResult) => void` | `undefined` | 游戏结果回调 |
+
+### 继承的BaseGameProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `className` | `string` | `''` | CSS类名 |
+| `style` | `React.CSSProperties` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
+| `onGameEnd` | `(result: RPSResult) => void` | `undefined` | 游戏结束回调 |
+
+### RPSResult
+
+```typescript
+interface RPSResult {
+  playerChoice: string;        // 玩家选择
+  computerChoice: string;      // 电脑选择
+  result: 'win' | 'lose' | 'tie';  // 游戏结果
+  message: string;             // 结果消息
+  emoji: {                     // 表情符号
+    player: string;
+    computer: string;
+  };
+  round: number;               // 轮次编号
+}
+```
+
+### RPSStats
+
+```typescript
+interface RPSStats {
+  totalGames: number;    // 总游戏数
+  wins: number;          // 胜利数
+  losses: number;        // 失败数
+  ties: number;          // 平局数
+  winRate: string;       // 胜率百分比
+}
+```
+
+## 🎨 样式定制
+
+### 游戏容器样式
+
+```css
+.rps-container {
+  border: 3px solid #6f42c1;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(111, 66, 193, 0.2);
+  background: linear-gradient(145deg, #f8f4ff, #efe8ff);
+}
+
+.rps-container:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+```
+
+### 选择按钮样式
+
+```css
+.choice-button {
+  background: linear-gradient(145deg, #ffffff, #e6e6e6);
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  font-size: 2em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.choice-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.choice-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+```
+
+## 🔧 高级功能
+
+### 自定义游戏规则
+
+```typescript
+function CustomRulesRPS() {
+  // 实现自定义的胜负判定逻辑
+  const customRules = {
+    rock: ['scissors', 'lizard'],
+    paper: ['rock', 'spock'],
+    scissors: ['paper', 'lizard'],
+    lizard: ['spock', 'paper'],
+    spock: ['scissors', 'rock']
+  };
+
+  const checkWinner = (player, computer) => {
+    if (player === computer) return 'tie';
+    return customRules[player]?.includes(computer) ? 'win' : 'lose';
+  };
+
+  return (
+    <RockPaperScissors
+      choices={['rock', 'paper', 'scissors', 'lizard', 'spock']}
+      onResult={(result) => {
+        const customResult = checkWinner(result.playerChoice, result.computerChoice);
+        console.log('自定义规则结果:', customResult);
+      }}
+    />
+  );
+}
+```
+
+### AI学习模式
+
+```typescript
+function LearningAI() {
+  const [playerHistory, setPlayerHistory] = useState([]);
+  const [aiPrediction, setAiPrediction] = useState(null);
+
+  const predictNextMove = (history) => {
+    if (history.length < 3) return null;
+
+    // 简单的模式识别：查找最常见的选择
+    const frequency = {};
+    history.slice(-5).forEach(choice => {
+      frequency[choice] = (frequency[choice] || 0) + 1;
+    });
+
+    const mostCommon = Object.entries(frequency)
+      .sort(([,a], [,b]) => b - a)[0];
+
+    // 预测玩家下次选择，然后选择克制它的选项
+    const counters = {
+      rock: 'paper',
+      paper: 'scissors',
+      scissors: 'rock'
+    };
+
+    return mostCommon ? counters[mostCommon[0]] : null;
+  };
+
+  const handleResult = (result) => {
+    setPlayerHistory(prev => [...prev, result.playerChoice].slice(-10));
+
+    // 更新AI预测
+    const prediction = predictNextMove([...playerHistory, result.playerChoice]);
+    setAiPrediction(prediction);
+  };
+
+  return (
+    <div>
+      {aiPrediction && (
+        <div style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#fff3cd' }}>
+          AI预测你下次会出: {aiPrediction}
+        </div>
+      )}
+
+      <RockPaperScissors
+        strategy="pattern"
+        onResult={handleResult}
+      />
+
+      <div style={{ marginTop: '20px', fontSize: '0.9em' }}>
+        <div>你的出招历史: {playerHistory.join(' → ')}</div>
+      </div>
+    </div>
+  );
+}
+```
+
+## 🎯 最佳实践
+
+### 1. 游戏平衡性
+
+```typescript
+// 确保AI策略的平衡性
+const balancedStrategies = {
+  beginner: { randomness: 0.8, pattern: 0.1, counter: 0.1 },
+  intermediate: { randomness: 0.5, pattern: 0.3, counter: 0.2 },
+  expert: { randomness: 0.2, pattern: 0.4, counter: 0.4 }
+};
+```
+
+### 2. 用户体验优化
+
+```typescript
+// 添加视觉反馈和动画
+const AnimatedRPS = () => {
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleGameStart = () => {
+    setIsAnimating(true);
+  };
+
+  const handleGameEnd = () => {
+    setIsAnimating(false);
+  };
+
+  return (
+    <RockPaperScissors
+      className={isAnimating ? 'game-animating' : ''}
+      onGameStart={handleGameStart}
+      onGameEnd={handleGameEnd}
+    />
+  );
+};
+```
+
+### 3. 数据持久化
+
+```typescript
+// 保存游戏统计到本地存储
+const PersistentRPS = () => {
+  const [stats, setStats] = useState(() => {
+    const saved = localStorage.getItem('rps-stats');
+    return saved ? JSON.parse(saved) : { wins: 0, losses: 0, ties: 0 };
+  });
+
+  useEffect(() => {
+    localStorage.setItem('rps-stats', JSON.stringify(stats));
+  }, [stats]);
+
+  return (
+    <RockPaperScissors
+      onResult={(result) => {
+        setStats(prev => ({
+          ...prev,
+          [result.result === 'win' ? 'wins' : result.result === 'lose' ? 'losses' : 'ties']:
+            prev[result.result === 'win' ? 'wins' : result.result === 'lose' ? 'losses' : 'ties'] + 1
+        }));
+      }}
+    />
+  );
+};
+```
+
+## 🐛 常见问题
+
+### Q: AI策略是如何工作的？
+A:
+- **随机策略**: 完全随机选择
+- **反制策略**: 分析玩家最近的选择，选择克制选项
+- **模式识别**: 识别玩家的出招模式并进行预测
+
+### Q: 可以自定义游戏规则吗？
+A: 是的，可以通过`choices`和自定义胜负判定逻辑实现任意规则。
+
+### Q: 支持多人对战吗？
+A: 当前版本主要支持人机对战，多人功能需要额外的状态管理。
+
+### Q: 如何实现公平的游戏？
+A: 组件使用RandBox确保随机性，AI策略可以调整以保持游戏平衡。
+
+## 🔗 相关链接
+
+- [GridLottery - 九宫格抽奖](/zh/docs/react/grid-lottery)
+- [SlotMachine - 滚动抽奖](/zh/docs/react/slot-machine)
+- [DiceGame - 骰子游戏](/zh/docs/react/dice-game)
+- [RandBox 核心功能](/zh/docs/basics)

@@ -1,0 +1,999 @@
+---
+title: 'DiceGame - 骰子游戏'
+description: '基于Canvas和Vue 3的3D骰子游戏组件，支持多种游戏模式、自定义骰子数量和投掷动画效果'
+---
+
+# DiceGame - 骰子游戏
+
+`DiceGame` 是一个基于Canvas和Vue 3的3D骰子游戏组件，提供真实的投掷体验和多种游戏模式。支持自定义骰子数量、面数以及丰富的游戏规则配置。
+
+## 📦 导入
+
+```vue
+<script setup>
+import { DiceGame } from '@randbox/vue'
+// 或者导入类型
+import type { DiceGameProps, DiceGameResult } from '@randbox/vue'
+</script>
+```
+
+## 🚀 基础用法
+
+```vue
+<template>
+  <DiceGame
+    :dice-count="2"
+    @result="handleResult"
+  />
+</template>
+
+<script setup>
+import { DiceGame } from '@randbox/vue'
+
+const handleResult = (result) => {
+  console.log('投掷结果:', result)
+  alert(`投掷结果: ${result.results.join(', ')}, 总和: ${result.total}`)
+}
+</script>
+```
+
+## 🎯 高级用法
+
+### 多种游戏模式
+
+```vue
+<template>
+  <div class="dice-game-modes">
+    <div class="mode-controls">
+      <label>游戏模式: </label>
+      <select v-model="gameMode">
+        <option value="simple">简单模式</option>
+        <option value="sum">和值模式</option>
+        <option value="bigSmall">大小模式</option>
+        <option value="even_odd">奇偶模式</option>
+        <option value="guess">猜测模式</option>
+        <option value="specific">特定值模式</option>
+      </select>
+
+      <div v-if="gameMode === 'sum'" class="target-sum">
+        <label>目标和值: </label>
+        <input
+          v-model.number="targetSum"
+          type="number"
+          min="2"
+          max="12"
+        />
+      </div>
+    </div>
+
+    <DiceGame
+      :dice-count="2"
+      :game-mode="gameMode"
+      :target-sum="targetSum"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const gameMode = ref('simple')
+const targetSum = ref(7)
+
+const handleResult = (result) => {
+  console.log(`${result.gameMode}模式结果:`, result)
+
+  switch (result.gameMode) {
+    case 'sum':
+      alert(`目标和值: ${targetSum.value}, 实际和值: ${result.sum}, ${result.isWin ? '成功' : '失败'}!`)
+      break
+    case 'bigSmall':
+      alert(`投掷结果: ${result.sum > 7 ? '大' : '小'} (${result.sum}), ${result.description}`)
+      break
+    case 'even_odd':
+      alert(`投掷结果: ${result.sum % 2 === 0 ? '偶数' : '奇数'} (${result.sum}), ${result.description}`)
+      break
+    default:
+      alert(result.message)
+  }
+}
+</script>
+
+<style scoped>
+.dice-game-modes {
+  padding: 20px;
+}
+
+.mode-controls {
+  margin-bottom: 20px;
+}
+
+.target-sum {
+  margin-top: 10px;
+}
+</style>
+```
+
+### 多骰子游戏
+
+```vue
+<template>
+  <div class="multi-dice-game">
+    <div class="controls">
+      <div class="control-group">
+        <label>骰子数量: </label>
+        <select v-model.number="diceCount">
+          <option v-for="n in 6" :key="n" :value="n">{{ n }}个骰子</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>骰子面数: </label>
+        <select v-model.number="sides">
+          <option :value="4">4面</option>
+          <option :value="6">6面</option>
+          <option :value="8">8面</option>
+          <option :value="10">10面</option>
+          <option :value="12">12面</option>
+          <option :value="20">20面</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="game-info">
+      <div>配置信息: {{ diceCount }}个{{ sides }}面骰子</div>
+      <div>可能和值范围: {{ diceCount }} - {{ totalPossibleSum }}</div>
+      <div>平均期望值: {{ averageSum.toFixed(1) }}</div>
+    </div>
+
+    <DiceGame
+      :dice-count="diceCount"
+      :sides="sides"
+      game-mode="simple"
+      @result="handleResult"
+    />
+
+    <!-- 历史记录 -->
+    <div v-if="results.length > 0" class="history">
+      <h3>投掷历史记录:</h3>
+      <div class="history-list">
+        <div
+          v-for="(result, index) in results"
+          :key="index"
+          class="history-item"
+        >
+          <span>{{ result.results.join(' + ') }} = {{ result.sum }}</span>
+          <span class="timestamp">{{ result.timestamp }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const diceCount = ref(3)
+const sides = ref(6)
+const results = ref([])
+
+const totalPossibleSum = computed(() => diceCount.value * sides.value)
+const averageSum = computed(() => diceCount.value * (sides.value + 1) / 2)
+
+const handleResult = (result) => {
+  const newResult = {
+    ...result,
+    timestamp: new Date().toLocaleTimeString()
+  }
+  results.value = [newResult, ...results.value.slice(0, 9)]
+}
+</script>
+
+<style scoped>
+.multi-dice-game {
+  padding: 20px;
+}
+
+.controls {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.game-info {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f0f8ff;
+  border-radius: 8px;
+}
+
+.history {
+  margin-top: 20px;
+}
+
+.history-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  margin: 5px 0;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+}
+
+.timestamp {
+  color: #666;
+  font-size: 0.9em;
+}
+</style>
+```
+
+### 竞技模式骰子游戏
+
+```vue
+<template>
+  <div class="competitive-dice">
+    <!-- 锦标赛状态 -->
+    <div class="tournament-status">
+      <h2>锦标赛模式</h2>
+      <div v-if="!isGameOver" class="current-round">
+        <div class="round-info">第 {{ tournament.currentRound }} / {{ tournament.maxRounds }} 轮</div>
+        <div class="score-display">
+          <div class="player-score">
+            <div>玩家</div>
+            <div class="score">{{ tournament.playerScore }}</div>
+          </div>
+          <div class="vs">VS</div>
+          <div class="computer-score">
+            <div>电脑</div>
+            <div class="score">{{ tournament.computerScore }}</div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="game-over">
+        <h3>锦标赛结束!</h3>
+        <div class="winner">
+          {{ winner === 'player' ? '🎉 恭喜获胜!' :
+             winner === 'computer' ? '😢 很遗憾失败!' : '🤝 平局!' }}
+        </div>
+        <div class="final-score">最终比分: {{ tournament.playerScore }} - {{ tournament.computerScore }}</div>
+        <button @click="resetTournament" class="reset-btn">
+          重新开始锦标赛
+        </button>
+      </div>
+    </div>
+
+    <!-- 游戏区域 -->
+    <div v-if="!isGameOver" class="game-area">
+      <h4>请投掷您的骰子</h4>
+      <DiceGame
+        :dice-count="2"
+        game-mode="simple"
+        :disabled="isGameOver"
+        @result="handleResult"
+      />
+    </div>
+
+    <!-- 比赛记录 -->
+    <div v-if="tournament.rounds.length > 0" class="tournament-history">
+      <h3>比赛记录:</h3>
+      <div
+        v-for="round in tournament.rounds"
+        :key="round.round"
+        class="round-record"
+        :class="round.winner"
+      >
+        <span>第{{ round.round }}轮</span>
+        <span class="round-result">
+          玩家: {{ round.player.dice.join('+') }}={{ round.player.sum }} vs
+          电脑: {{ round.computer.dice.join('+') }}={{ round.computer.sum }}
+        </span>
+        <span class="round-winner">
+          {{ round.winner === 'tie' ? '平局' :
+             round.winner === 'player' ? '玩家胜' : '电脑胜' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+const tournament = ref({
+  currentRound: 1,
+  maxRounds: 5,
+  playerScore: 0,
+  computerScore: 0,
+  rounds: []
+})
+
+const isGameOver = ref(false)
+
+const winner = computed(() => {
+  if (tournament.value.playerScore > tournament.value.computerScore) return 'player'
+  if (tournament.value.computerScore > tournament.value.playerScore) return 'computer'
+  return 'tie'
+})
+
+const handleResult = (result) => {
+  const playerSum = result.sum
+
+  // 计算机投掷
+  const computerDice = Array.from({ length: 2 }, () => Math.floor(Math.random() * 6) + 1)
+  const computerSum = computerDice.reduce((a, b) => a + b, 0)
+
+  const roundResult = {
+    round: tournament.value.currentRound,
+    player: { dice: result.results, sum: playerSum },
+    computer: { dice: computerDice, sum: computerSum },
+    winner: playerSum > computerSum ? 'player' : computerSum > playerSum ? 'computer' : 'tie'
+  }
+
+  tournament.value.rounds.push(roundResult)
+
+  // 更新分数
+  if (roundResult.winner === 'player') {
+    tournament.value.playerScore++
+  } else if (roundResult.winner === 'computer') {
+    tournament.value.computerScore++
+  }
+
+  // 检查游戏结束条件
+  const winningScore = 3
+  if (tournament.value.playerScore >= winningScore ||
+      tournament.value.computerScore >= winningScore ||
+      tournament.value.currentRound >= tournament.value.maxRounds) {
+    isGameOver.value = true
+  } else {
+    tournament.value.currentRound++
+  }
+
+  // 显示结果
+  setTimeout(() => {
+    alert(
+      `第${tournament.value.currentRound}轮结果:\n` +
+      `玩家: ${playerSum} vs 电脑: ${computerSum}\n` +
+      `${roundResult.winner === 'tie' ? '平局!' : `${roundResult.winner === 'player' ? '玩家' : '电脑'}获胜!`}`
+    )
+  }, 1000)
+}
+
+const resetTournament = () => {
+  tournament.value = {
+    currentRound: 1,
+    maxRounds: 5,
+    playerScore: 0,
+    computerScore: 0,
+    rounds: []
+  }
+  isGameOver.value = false
+}
+</script>
+
+<style scoped>
+.competitive-dice {
+  padding: 20px;
+}
+
+.tournament-status {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.score-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-top: 15px;
+}
+
+.player-score, .computer-score {
+  text-align: center;
+}
+
+.score {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.player-score .score {
+  color: #007bff;
+}
+
+.computer-score .score {
+  color: #dc3545;
+}
+
+.game-area {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.reset-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tournament-history {
+  margin-top: 20px;
+}
+
+.round-record {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+.round-record.player {
+  background-color: #d4edda;
+}
+
+.round-record.computer {
+  background-color: #f8d7da;
+}
+
+.round-record.tie {
+  background-color: #fff3cd;
+}
+
+.round-winner {
+  font-weight: bold;
+}
+</style>
+```
+
+### 统计分析骰子游戏
+
+```vue
+<template>
+  <div class="statistical-dice">
+    <!-- 游戏控制面板 -->
+    <div class="control-panel">
+      <div class="controls-row">
+        <div class="control-item">
+          <label>骰子数量: </label>
+          <select v-model.number="diceCount">
+            <option v-for="n in 4" :key="n" :value="n">{{ n }}个</option>
+          </select>
+        </div>
+
+        <label class="auto-play">
+          <input
+            v-model="autoRoll"
+            type="checkbox"
+            :disabled="rolls.length >= 100"
+          />
+          自动投掷 ({{ rolls.length }}/100)
+        </label>
+
+        <button @click="clearStats" class="clear-btn">
+          清除统计
+        </button>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <!-- 骰子游戏区域 -->
+      <div class="game-section">
+        <DiceGame
+          :dice-count="diceCount"
+          game-mode="simple"
+          :disabled="autoRoll"
+          @result="handleResult"
+        />
+      </div>
+
+      <!-- 统计面板 -->
+      <div v-if="stats" class="stats-section">
+        <h3>统计数据</h3>
+        <div class="stats-grid">
+          <div class="stat-item">总投掷次数: {{ stats.totalRolls }}</div>
+          <div class="stat-item">平均值: {{ stats.average }}</div>
+          <div class="stat-item">最小值: {{ stats.min }}</div>
+          <div class="stat-item">最大值: {{ stats.max }}</div>
+          <div class="stat-item">最常见: {{ stats.mostCommon }}</div>
+        </div>
+
+        <h4 class="frequency-title">频率分布:</h4>
+        <div class="frequency-chart">
+          <div
+            v-for="[sum, count] in frequencyEntries"
+            :key="sum"
+            class="frequency-item"
+          >
+            <div class="frequency-label">
+              <span>{{ sum }}:</span>
+              <span>{{ count }}次 ({{ ((count / stats.totalRolls) * 100).toFixed(1) }}%)</span>
+            </div>
+            <div class="frequency-bar">
+              <div
+                class="frequency-fill"
+                :style="{ width: `${(count / stats.totalRolls) * 100}%` }"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, watch, onUnmounted } from 'vue'
+
+const diceCount = ref(2)
+const autoRoll = ref(false)
+const rolls = ref([])
+
+let autoRollInterval = null
+
+// 计算统计数据
+const stats = computed(() => {
+  if (rolls.value.length === 0) return null
+
+  const sums = rolls.value.map(r => r.sum)
+  const average = sums.reduce((a, b) => a + b, 0) / sums.length
+  const frequency = {}
+
+  sums.forEach(sum => {
+    frequency[sum] = (frequency[sum] || 0) + 1
+  })
+
+  const mostCommon = Object.entries(frequency)
+    .sort(([,a], [,b]) => b - a)[0]
+
+  return {
+    totalRolls: rolls.value.length,
+    average: average.toFixed(2),
+    min: Math.min(...sums),
+    max: Math.max(...sums),
+    mostCommon: mostCommon ? `${mostCommon[0]} (${mostCommon[1]}次)` : '无',
+    frequency
+  }
+})
+
+const frequencyEntries = computed(() => {
+  if (!stats.value) return []
+  return Object.entries(stats.value.frequency)
+    .sort(([a], [b]) => parseInt(a) - parseInt(b))
+})
+
+// 自动投掷
+watch(autoRoll, (newValue) => {
+  if (newValue && rolls.value.length < 100) {
+    autoRollInterval = setInterval(() => {
+      if (rolls.value.length >= 100) {
+        autoRoll.value = false
+        return
+      }
+      // 模拟投掷
+      const simulatedResult = {
+        results: Array.from({ length: diceCount.value }, () => Math.floor(Math.random() * 6) + 1),
+        sum: 0,
+        gameMode: 'simple',
+        message: '自动投掷'
+      }
+      simulatedResult.sum = simulatedResult.results.reduce((a, b) => a + b, 0)
+      rolls.value.push(simulatedResult)
+    }, 500)
+  } else {
+    clearInterval(autoRollInterval)
+  }
+})
+
+onUnmounted(() => {
+  clearInterval(autoRollInterval)
+})
+
+const handleResult = (result) => {
+  rolls.value.push(result)
+}
+
+const clearStats = () => {
+  rolls.value = []
+  autoRoll.value = false
+}
+</script>
+
+<style scoped>
+.statistical-dice {
+  padding: 20px;
+}
+
+.control-panel {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.controls-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.stats-section {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.stats-grid {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  padding: 8px;
+  background: white;
+  border-radius: 4px;
+}
+
+.frequency-title {
+  margin-bottom: 10px;
+}
+
+.frequency-chart {
+  font-size: 0.9em;
+}
+
+.frequency-item {
+  margin-bottom: 8px;
+}
+
+.frequency-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.frequency-bar {
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.frequency-fill {
+  height: 100%;
+  background-color: #007bff;
+  transition: width 0.3s ease;
+}
+
+.clear-btn {
+  padding: 8px 16px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+</style>
+```
+
+## 📋 API参考
+
+### Props
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `diceCount` | `number` | `2` | 骰子数量 |
+| `sides` | `number` | `6` | 骰子面数 |
+| `gameMode` | `'simple' \| 'sum' \| 'bigSmall' \| 'guess' \| 'even_odd' \| 'specific'` | `'simple'` | 游戏模式 |
+| `targetSum` | `number` | `7` | 目标和值（sum模式下使用） |
+| `class` | `string` | `''` | CSS类名 |
+| `style` | `Record<string, any>` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+
+### Events
+
+| 事件名 | 参数 | 描述 |
+|--------|------|------|
+| `result` | `(result: DiceGameResult)` | 投掷结果回调 |
+| `game-start` | `()` | 游戏开始回调 |
+| `game-end` | `(result: DiceGameResult)` | 游戏结束回调 |
+
+### DiceGameResult
+
+```typescript
+interface DiceGameResult {
+  results: number[]      // 每个骰子的点数
+  total: number          // 总和（同sum）
+  gameMode: string       // 游戏模式
+  isWin?: boolean        // 是否获胜（某些模式下）
+  message: string        // 结果描述消息
+  values: number[]       // 骰子点数数组（同results）
+  sum: number           // 点数总和
+  description: string    // 详细描述
+}
+```
+
+### 游戏模式说明
+
+| 模式 | 描述 | 胜利条件 |
+|------|------|----------|
+| `simple` | 简单模式 | 无特定条件，仅显示结果 |
+| `sum` | 和值模式 | 投掷总和等于目标值 |
+| `bigSmall` | 大小模式 | 总和大于7为"大"，小于等于7为"小" |
+| `guess` | 猜测模式 | 需要玩家预先猜测结果 |
+| `even_odd` | 奇偶模式 | 总和为偶数或奇数 |
+| `specific` | 特定值模式 | 投掷出指定的特定组合 |
+
+## 🎨 样式定制
+
+### 容器样式
+
+```vue
+<style scoped>
+.dice-game-container {
+  border: 2px solid #28a745;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.2);
+  background: linear-gradient(145deg, #f8fff8, #e8f5e8);
+}
+
+.dice-game-container:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+</style>
+```
+
+### 投掷动画
+
+```vue
+<style scoped>
+.dice-rolling {
+  animation: diceRoll 1s ease-in-out;
+}
+
+@keyframes diceRoll {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  75% { transform: rotate(270deg) scale(1.1); }
+}
+</style>
+```
+
+## 🔧 高级功能
+
+### 自定义投掷规则
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const checkSpecialCombinations = (results) => {
+  const sorted = [...results].sort()
+
+  // 顺子检查
+  const isStraight = sorted.every((val, i) => i === 0 || val === sorted[i-1] + 1)
+
+  // 对子检查
+  const pairs = {}
+  results.forEach(val => pairs[val] = (pairs[val] || 0) + 1)
+  const pairCounts = Object.values(pairs)
+
+  if (isStraight) return { type: 'straight', message: '顺子！', bonus: 50 }
+  if (pairCounts.includes(3)) return { type: 'triple', message: '三条！', bonus: 30 }
+  if (pairCounts.includes(2)) return { type: 'pair', message: '对子！', bonus: 10 }
+
+  return { type: 'normal', message: '普通投掷', bonus: 0 }
+}
+
+const handleResult = (result) => {
+  const special = checkSpecialCombinations(result.results)
+  alert(`${result.message}\n${special.message}\n奖励分数: ${special.bonus}`)
+}
+</script>
+```
+
+### 多人游戏模式
+
+```vue
+<template>
+  <div class="multiplayer-dice">
+    <div class="game-status">
+      <h3>第 {{ round }} 轮 - {{ players[currentPlayer] }} 的回合</h3>
+      <div class="player-scores">
+        <div
+          v-for="player in players"
+          :key="player"
+          class="player-score"
+          :class="{ active: player === players[currentPlayer] }"
+        >
+          {{ player }}: {{ scores[player] || 0 }}分
+        </div>
+      </div>
+    </div>
+
+    <DiceGame
+      :dice-count="2"
+      game-mode="simple"
+      @result="handleResult"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const players = ref(['玩家1', '玩家2', '玩家3'])
+const currentPlayer = ref(0)
+const scores = ref({})
+const round = ref(1)
+
+const handleResult = (result) => {
+  const player = players.value[currentPlayer.value]
+  scores.value[player] = (scores.value[player] || 0) + result.sum
+
+  // 切换到下一个玩家
+  const nextPlayer = (currentPlayer.value + 1) % players.value.length
+  if (nextPlayer === 0) {
+    round.value++
+  }
+  currentPlayer.value = nextPlayer
+}
+</script>
+
+<style scoped>
+.multiplayer-dice {
+  padding: 20px;
+}
+
+.game-status {
+  margin-bottom: 20px;
+}
+
+.player-scores {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.player-score {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+}
+
+.player-score.active {
+  background-color: #fff3cd;
+  border: 2px solid #ffc107;
+}
+</style>
+```
+
+## 🎯 最佳实践
+
+### 1. 游戏模式选择
+
+```vue
+<script setup>
+// 根据用户群体选择合适的游戏模式
+const gameModeConfig = {
+  children: { mode: 'simple', diceCount: 1 },
+  casual: { mode: 'bigSmall', diceCount: 2 },
+  competitive: { mode: 'sum', diceCount: 3, targetSum: 10 }
+}
+</script>
+```
+
+### 2. 性能优化
+
+```vue
+<script setup>
+import { ref, computed, shallowRef } from 'vue'
+
+// 对于大量数据使用shallowRef
+const gameHistory = shallowRef([])
+
+// 缓存复杂计算
+const gameConfig = computed(() => ({
+  diceCount: 3,
+  sides: 6,
+  gameMode: 'sum'
+}))
+</script>
+```
+
+### 3. 错误处理
+
+```vue
+<template>
+  <div>
+    <div v-if="error" class="error-message">
+      错误: {{ error }}
+    </div>
+
+    <DiceGame
+      :dice-count="2"
+      @result="handleResult"
+      @error="handleError"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const error = ref('')
+
+const handleResult = (result) => {
+  error.value = ''
+  console.log('投掷成功:', result)
+}
+
+const handleError = (err) => {
+  error.value = err.message
+  console.error('骰子游戏错误:', err)
+}
+</script>
+
+<style scoped>
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #ffe6e6;
+  border-radius: 4px;
+}
+</style>
+```
+
+## 🐛 常见问题
+
+### Q: 骰子投掷是否真正随机？
+A: 是的，组件使用RandBox的Mersenne Twister算法，提供高质量的随机数生成。
+
+### Q: 可以自定义骰子面数吗？
+A: 支持，通过`sides`属性可以设置4面、6面、8面、10面、12面、20面等多种骰子。
+
+### Q: 如何实现特殊的投掷规则？
+A: 可以在`result`事件回调中自定义逻辑，检查投掷结果并实现特殊规则。
+
+### Q: 支持多少个骰子同时投掷？
+A: 理论上没有限制，但建议不超过6个以保证良好的用户体验和性能。
+
+### Q: 如何与Vue Router集成？
+A: 可以在路由组件中正常使用，或者通过路由参数动态配置游戏模式。
+
+## 🔗 相关链接
+
+- [GridLottery - 九宫格抽奖](/zh/docs/vue/grid-lottery)
+- [SlotMachine - 滚动抽奖](/zh/docs/vue/slot-machine)
+- [ScratchCard - 刮刮卡](/zh/docs/vue/scratch-card)
+- [RandBox 核心算法](/zh/docs/basics)

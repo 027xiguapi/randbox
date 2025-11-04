@@ -1,0 +1,587 @@
+---
+title: 'SlotMachine - 滚动抽奖'
+description: '基于Canvas的老虎机风格滚动抽奖组件，支持多滚轴、自定义符号和中奖规则配置'
+---
+
+# SlotMachine - 滚动抽奖
+
+`SlotMachine` 是一个基于Canvas的老虎机风格滚动抽奖组件，提供多滚轴同步或异步滚动，支持自定义符号、权重配置和中奖规则。
+
+## 📦 导入
+
+```typescript
+import { SlotMachine } from '@randbox/react';
+import type { SlotMachineProps, SlotMachineResult } from '@randbox/react';
+```
+
+## 🎯 类型定义
+
+### SlotMachineProps
+
+```typescript
+interface SlotMachineProps {
+  // 必需属性
+  reels: string[][];                                 // 滚轴数组，每个滚轴包含多个符号
+
+  // 可选属性
+  weights?: number[][];                              // 每个滚轴符号的权重
+  animationDuration?: number;                        // 动画时长（毫秒），默认3000
+  buttonText?: string;                               // 按钮文字，默认"开始"
+  width?: number;                                    // Canvas 宽度
+  height?: number;                                   // Canvas 高度
+
+  // 基础属性（继承自BaseGameProps）
+  className?: string;                                // CSS类名
+  style?: React.CSSProperties;                      // 内联样式
+  disabled?: boolean;                                // 是否禁用
+
+  // 回调函数
+  onGameStart?: () => void;                         // 游戏开始回调
+  onGameEnd?: (result: SlotMachineResult) => void; // 游戏结束回调
+  onResult?: (result: SlotMachineResult) => void;  // 结果回调
+}
+```
+
+### SlotMachineResult
+
+```typescript
+interface SlotMachineResult {
+  results: string[];         // 每个滚轴的结果
+  isJackpot: boolean;        // 是否中大奖（所有符号相同）
+  combination: string;       // 组合描述
+}
+```
+
+## 🚀 基础用法
+
+```typescript
+import React from 'react';
+import { SlotMachine } from '@randbox/react';
+
+function BasicSlotMachine() {
+  const reels = [
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣']
+  ];
+
+  const handleResult = (result) => {
+    console.log('老虎机结果:', result);
+    if (result.isJackpot) {
+      alert('🎉 恭喜中大奖！');
+    }
+  };
+
+  return (
+    <SlotMachine
+      reels={reels}
+      onResult={handleResult}
+    />
+  );
+}
+```
+
+## 🎯 高级用法
+
+### 带权重的滚动抽奖
+
+```typescript
+function WeightedSlotMachine() {
+  const reels = [
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '7️⃣']
+  ];
+
+  // 为每个滚轴设置不同的权重
+  const weights = [
+    [20, 18, 15, 12, 10, 8, 5, 2],  // 第一个滚轴权重
+    [20, 18, 15, 12, 10, 8, 5, 2],  // 第二个滚轴权重
+    [20, 18, 15, 12, 10, 8, 5, 2]   // 第三个滚轴权重
+  ];
+
+  return (
+    <SlotMachine
+      reels={reels}
+      weights={weights}
+      animationDuration={4000}
+      onResult={(result) => {
+        console.log('权重抽奖结果:', result);
+        if (result.combination === '💎💎💎') {
+          alert('💎 钻石大奖！');
+        }
+      }}
+    />
+  );
+}
+```
+
+### 数字老虎机
+
+```typescript
+function NumberSlotMachine() {
+  const numberReels = [
+    ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+  ];
+
+  const checkJackpot = (results) => {
+    // 检查是否为顺子或三个相同数字
+    const [a, b, c] = results.map(r => parseInt(r));
+    return a === b && b === c; // 三个相同数字
+  };
+
+  return (
+    <SlotMachine
+      reels={numberReels}
+      animationDuration={3000}
+      onResult={(result) => {
+        const isWin = checkJackpot(result.results);
+        console.log('数字老虎机:', { ...result, isWin });
+      }}
+    />
+  );
+}
+```
+
+### 五轴老虎机
+
+```typescript
+function FiveReelSlotMachine() {
+  const symbols = ['A', 'K', 'Q', 'J', '10', '9', '8', '7'];
+  const reels = Array(5).fill(symbols);
+
+  // 为五轴设置不同的权重分布
+  const weights = reels.map((_, index) => {
+    // 中间轴比较容易出好符号
+    const bonus = index === 2 ? 1.2 : 1.0;
+    return symbols.map((_, i) => (symbols.length - i) * bonus);
+  });
+
+  const checkWinningLines = (results) => {
+    const lines = [
+      results, // 中间线
+      // 可以添加更多支付线逻辑
+    ];
+
+    return lines.some(line => {
+      const first = line[0];
+      return line.every(symbol => symbol === first);
+    });
+  };
+
+  return (
+    <SlotMachine
+      reels={reels}
+      weights={weights}
+      animationDuration={5000}
+      onResult={(result) => {
+        const hasWin = checkWinningLines(result.results);
+        console.log('五轴结果:', { ...result, hasWin });
+      }}
+    />
+  );
+}
+```
+
+### 完整配置示例
+
+```typescript
+function FullConfigSlotMachine() {
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [totalSpins, setTotalSpins] = useState(0);
+  const [wins, setWins] = useState(0);
+  const [history, setHistory] = useState([]);
+
+  const reels = [
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐'],
+    ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐']
+  ];
+
+  const weights = [
+    [25, 20, 15, 12, 10, 8, 5, 5],
+    [25, 20, 15, 12, 10, 8, 5, 5],
+    [25, 20, 15, 12, 10, 8, 5, 5]
+  ];
+
+  const handleGameStart = () => {
+    setIsSpinning(true);
+    console.log('开始旋转...');
+  };
+
+  const handleGameEnd = (result) => {
+    setIsSpinning(false);
+    setTotalSpins(prev => prev + 1);
+
+    if (result.isJackpot) {
+      setWins(prev => prev + 1);
+    }
+
+    setHistory(prev => [result, ...prev.slice(0, 9)]);
+    console.log('旋转结束:', result);
+  };
+
+  const winRate = totalSpins > 0 ? ((wins / totalSpins) * 100).toFixed(1) : '0.0';
+
+  return (
+    <div style={{ padding: '20px' }}>
+      {/* 统计信息 */}
+      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+        <div>总旋转次数: {totalSpins} | 中奖次数: {wins} | 中奖率: {winRate}%</div>
+      </div>
+
+      <SlotMachine
+        reels={reels}
+        weights={weights}
+        animationDuration={3500}
+        buttonText={isSpinning ? '旋转中...' : '🎰 开始旋转'}
+        className="casino-slot"
+        style={{ border: '3px solid gold', borderRadius: '15px' }}
+        disabled={isSpinning}
+        onGameStart={handleGameStart}
+        onGameEnd={handleGameEnd}
+        onResult={(result) => {
+          console.log('实时结果:', result);
+        }}
+      />
+
+      {/* 历史记录 */}
+      {history.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <h3>最近旋转记录：</h3>
+          {history.map((result, index) => (
+            <div
+              key={index}
+              style={{
+                padding: '8px',
+                backgroundColor: result.isJackpot ? '#fff3cd' : '#f8f9fa',
+                margin: '5px 0',
+                borderRadius: '5px',
+                border: result.isJackpot ? '2px solid #ffc107' : '1px solid #dee2e6'
+              }}
+            >
+              <strong>{result.combination}</strong>
+              {result.isJackpot && <span style={{ color: '#d4a853', marginLeft: '10px' }}>🎉 中奖!</span>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## 📋 API参考
+
+### SlotMachineProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `reels` | `string[][]` | **必需** | 滚轴配置，每个子数组代表一个滚轴的符号 |
+| `weights` | `number[][]` | `undefined` | 权重配置，控制每个滚轴上符号的出现概率 |
+| `animationDuration` | `number` | `3000` | 动画持续时间（毫秒） |
+| `buttonText` | `string` | `'开始旋转'` | 操作按钮文字 |
+| `onResult` | `(result: SlotMachineResult) => void` | `undefined` | 结果回调 |
+
+### 继承的BaseGameProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `className` | `string` | `''` | CSS类名 |
+| `style` | `React.CSSProperties` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
+| `onGameEnd` | `(result: SlotMachineResult) => void` | `undefined` | 游戏结束回调 |
+
+### SlotMachineResult
+
+```typescript
+interface SlotMachineResult {
+  results: string[];      // 每个滚轴的结果
+  isJackpot: boolean;     // 是否中大奖
+  combination: string;    // 组合字符串（如 "🍎🍎🍎"）
+}
+```
+
+## 🎨 样式定制
+
+### 容器样式
+
+```css
+.casino-slot {
+  background: linear-gradient(145deg, #2c3e50, #34495e);
+  border: 3px solid #f39c12;
+  border-radius: 20px;
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.3),
+    inset 0 2px 10px rgba(255,255,255,0.1);
+}
+
+.casino-slot:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+```
+
+### 霓虹灯效果
+
+```css
+.neon-slot {
+  border: 2px solid #ff6b6b;
+  border-radius: 15px;
+  box-shadow:
+    0 0 20px #ff6b6b,
+    inset 0 0 20px rgba(255, 107, 107, 0.1);
+  animation: neonGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes neonGlow {
+  from {
+    box-shadow:
+      0 0 20px #ff6b6b,
+      inset 0 0 20px rgba(255, 107, 107, 0.1);
+  }
+  to {
+    box-shadow:
+      0 0 30px #ff6b6b,
+      0 0 40px #ff6b6b,
+      inset 0 0 30px rgba(255, 107, 107, 0.2);
+  }
+}
+```
+
+## 🔧 高级功能
+
+### 中奖规则定制
+
+```typescript
+function CustomWinRulesSlotMachine() {
+  const symbols = ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐'];
+  const reels = [symbols, symbols, symbols];
+
+  // 自定义中奖规则
+  const checkWinning = (results) => {
+    const [a, b, c] = results;
+
+    // 规则1: 三个相同
+    if (a === b && b === c) return { type: 'triple', multiplier: 10 };
+
+    // 规则2: 两个相同
+    if (a === b || b === c || a === c) return { type: 'double', multiplier: 2 };
+
+    // 规则3: 特殊组合
+    if (results.includes('💎') && results.includes('⭐')) {
+      return { type: 'special', multiplier: 5 };
+    }
+
+    return { type: 'none', multiplier: 0 };
+  };
+
+  return (
+    <SlotMachine
+      reels={reels}
+      onResult={(result) => {
+        const winInfo = checkWinning(result.results);
+        console.log('中奖信息:', winInfo);
+
+        if (winInfo.multiplier > 0) {
+          alert(`中奖类型: ${winInfo.type}, 倍数: ${winInfo.multiplier}x`);
+        }
+      }}
+    />
+  );
+}
+```
+
+### 渐进式奖池
+
+```typescript
+function ProgressiveSlotMachine() {
+  const [jackpotAmount, setJackpotAmount] = useState(1000);
+  const [lastWin, setLastWin] = useState(null);
+
+  const reels = [
+    ['💎', '⭐', '🔔', '🍒', '🍇', '🍊', '🍎'],
+    ['💎', '⭐', '🔔', '🍒', '🍇', '🍊', '🍎'],
+    ['💎', '⭐', '🔔', '🍒', '🍇', '🍊', '🍎']
+  ];
+
+  const handleResult = (result) => {
+    // 每次游戏增加奖池
+    setJackpotAmount(prev => prev + 10);
+
+    if (result.combination === '💎💎💎') {
+      // 中超级大奖
+      setLastWin({ type: 'jackpot', amount: jackpotAmount });
+      setJackpotAmount(1000); // 重置奖池
+      alert(`🎉 超级大奖！奖金: $${jackpotAmount}`);
+    } else if (result.isJackpot) {
+      const amount = 100;
+      setLastWin({ type: 'normal', amount });
+      alert(`🎉 中奖！奖金: $${amount}`);
+    }
+  };
+
+  return (
+    <div>
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <h2>累积奖池: ${jackpotAmount.toLocaleString()}</h2>
+        {lastWin && (
+          <div style={{ color: 'green' }}>
+            上次中奖: {lastWin.type} - ${lastWin.amount}
+          </div>
+        )}
+      </div>
+
+      <SlotMachine
+        reels={reels}
+        onResult={handleResult}
+      />
+    </div>
+  );
+}
+```
+
+### 多支付线老虎机
+
+```typescript
+function MultiLineSlotMachine() {
+  const symbols = ['A', 'K', 'Q', 'J', '10', '9'];
+  const reels = Array(5).fill(symbols);
+
+  // 定义支付线
+  const paylines = [
+    [1, 1, 1, 1, 1], // 中线
+    [0, 0, 0, 0, 0], // 上线
+    [2, 2, 2, 2, 2], // 下线
+    [0, 1, 2, 1, 0], // V形
+    [2, 1, 0, 1, 2], // 倒V形
+  ];
+
+  const checkPaylines = (results) => {
+    const wins = [];
+
+    paylines.forEach((line, lineIndex) => {
+      const lineSymbols = line.map((row, col) => {
+        // 这里需要根据实际的滚轴结果矩阵来获取符号
+        return results[col]; // 简化版本
+      });
+
+      // 检查支付线是否中奖
+      const firstSymbol = lineSymbols[0];
+      let matchCount = 1;
+
+      for (let i = 1; i < lineSymbols.length; i++) {
+        if (lineSymbols[i] === firstSymbol) {
+          matchCount++;
+        } else {
+          break;
+        }
+      }
+
+      if (matchCount >= 3) {
+        wins.push({
+          line: lineIndex + 1,
+          symbol: firstSymbol,
+          count: matchCount,
+          payout: calculatePayout(firstSymbol, matchCount)
+        });
+      }
+    });
+
+    return wins;
+  };
+
+  const calculatePayout = (symbol, count) => {
+    const payouts = {
+      'A': [0, 0, 50, 200, 1000],
+      'K': [0, 0, 25, 100, 500],
+      'Q': [0, 0, 20, 80, 400],
+      'J': [0, 0, 15, 60, 300],
+      '10': [0, 0, 10, 40, 200],
+      '9': [0, 0, 5, 20, 100],
+    };
+
+    return payouts[symbol]?.[count] || 0;
+  };
+
+  return (
+    <SlotMachine
+      reels={reels}
+      onResult={(result) => {
+        const wins = checkPaylines(result.results);
+        const totalPayout = wins.reduce((sum, win) => sum + win.payout, 0);
+
+        console.log('支付线中奖:', wins);
+        if (totalPayout > 0) {
+          alert(`中奖！总奖金: ${totalPayout}`);
+        }
+      }}
+    />
+  );
+}
+```
+
+## 🎯 最佳实践
+
+### 1. 符号设计建议
+
+```typescript
+// 使用易区分的符号
+const goodSymbols = ['🍎', '🍊', '🍋', '🍒', '🍇', '🔔', '💎', '⭐'];
+
+// 避免相似符号
+const badSymbols = ['😀', '😃', '😄', '😁']; // 太相似，难以区分
+```
+
+### 2. 权重平衡
+
+```typescript
+// 平衡的权重分配
+const balancedWeights = [
+  [30, 25, 20, 15, 5, 3, 1, 1], // 常见符号权重高，稀有符号权重低
+  [30, 25, 20, 15, 5, 3, 1, 1],
+  [30, 25, 20, 15, 5, 3, 1, 1]
+];
+```
+
+### 3. 性能优化
+
+```typescript
+// 使用React.memo优化重渲染
+const OptimizedSlotMachine = React.memo(({ reels, ...props }) => {
+  return <SlotMachine reels={reels} {...props} />;
+});
+
+// 使用useMemo缓存复杂计算
+function CachedSlotMachine() {
+  const reels = useMemo(() =>
+    generateReels(complexity), [complexity]
+  );
+
+  return <SlotMachine reels={reels} />;
+}
+```
+
+## 🐛 常见问题
+
+### Q: 如何实现真正的随机性？
+A: 组件使用RandBox的Mersenne Twister算法，提供高质量的随机数生成。
+
+### Q: 滚轴数量有限制吗？
+A: 理论上没有限制，但建议不超过7个滚轴以保证性能和用户体验。
+
+### Q: 可以实现异步滚动吗？
+A: 是的，组件内部已实现异步滚动效果，每个滚轴会在不同时间停止。
+
+### Q: 如何调整中奖概率？
+A: 通过weights属性调整每个符号的权重，权重越高出现概率越大。
+
+## 🔗 相关链接
+
+- [GridLottery - 九宫格抽奖](/zh/docs/react/grid-lottery)
+- [ScratchCard - 刮刮卡](/zh/docs/react/scratch-card)
+- [DiceGame - 骰子游戏](/zh/docs/react/dice-game)
+- [RandBox 权重方法](/zh/docs/miscellaneous/weighted)

@@ -1,0 +1,29 @@
+---
+title: "exp"
+description: "RandBox ページ：exp、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "finance", "exp"]
+keywords: ["RandBox", "finance", "exp", "ランダム", "JavaScript", "MDX"]
+---
+
+# exp
+
+```js
+// 使い方
+randBox.exp()
+randBox.exp({raw: true})
+```
+
+ランダムなクレジットカード有効期限を生成します。
+
+```js
+randBox.exp();
+=> '10/2020'
+```
+
+必要に応じて、文字列ではなく、生のオブジェクトを返すように指定できます
+
+```js
+randBox.exp({raw: true});
+=> {month: '11', year: '2017'}
+```

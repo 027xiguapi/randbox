@@ -1,0 +1,69 @@
+---
+title: "character"
+description: "RandBox ページ：character、例とドキュメントが含まれています。"
+date: "2025-10-16"
+tags: ["RandBox", "basics", "character"]
+keywords: ["RandBox", "basics", "character", "ランダム", "JavaScript", "MDX"]
+---
+
+# character
+
+```js
+// 使い方
+randBox.character()
+randBox.character({ pool: 'abcde' })
+randBox.character({ alpha: true })
+randBox.character({ numeric: true })
+randBox.character({ casing: 'lower' })
+randBox.character({ symbols: true })
+```
+
+ランダムな文字を返します。
+
+```js
+randBox.character();
+=> 'v'
+```
+
+デフォルトでは、以下の文字プールからランダムな文字を返します。
+
+```js
+'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()'
+```
+
+オプションで文字プールを指定でき、その文字プールからの文字のみを生成します。
+
+```js
+randBox.character({ pool: 'abcde' });
+=> 'c'
+```
+
+オプションで alpha を指定して英字を取得できます。
+
+```js
+randBox.character({ alpha: true });
+=> 'N'
+```
+
+オプションで numeric を指定して数字文字を取得できます。
+
+```js
+randBox.character({ numeric: true });
+=> '8'
+```
+
+デフォルトでは大文字と小文字の両方が含まれています。いずれか一方を指定できます。
+
+```js
+randBox.character({ casing: 'lower' });
+=> 'j'
+```
+
+*注意。此のキーを ```case``` と名付けたかったのですが、不運なことにこれは JavaScript で switch 文で使用される予約語です*
+
+オプションで記号のみを返すことができます
+
+```js
+randBox.character({ symbols: true });
+=> '%'
+```

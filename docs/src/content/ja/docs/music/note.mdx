@@ -1,0 +1,41 @@
+---
+title: "note"
+description: "RandBox 页面：note，包含示例与说明。"
+date: "2025-10-16"
+tags: ["RandBox", "music", "note"]
+keywords: ["RandBox", "music", "note", "随机", "JavaScript", "MDX"]
+---
+
+# note
+
+```js
+// 用法
+randBox.note();
+randBox.note({ notes: 'flatkey' });
+```
+
+返回一个音符。🎵
+
+```js
+randBox.note();
+=> 'B'
+
+randBox.note();
+=> 'E♭'
+```
+
+选项
+flatKey - 带降音符的半音阶（默认）
+sharpKey - 带升音符的半音阶
+flats - 仅降音符
+sharps - 仅升音符
+naturals - 仅自然音符
+all - 自然音符、升音符和降音符
+
+```js
+randBox.note({notes: 'flats' });
+=> 'A'
+
+randBox.note({notes: 'sharps' });
+=> 'F♯'
+```

@@ -6,6 +6,7 @@ import 'server-only'
 const dictionaries = {
   en: () => import('@/i18n/en'),
   zh: () => import('@/i18n/zh'),
+  ja: () => import('@/i18n/ja'),
 } as const satisfies Record<string, () => Promise<{ default: typeof Zh }>>
 
 export const getDictionary = async (
@@ -16,6 +17,7 @@ export const getDirection = (locale: keyof typeof dictionaries) => {
   switch (locale) {
     case 'en':
     case 'zh':
+    case 'ja':
     default:
       return 'ltr' as const
   }

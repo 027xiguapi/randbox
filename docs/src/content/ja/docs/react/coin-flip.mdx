@@ -1,0 +1,360 @@
+---
+title: 'CoinFlip - 抛硬币'
+description: '基于Canvas的3D硬币抛掷游戏组件，支持动画效果和统计数据'
+---
+
+# CoinFlip - 抛硬币
+
+`CoinFlip` 是一个基于Canvas的3D硬币抛掷游戏组件，提供真实的硬币翻转动画和统计功能。
+
+## 📦 导入
+
+```typescript
+import { CoinFlip } from '@randbox/react';
+import type { CoinFlipProps, CoinFlipResult, CoinFlipStats } from '@randbox/react';
+```
+
+## 🎯 类型定义
+
+### CoinFlipProps
+
+```typescript
+interface CoinFlipProps {
+  // 可选属性
+  animationDuration?: number;                      // 动画时长（毫秒），默认2000
+  showStats?: boolean;                             // 是否显示统计，默认true
+
+  // 基础属性（继承自BaseGameProps）
+  className?: string;                              // CSS类名
+  style?: React.CSSProperties;                    // 内联样式
+  disabled?: boolean;                              // 是否禁用
+
+  // 回调函数
+  onGameStart?: () => void;                       // 游戏开始回调
+  onGameEnd?: (result: CoinFlipResult) => void;  // 游戏结束回调
+  onResult?: (result: CoinFlipResult) => void;   // 结果回调
+}
+```
+
+### CoinFlipResult
+
+```typescript
+interface CoinFlipResult {
+  result: 'heads' | 'tails';  // 硬币结果：正面或反面
+  round: number;              // 回合数
+  timestamp: number;          // 时间戳
+}
+```
+
+### CoinFlipStats
+
+```typescript
+interface CoinFlipStats {
+  totalFlips: number;    // 总抛掷次数
+  heads: number;         // 正面次数
+  tails: number;         // 反面次数
+  headsRate: string;     // 正面概率（百分比）
+  tailsRate: string;     // 反面概率（百分比）
+}
+```
+
+## 📋 API参考
+
+### CoinFlipProps
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `animationDuration` | `number` | `2000` | 动画持续时间（毫秒） |
+| `showStats` | `boolean` | `true` | 是否显示统计信息 |
+| `className` | `string` | `''` | CSS类名 |
+| `style` | `React.CSSProperties` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
+| `onGameEnd` | `(result) => void` | `undefined` | 游戏结束回调 |
+| `onResult` | `(result) => void` | `undefined` | 结果回调 |
+
+### CoinFlipResult 结构
+
+```typescript
+{
+  result: "heads",        // "heads" 或 "tails"
+  round: 1,              // 当前回合数
+  timestamp: 1234567890  // 时间戳
+}
+```
+
+### CoinFlipStats 结构
+
+```typescript
+{
+  totalFlips: 10,        // 总抛掷次数
+  heads: 6,              // 正面次数
+  tails: 4,              // 反面次数
+  headsRate: "60.0",     // 正面概率（百分比）
+  tailsRate: "40.0"      // 反面概率（百分比）
+}
+```
+
+## 🚀 基础用法
+
+```typescript
+import React from 'react';
+import { CoinFlip } from '@randbox/react';
+
+function BasicCoinFlip() {
+  const handleResult = (result) => {
+    console.log('抛币结果:', result);
+    alert(`结果是：${result.result === 'heads' ? '正面' : '反面'}`);
+  };
+
+  return (
+    <CoinFlip onResult={handleResult} />
+  );
+}
+```
+
+## 🎨 高级用法
+
+### 自定义动画时长
+
+```typescript
+function FastCoinFlip() {
+  return (
+    <div>
+      <h3>快速模式（1秒）</h3>
+      <CoinFlip animationDuration={1000} />
+
+      <h3>慢速模式（3秒）</h3>
+      <CoinFlip animationDuration={3000} />
+    </div>
+  );
+}
+```
+
+### 隐藏统计信息
+
+```typescript
+function SimpleCoinFlip() {
+  return (
+    <CoinFlip
+      showStats={false}
+      animationDuration={1500}
+      onResult={(result) => {
+        console.log('结果:', result.result);
+      }}
+    />
+  );
+}
+```
+
+### 完整配置示例
+
+```typescript
+function FullConfigCoinFlip() {
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [history, setHistory] = useState<CoinFlipResult[]>([]);
+  const [stats, setStats] = useState<CoinFlipStats>({
+    totalFlips: 0,
+    heads: 0,
+    tails: 0,
+    headsRate: '0',
+    tailsRate: '0'
+  });
+
+  const handleGameStart = () => {
+    setIsFlipping(true);
+    console.log('开始抛硬币...');
+  };
+
+  const handleGameEnd = (result: CoinFlipResult) => {
+    setIsFlipping(false);
+    setHistory(prev => [result, ...prev.slice(0, 9)]);
+
+    // 更新统计
+    const newStats = {
+      totalFlips: stats.totalFlips + 1,
+      heads: stats.heads + (result.result === 'heads' ? 1 : 0),
+      tails: stats.tails + (result.result === 'tails' ? 1 : 0),
+      headsRate: '0',
+      tailsRate: '0'
+    };
+    newStats.headsRate = ((newStats.heads / newStats.totalFlips) * 100).toFixed(1);
+    newStats.tailsRate = ((newStats.tails / newStats.totalFlips) * 100).toFixed(1);
+    setStats(newStats);
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <CoinFlip
+        animationDuration={2000}
+        showStats={true}
+        className="my-coin-flip"
+        disabled={isFlipping}
+        onGameStart={handleGameStart}
+        onGameEnd={handleGameEnd}
+        onResult={(result) => {
+          console.log('实时结果:', result);
+        }}
+      />
+
+      {/* 抛币历史 */}
+      {history.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <h3>最近10次记录：</h3>
+          <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+            {history.map((result, index) => (
+              <span
+                key={index}
+                style={{
+                  padding: '5px 10px',
+                  backgroundColor: result.result === 'heads' ? '#2ecc71' : '#e74c3c',
+                  color: 'white',
+                  borderRadius: '5px',
+                  fontSize: '12px'
+                }}
+              >
+                {result.result === 'heads' ? '正面' : '反面'}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 统计汇总 */}
+      <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f5f5f5' }}>
+        <h3>统计汇总</h3>
+        <p>总次数：{stats.totalFlips}</p>
+        <p>正面：{stats.heads} 次 ({stats.headsRate}%)</p>
+        <p>反面：{stats.tails} 次 ({stats.tailsRate}%)</p>
+      </div>
+    </div>
+  );
+}
+```
+
+## 📋 API参考
+
+### 属性说明
+
+| 属性 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `animationDuration` | `number` | `2000` | 动画持续时间（毫秒） |
+| `showStats` | `boolean` | `true` | 是否显示统计信息 |
+| `className` | `string` | `''` | CSS类名 |
+| `style` | `React.CSSProperties` | `{}` | 内联样式 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `onGameStart` | `() => void` | `undefined` | 游戏开始回调 |
+| `onGameEnd` | `(result) => void` | `undefined` | 游戏结束回调 |
+| `onResult` | `(result) => void` | `undefined` | 结果回调 |
+
+### CoinFlipResult 结构
+
+```typescript
+{
+  result: "heads",        // "heads" 或 "tails"
+  round: 1,              // 当前回合数
+  timestamp: 1234567890  // 时间戳
+}
+```
+
+## 🎨 样式定制
+
+### 容器样式
+
+```css
+.my-coin-flip {
+  border: 3px solid #f39c12;
+  border-radius: '20px';
+  padding: '20px';
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+```
+
+## 🔧 高级功能
+
+### 猜硬币游戏
+
+```typescript
+function GuessCoinGame() {
+  const [guess, setGuess] = useState<'heads' | 'tails' | null>(null);
+  const [score, setScore] = useState({ wins: 0, losses: 0 });
+
+  const handleResult = (result: CoinFlipResult) => {
+    if (guess === result.result) {
+      setScore(prev => ({ ...prev, wins: prev.wins + 1 }));
+      alert('猜对了！🎉');
+    } else {
+      setScore(prev => ({ ...prev, losses: prev.losses + 1 }));
+      alert('猜错了！😢');
+    }
+    setGuess(null);
+  };
+
+  return (
+    <div>
+      <h3>猜硬币游戏</h3>
+      <p>战绩 - 赢：{score.wins} 输：{score.losses}</p>
+
+      <div style={{ marginBottom: '20px' }}>
+        <button onClick={() => setGuess('heads')} disabled={guess !== null}>
+          猜正面
+        </button>
+        <button onClick={() => setGuess('tails')} disabled={guess !== null}>
+          猜反面
+        </button>
+      </div>
+
+      <CoinFlip
+        disabled={guess === null}
+        onResult={handleResult}
+      />
+
+      {guess && <p>你的选择：{guess === 'heads' ? '正面' : '反面'}</p>}
+    </div>
+  );
+}
+```
+
+## 🎯 最佳实践
+
+### 1. 概率验证
+
+```typescript
+// 大量实验验证随机性
+function ProbabilityTest() {
+  const [trials, setTrials] = useState(0);
+  const [heads, setHeads] = useState(0);
+
+  const runTrials = (n: number) => {
+    for (let i = 0; i < n; i++) {
+      // 模拟抛币...
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={() => runTrials(1000)}>运行1000次</button>
+      <p>总次数：{trials}</p>
+      <p>正面率：{(heads / trials * 100).toFixed(2)}%</p>
+      <p>理论值：50%</p>
+    </div>
+  );
+}
+```
+
+## 🐛 常见问题
+
+### Q: 结果真的是随机的吗？
+A: 是的，使用RandBox的Mersenne Twister算法，确保高质量的随机性。
+
+### Q: 可以预测结果吗？
+A: 不可以，每次抛币都是独立事件，无法预测。
+
+### Q: 为什么连续出现多次相同结果？
+A: 这是正常的随机现象，类似现实中的连续正面或反面。
+
+## 🔗 相关链接
+
+- [DiceGame - 骰子游戏](/zh/docs/react/dice-game)
+- [RockPaperScissors - 石头剪刀布](/zh/docs/react/rock-paper-scissors)
+- [RandBox 核心库](/zh/docs/basics)

@@ -1,0 +1,46 @@
+---
+title: "prime"
+description: "RandBox ページ：prime、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "basics", "prime"]
+keywords: ["RandBox", "basics", "prime", "ランダム", "JavaScript", "MDX"]
+---
+
+# prime
+
+```js
+// 使い方
+randBox.prime()
+randBox.prime({ min: 1, max: 20 })
+```
+
+素数を返します。
+
+_デフォルト範囲：0 から 10000_
+
+```js
+  randBox.prime();
+  => 929
+```
+
+必要に応じて min と max を指定できます。
+
+```js
+randBox.prime({min: 1, max: 20});
+=> 13
+```
+
+これらは包括的であり、範囲内に含まれます。これは、
+```randBox.prime({min: 2, max: 5});``` が 2、3 または 5 のいずれかを返すことを意味します：
+
+```js
+// 具体情况
+2 <= ランダム数 <= 5
+
+// 一般状況
+min <= ランダム数 <= max
+```
+
+[ウィキペディアの素数][prime]
+
+[prime]: https://en.wikipedia.org/wiki/Prime_number

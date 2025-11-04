@@ -1,0 +1,33 @@
+---
+title: "letter"
+description: "RandBox ページ：letter、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "basics", "letter"]
+keywords: ["RandBox", "basics", "letter", "ランダム", "JavaScript", "MDX"]
+---
+
+# letter
+
+```js
+// 使い方
+randBox.letter()
+randBox.letter({ casing: 'lower' })
+```
+
+ランダムな文字を返します。
+
+```js
+randBox.letter();
+=> 'p'
+```
+
+デフォルトでは、ランダムな小文字を返します。
+
+<p class="pullquote">注意，原本想将这个オプション命名为 <strong>case</strong> 而不是 <strong>casing</strong>，但不幸的是これは JavaScript において switch 文の予約語です</p>
+
+大文字を指定できます
+
+```js
+randBox.letter({casing: 'upper'});
+=> 'A'
+```

@@ -1,0 +1,35 @@
+---
+title: "euro"
+description: "RandBox ページ：euro、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "finance", "euro"]
+keywords: ["RandBox", "finance", "euro", "ランダム", "JavaScript", "MDX"]
+---
+
+# euro
+
+```js
+// 使い方
+randBox.euro()
+randBox.euro({max: 250})
+```
+
+ランダムなユーロ額を返します。フォーマットは現在のロケール設定に依存します（例ではヨーロッパ形式で表示）
+
+```js
+randBox.euro();
+=> "2.560,27€"
+
+randBox.euro();
+=> "750.99€"
+```
+
+デフォルトでは 10000 を超えないユーロ額を返します。必要に応じて max パラメータを指定して、より大きく（または小さく）することができます。
+
+```js
+randBox.euro({max: 20});
+=> "15,23€"
+
+randBox.euro({max: 10000000})
+=> "5.051.205,49€"
+```

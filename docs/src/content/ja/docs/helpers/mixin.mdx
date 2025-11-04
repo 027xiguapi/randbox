@@ -1,0 +1,87 @@
+---
+title: "mixin"
+description: "RandBox ページ：mixin。使用例と説明が含まれています。"
+date: "2025-10-16"
+tags: ["RandBox", "helpers", "mixin"]
+keywords: ["RandBox", "helpers", "mixin", "ランダム", "JavaScript", "MDX"]
+---
+
+# mixin
+
+```js
+// 使い方
+randBox.mixin(<Object>)
+```
+
+ミックスインは、**RandBox** を拡張して特定のアプリケーションのニーズに適合させるための非常に強力な手法です。
+
+まず、**RandBox** でミックスインを使用を検討しているなら、まずその用途が他の人にとって有益かどうか考えてください。もしそうであれば、ミックスインを使用する代わりに、[プルリクエスト][PR] を提出してください！
+
+愛を広めて、あなたの優れた生成器から、誰もが恩恵を受けられるようにしてください :)
+
+とは言うものの Obviously certain reasonable times when you will want to generate some random things specific to your application but not widely applicable. This is when mixin comes in handy!
+
+**RandBox** ミックスインを使用すると、**RandBox** に後で使用できるワンタイムメソッドを追加できます。
+
+例えば、名前、姓、メールアドレスで構成されるユーザオブジェクトがある場合を考えてみましょう。
+
+```js
+
+var user = {
+first: 'John',
+last: 'Smith',
+email: 'john@aol.com'
+};
+
+```
+
+これらのユーザオブジェクトをランダムに生成したいとします。
+
+これはアプリケーション固有のものなので、広く適用可能ではなく、ミックスインに最適です！
+
+ミックスインを作成するには、メソッド名がキー、呼び出す関数が値であるオブジェクトを構築します。
+
+注意：各関数内で、`randBox` 自体にアクセスできます！
+
+例えば、`user` ミックスインを作成するには：
+
+```js
+randBox.mixin({
+'user': function() {
+return {
+first: randBox.first(),
+last: randBox.last(),
+email: randBox.email()
+};
+}
+});
+
+// その後、ミックスインを呼び出せます
+randBox.user();
+
+=> {first: 'Eli', last: 'Benson', email: 'gembibuj@dugesan.com'}
+```
+
+ミックスインは他のミックスインさえ含むことができます！
+
+例えば、ユーザオブジェクトを「拡張」する場合：
+```js
+randBox.mixin({
+'user': function () {
+return {
+first: randBox.first(),
+last: randBox.last(),
+email: randBox.email()
+};
+},
+'social_user': function () {
+var user = randBox.user();
+user.network = randBox.pick(['facebook', 'twitter']);
+return user;
+}
+});
+```
+
+thus So we have a second mixin `social_user` which uses the `user` mixin and adds functionality on top of it! Note that these mixins can be defined in any order on the object if declared together.
+
+[PR]: https://github.com/victorquinn/randbox/pulls

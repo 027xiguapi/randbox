@@ -1,0 +1,385 @@
+---
+title: '@randbox/react 组件库'
+description: '基于Canvas的高性能React游戏组件库，提供九宫格抽奖、老虎机、幸运大转盘、骰子游戏、刮刮卡、石头剪刀布和抛硬币组件'
+---
+
+# @randbox/react 组件库
+
+@randbox/react 是一个基于Canvas渲染的高性能React游戏组件库，提供了7个核心游戏组件。所有组件都使用RandBox作为随机数生成器，确保真正的随机性和公平性。
+
+## ✨ 特性
+
+- 🎮 **7个核心游戏组件**：九宫格抽奖、老虎机、幸运大转盘、骰子游戏、刮刮卡、石头剪刀布、抛硬币
+- 🚀 **高性能**：基于Canvas渲染，流畅的动画效果
+- 📦 **轻量级**：优化后的打包大小（ES模块：~96KB，UMD：~43KB）
+- 🎨 **无需CSS**：所有样式都通过Canvas渲染，无外部依赖
+- 📱 **响应式**：自适应不同屏幕尺寸
+- 🔧 **TypeScript**：完整的类型定义支持
+- 🎲 **真实随机**：基于RandBox的高质量随机数生成
+
+## 📦 安装
+
+```bash
+npm install @randbox/react randbox
+# 或
+yarn add @randbox/react randbox
+# 或
+pnpm add @randbox/react randbox
+```
+
+## 🚀 快速开始
+
+```typescript
+import {
+  GridLottery,
+  SlotMachine,
+  LuckyWheel,
+  DiceGame,
+  ScratchCard,
+  RockPaperScissors,
+  CoinFlip
+} from '@randbox/react';
+
+function App() {
+  return (
+    <div>
+      {/* 九宫格抽奖 */}
+      <GridLottery
+        prizes={['一等奖', '二等奖', '三等奖', '谢谢参与']}
+        onResult={(result) => console.log('中奖:', result)}
+      />
+
+      {/* 老虎机 */}
+      <SlotMachine
+        reels={[
+          ['🍎', '🍊', '🍋', '🍒'],
+          ['🍎', '🍊', '🍋', '🍒'],
+          ['🍎', '🍊', '🍋', '🍒']
+        ]}
+        onResult={(result) => console.log('结果:', result)}
+      />
+
+      {/* 幸运大转盘 */}
+      <LuckyWheel
+        prizes={['大奖', '中奖', '小奖', '谢谢参与']}
+        onResult={(result) => console.log('中奖:', result)}
+      />
+
+      {/* 骰子游戏 */}
+      <DiceGame
+        diceCount={2}
+        gameMode="sum"
+        onResult={(result) => console.log('投掷结果:', result)}
+      />
+
+      {/* 刮刮卡 */}
+      <ScratchCard
+        rows={3}
+        cols={3}
+        symbols={['🍎', '🍌', '🍇']}
+        onScratch={(result) => console.log('刮奖结果:', result)}
+      />
+
+      {/* 石头剪刀布 */}
+      <RockPaperScissors
+        onResult={(result) => console.log('游戏结果:', result)}
+      />
+
+      {/* 抛硬币 */}
+      <CoinFlip
+        onResult={(result) => console.log('抛币结果:', result)}
+      />
+    </div>
+  );
+}
+```
+
+## 🎮 组件列表
+
+### [GridLottery - 九宫格抽奖](/zh/docs/react/grid-lottery)
+经典的九宫格转盘抽奖，支持自定义奖品和权重。
+
+### [SlotMachine - 老虎机](/zh/docs/react/slot-machine)
+多滚轴老虎机风格的抽奖组件，支持自定义符号和中奖规则。
+
+### [LuckyWheel - 幸运大转盘](/zh/docs/react/lucky-wheel)
+经典转盘抽奖，支持自定义奖品、颜色和权重配置。
+
+### [DiceGame - 骰子游戏](/zh/docs/react/dice-game)
+3D效果的骰子游戏，支持多种游戏模式（简单、和值、大小、猜测等）。
+
+### [ScratchCard - 刮刮卡](/zh/docs/react/scratch-card)
+真实的刮除体验，支持多种中奖模式（横排、竖排、对角线）。
+
+### [RockPaperScissors - 石头剪刀布](/zh/docs/react/rock-paper-scissors)
+经典的石头剪刀布游戏，支持多种AI策略和统计功能。
+
+### [CoinFlip - 抛硬币](/zh/docs/react/coin-flip)
+3D硬币抛掷游戏，支持动画效果和统计数据。
+
+## 🎯 性能优化
+
+- **Tree-shaking**: 支持按需导入，未使用的组件不会被打包
+- **Canvas渲染**: 利用GPU加速，提供流畅的60fps动画
+- **外部依赖**: React和RandBox作为外部依赖，避免重复打包
+- **代码压缩**: 生产环境自动移除console.log和调试代码
+
+## 🔧 技术规格
+
+- **渲染引擎**: HTML5 Canvas
+- **随机数生成**: RandBox (Mersenne Twister算法)
+- **动画**: requestAnimationFrame + 缓动函数
+- **响应式**: 自动适配容器大小
+- **TypeScript**: 完整的类型支持
+
+## 📚 API参考
+
+### 基础类型
+
+所有组件都继承自 `BaseGameProps` 接口：
+
+```typescript
+interface BaseGameProps {
+  className?: string;
+  style?: React.CSSProperties;
+  disabled?: boolean;
+  onGameStart?: () => void;
+  onGameEnd?: (result: any) => void;
+}
+```
+
+### 通用类型
+
+```typescript
+// 动画状态
+interface AnimationState {
+  isAnimating: boolean;
+  currentStep: number;
+  totalSteps: number;
+}
+
+// 游戏状态
+interface GameState {
+  isPlaying: boolean;
+  result?: any;
+  history: any[];
+}
+
+// 游戏主题配置
+interface GameTheme {
+  primaryColor: string;
+  secondaryColor: string;
+  backgroundColor: string;
+  textColor: string;
+  borderRadius: string;
+  fontFamily: string;
+}
+```
+
+### 组件详细类型
+
+#### GridLottery（九宫格抽奖）
+
+```typescript
+interface GridLotteryProps {
+  prizes: string[];                    // 奖品列表
+  weights?: number[];                  // 奖品权重
+  gridSize?: number;                   // 网格大小，默认9
+  animationDuration?: number;          // 动画时长，默认3000
+  buttonText?: string;                 // 按钮文字
+  onResult?: (result) => void;        // 结果回调
+}
+
+interface GridLotteryResult {
+  position: number;    // 中奖位置（0-8）
+  prize: string;       // 中奖奖品
+  animation: number[]; // 动画路径
+}
+```
+
+#### SlotMachine（老虎机）
+
+```typescript
+interface SlotMachineProps {
+  reels: string[][];                    // 滚轴数组
+  weights?: number[][];                 // 权重配置
+  animationDuration?: number;           // 动画时长，默认3000
+  buttonText?: string;                  // 按钮文字
+  width?: number;                       // Canvas宽度
+  height?: number;                      // Canvas高度
+  onResult?: (result) => void;         // 结果回调
+}
+
+interface SlotMachineResult {
+  results: string[];    // 每个滚轴的结果
+  isJackpot: boolean;   // 是否中大奖
+  combination: string;  // 组合描述
+}
+```
+
+#### LuckyWheel（幸运大转盘）
+
+```typescript
+interface LuckyWheelProps {
+  prizes: string[];                     // 奖品列表
+  weights?: number[];                   // 奖品权重
+  colors?: string[];                    // 自定义颜色
+  animationDuration?: number;           // 动画时长，默认4000
+  buttonText?: string;                  // 按钮文字
+  onResult?: (result) => void;         // 结果回调
+}
+
+interface LuckyWheelResult {
+  prizeIndex: number;  // 中奖奖品索引
+  prize: string;       // 中奖奖品
+  angle: number;       // 最终旋转角度
+  round: number;       // 回合数
+}
+```
+
+#### DiceGame（骰子游戏）
+
+```typescript
+interface DiceGameProps {
+  diceCount?: number;                   // 骰子数量，默认1
+  sides?: number;                       // 骰子面数，默认6
+  gameMode?: DiceGameMode;              // 游戏模式
+  targetSum?: number;                   // 目标总和
+  onResult?: (result) => void;         // 结果回调
+}
+
+type DiceGameMode = 'simple' | 'sum' | 'bigSmall' | 'guess' | 'even_odd' | 'specific';
+
+interface DiceGameResult {
+  results: number[];    // 骰子结果数组
+  total: number;        // 点数总和
+  gameMode: string;     // 游戏模式
+  isWin?: boolean;      // 是否获胜
+  message: string;      // 结果描述
+}
+```
+
+#### ScratchCard（刮刮卡）
+
+```typescript
+interface ScratchCardProps {
+  rows?: number;                        // 行数，默认3
+  cols?: number;                        // 列数，默认3
+  symbols?: string[];                   // 符号数组
+  winProbability?: number;              // 中奖概率，默认0.3
+  width?: number;                       // Canvas宽度，默认300
+  height?: number;                      // Canvas高度，默认200
+  onScratch?: (result) => void;        // 刮开回调
+  onNewCard?: () => void;              // 新卡片回调
+}
+
+interface ScratchCardResult {
+  grid: string[][];                     // 卡片网格内容
+  isWinner: boolean;                    // 是否中奖
+  scratchProgress?: number;             // 刮开进度（0-1）
+  winningInfo?: {                       // 中奖信息
+    pattern: string[];
+    name: string;
+    prize: string;
+    positions: Array<{ row: number; col: number; }>;
+  };
+}
+```
+
+#### RockPaperScissors（石头剪刀布）
+
+```typescript
+interface RockPaperScissorsProps {
+  choices?: string[];                   // 可选择选项
+  emojis?: Record<string, string>;      // emoji图标
+  showStats?: boolean;                  // 是否显示统计，默认true
+  strategy?: RPSStrategy;               // AI策略，默认'random'
+  width?: number;                       // Canvas宽度
+  height?: number;                      // Canvas高度
+  onResult?: (result) => void;         // 结果回调
+}
+
+type RPSStrategy = 'random' | 'counter' | 'pattern';
+type RPSResultType = 'win' | 'lose' | 'tie';
+
+interface RPSResult {
+  playerChoice: string;      // 玩家选择
+  computerChoice: string;    // 电脑选择
+  result: RPSResultType;     // 游戏结果
+  message: string;           // 结果描述
+  emoji: {                   // emoji图标
+    player: string;
+    computer: string;
+  };
+  round: number;             // 回合数
+}
+
+interface RPSStats {
+  totalGames: number;  // 总游戏次数
+  wins: number;        // 获胜次数
+  losses: number;      // 失败次数
+  ties: number;        // 平局次数
+  winRate: string;     // 胜率（百分比）
+}
+```
+
+#### CoinFlip（抛硬币）
+
+```typescript
+interface CoinFlipProps {
+  animationDuration?: number;           // 动画时长，默认2000
+  showStats?: boolean;                  // 是否显示统计，默认true
+  width?: number;                       // Canvas宽度
+  height?: number;                      // Canvas高度
+  onResult?: (result) => void;         // 结果回调
+}
+
+type CoinSide = 'heads' | 'tails';
+
+interface CoinFlipResult {
+  result: CoinSide;   // 硬币结果
+  round: number;      // 回合数
+  timestamp: number;  // 时间戳
+}
+
+interface CoinFlipStats {
+  totalFlips: number;  // 总抛掷次数
+  heads: number;       // 正面次数
+  tails: number;       // 反面次数
+  headsRate: string;   // 正面概率
+  tailsRate: string;   // 反面概率
+}
+```
+
+每个组件还有自己特定的属性和类型定义，详见各组件的专门文档。
+
+## 🎨 自定义样式
+
+由于所有组件都基于Canvas渲染，样式定制主要通过组件属性进行：
+
+```typescript
+// 通过容器样式控制组件外观
+<div style={{ border: '2px solid #ccc', borderRadius: '10px' }}>
+  <GridLottery {...props} />
+</div>
+
+// 通过组件属性控制Canvas内容
+<DiceGame
+  style={{ border: '1px solid #ddd' }}
+  className="my-dice-game"
+/>
+
+// 幸运大转盘支持自定义颜色
+<LuckyWheel
+  prizes={['奖品1', '奖品2', '奖品3', '奖品4']}
+  colors={['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']}
+/>
+```
+
+## 🤝 贡献
+
+欢迎贡献代码！请查看我们的[贡献指南](https://github.com/027xiguapi/randbox/blob/main/CONTRIBUTING.md)。
+
+## 📄 许可证
+
+MIT License - 详见 [LICENSE](https://github.com/027xiguapi/randbox/blob/main/LICENSE) 文件。

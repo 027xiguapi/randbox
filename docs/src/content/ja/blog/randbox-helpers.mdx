@@ -1,0 +1,48 @@
+---
+title: "RandBox 模块导览（3/12）：helpers - 辅助工具"
+description: "RandBox 辅助工具模块速览：pickone/pickset/shuffle 集合操作，capitalize/pad 文本处理，以及 set/mixin 扩展；含示例、FAQ 与参考，SEO 友好。"
+date: "2025-10-16"
+tags: ["RandBox", "辅助工具", "集合操作", "文本处理", "扩展"]
+keywords: ["RandBox", "pickone", "pickset", "shuffle", "capitalize", "mixin"]
+---
+
+# RandBox 模块导览（3/12）：helpers - 辅助工具
+
+辅助工具模块提供集合选择、洗牌与文本处理能力，并支持扩展 RandBox。更多函数参见 `/zh/docs/index` 与 `/zh/docs/helpers/`。
+
+**模块概览**
+- 集合：`pickone/pickset/shuffle`
+- 文本：`capitalize/pad`
+- 扩展：`set/mixin`
+
+**示例**
+```ts
+import RandBox from 'randbox'
+const rb = new RandBox()
+const tag = rb.pickone?.(['A','B','C'])
+const many = rb.pickset?.(['x','y','z'], 2)
+const mixed = rb.shuffle?.([1,2,3,4])
+```
+
+**文档与链接**
+- 中文索引：`/zh/docs/index`
+- 模块索引：`/zh/docs/helpers/`
+- 条目示例：`/zh/docs/helpers/pickone`、`/zh/docs/helpers/mixin`
+
+## Q&A 常见问题（FAQ）
+
+- `pickset` 是否会重复？
+  - 通常返回不重复集合（视实现）；如需允许重复，可通过参数控制。
+- `shuffle` 算法是什么？
+  - 一般采用 Fisher-Yates（现代随机洗牌），确保均匀分布。
+- `mixin` 会覆盖原有方法吗？
+  - 允许混入新方法或覆盖（谨慎使用），详见 `mixin` 文档与示例。
+
+## 参考与出处（References）
+
+- RandBox 中文文档索引：`/zh/docs/index`
+- Helpers 模块文档：`/zh/docs/helpers/index.mdx`
+- 相关 API 页：`/zh/docs/helpers/pickone`、`/zh/docs/helpers/pickset`、`/zh/docs/helpers/shuffle`
+
+
+

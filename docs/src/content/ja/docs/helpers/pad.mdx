@@ -1,0 +1,45 @@
+---
+title: "pad"
+description: "RandBox ページ：pad。使用例と説明が含まれています。"
+date: "2025-10-16"
+tags: ["RandBox", "helpers", "pad"]
+keywords: ["RandBox", "helpers", "pad", "ランダム", "JavaScript", "MDX"]
+---
+
+# pad
+
+```js
+// 使い方
+randBox.pad(number, width)
+randBox.pad(number, width, padder)
+```
+
+ある文字列を使用して数値を希望の幅まで埋めます。
+
+デフォルトでは、`randBox.pad()` はゼロで埋めます。例えば、出力の幅を 5 にするために数字をゼロで埋めるには、次のようにします。
+
+```js
+randBox.pad(45, 5)
+=> '00045'
+
+randBox.pad(284, 5)
+=> '00284'
+
+randBox.pad(82843, 5)
+=> '82843'
+```
+
+返される各項目は、文字列であり、先頭にゼロが付いて各項目の幅が 5 になっていることに注意してください。
+
+ゼロ以外の文字で埋める場合は、オプションで文字を指定できます。
+
+```js
+randBox.pad(81, 5, 'Z')
+=> 'ZZZ81'
+
+randBox.pad(692, 5, 'Z')
+=> 'ZZ692'
+
+randBox.pad(52859, 5)
+=> '52859'
+```

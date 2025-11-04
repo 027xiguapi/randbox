@@ -1,0 +1,49 @@
+---
+title: "floating"
+description: "RandBox ページ：floating、サンプルと説明を含む。"
+date: "2025-10-16"
+tags: ["RandBox", "basics", "floating"]
+keywords: ["RandBox", "basics", "floating", "ランダム", "JavaScript", "MDX"]
+---
+
+# floating
+
+```js
+// 使い方
+randBox.floating()
+randBox.floating({ fixed: 7 })
+randBox.floating({ min: 0, max: 100 })
+```
+<p class="pullquote">float または double をメソッド名として使用したいと考えましたが、J両方は JS 予約語であり、実際には使用されていません...</p>
+
+ランダムな浮動小数点数を返します。
+
+```js
+randBox.floating();
+=> -211920142886.5024
+```
+
+デフォルトでは、小数点以下最大 4 桁の固定小数点数を返します。
+
+注意：最大 4 桁。这是因为、末尾のゼロ（JavaScript 浮動小数点数では許可されていません）を返さない限り、小数点以下 4 桁を保証できないためです。したがって、ランダム randBox が `82383854.2000` を返した場合、返される値は `82383854.2` になります。
+
+小数点以下固定桁数の数値を取得するには、オプションとして提供します。
+
+```js
+randBox.floating({ fixed: 7 });
+=> -749512327.7447168
+```
+
+他の数値関数と同様に、min と/または max を含めることができます。
+
+```js
+randBox.floating({ min: 0, max: 100 });
+=> 31.9021
+```
+
+または組み合わせることができます。
+
+```js
+randBox.floating({ min: 0, max: 100, fixed: 8 });
+=> 45.92367599
+```
