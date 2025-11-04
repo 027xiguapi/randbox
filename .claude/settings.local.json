@@ -34,7 +34,17 @@
       "Bash(pnpm install:*)",
       "Bash(grep:*)",
       "Bash(do echo \"=== $file ===\")",
-      "Bash(head -15 \"$file\")"
+      "Bash(head -15 \"$file\")",
+      "Bash(xargs -n1 basename)",
+      "Bash(test -f /d/monorepo/randbox/docs/src/content/en/blog/03-feature-modules-deep-implementation.mdx)",
+      "Bash(do)",
+      "Bash(if [ ! -f \"$file\" ])",
+      "Bash(then)",
+      "Bash(echo \"MISSING: $file\")",
+      "Bash(fi)",
+      "Bash(if [ -f \"$file\" ])",
+      "Bash(echo \"EXISTS: $file\")",
+      "Bash(else)"
     ],
     "deny": [],
     "ask": []

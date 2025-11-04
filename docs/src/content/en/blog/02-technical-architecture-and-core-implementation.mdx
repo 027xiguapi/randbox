@@ -1,54 +1,607 @@
 ---
-title: "Building RandBox from Scratch (2/5): Technical Architecture and Core Implementation"
-description: "A deep dive into RandBox’s architecture: RNG abstraction, option parsing, validation, module structure, and how consistent API design delivers ergonomic randomness across domains."
-date: 2025-10-16
-tags: [RandBox, architecture, implementation, RNG, TypeScript, modules]
-keywords: [RandBox, random data, architecture, implementation, design patterns, TypeScript]
+title: "Building RandBox from Scratch: A Powerful JavaScript Random Data Generation Library (2/5) - Technical Architecture and Core Implementation"
+description: "RandBox: Technical architecture and core implementation (2/5), including examples and explanations."
+date: "2025-10-16"
+tags: ["RandBox", "blog", "02-technical-architecture-and-core-implementation"]
+keywords: ["RandBox", "blog", "02-technical-architecture-and-core-implementation", "random", "JavaScript", "MDX"]
 ---
 
-# Building RandBox from Scratch (2/5): Technical Architecture and Core Implementation
+# Building RandBox from Scratch: A Powerful JavaScript Random Data Generation Library (2/5) - Technical Architecture and Core Implementation
 
 ![randbox-home](/img/randbox-home.png)
 
-## Design Principles
+## Preface
 
-- Progressive complexity: Simple → advanced options.
-- Sensible defaults: Useable out of the box.
-- Consistency: One API style across modules.
+In the previous article, we explored the origin and overall planning of the RandBox project. Today, I will delve into technical details, sharing the design approach and key implementations of RandBox's core architecture. From the selection of random number generators to the design of the TypeScript type system, every technical decision carries deep consideration for developer experience and performance.
 
-## Core API
+## Core Architecture Design
 
-```ts
-export function integer(this: RandBox): number
-export function integer(this: RandBox, max: number): number
-export function integer(this: RandBox, min: number, max: number): number
-export function integer(this: RandBox, options: IntegerOptions): number
+### Layered Architecture Pattern
+
+RandBox adopts a classic layered architecture to ensure code maintainability and extensibility:
+
+```
+┌─────────────────────────────────────────┐
+│             API Layer                   │
+├─────────────────────────────────────────┤
+│          Module Layer                   │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐    │
+│  │ Person  │ │Location │ │Finance  │ ...│
+│  └─────────┘ └─────────┘ └─────────┘    │
+├─────────────────────────────────────────┤
+│           Core Layer                    │
+│     RNG | Utils | Type Definitions      │
+├─────────────────────────────────────────┤
+│         Runtime Layer                   │
+│      Node.js | Browser | Mini-app       │
+└─────────────────────────────────────────┘
 ```
 
-Internally, options are normalized, ranges validated, and exclusions applied to produce robust outputs.
+### Core Module Details
 
-## Modules
+#### 1. **Core Module - Infrastructure**
 
-- basics: integers/floats/strings/booleans
-- person: names, gender, birthday, documents (SSN/CPF/CF/Aadhar)
-- location: coordinates, lat/long, address, phone, zip/postal
-- finance: credit card (Luhn), expiry, currencies, currency pairs
-- text: syllable/word/sentence/paragraph, emoji
-- time: date/time/timestamp/timezone/ampm
-- web: domain/url/email/ip/mac/tld/social
+The Core module is the foundation of RandBox, providing basic random number generation capabilities and utility functions:
 
-## Helpers
+```typescript
+// src/core.ts Core class design
+export class RandBox {
+  private mt: MersenneTwister;
+  private seed: string | number | undefined;
 
-- pickone/pickset/shuffle
-- capitalize/pad
-- set/mixin for data and behavior extensibility
+  constructor(seed?: string | number) {
+    this.seed = seed;
+    this.mt = new MersenneTwister(this.getSeedValue(seed));
+  }
 
-## Testing & Validation
+  // Core random number generation method
+  random(): number {
+    return this.mt.random();
+  }
 
-- Range tests, locale constraints, format checks (e.g., Luhn for cc)
-- Deterministic seeds for reproducible test cases
+  // Utility method: range check
+  testRange(test: boolean, message: string): void {
+    if (test) {
+      throw new RangeError(message);
+    }
+  }
 
-## Conclusion
+  // Utility method: initialize options
+  initOptions<T>(options: T | undefined, defaultOptions: T): T {
+    return { ...defaultOptions, ...options };
+  }
+}
+```
 
-The architecture balances flexibility and consistency, yielding a library that is easy to adopt while remaining powerful for complex scenarios.
+**Why Choose Mersenne Twister?**
+
+1. **High-Quality Randomness**: Period up to 2^19937-1, almost no repetition
+2. **Excellent Performance**: High computational efficiency, suitable for large-scale data generation
+3. **Predictability**: Supports seed configuration for easy testing and debugging
+4. **Widely Recognized**: Adopted by many programming languages and libraries
+
+#### 2. **Type System Design**
+
+The TypeScript type system is one of RandBox's core advantages, with complete type definitions:
+
+```typescript
+// src/types.ts Type definitions
+export interface RandBoxOptions {
+  seed?: string | number;
+}
+
+// Option interfaces for basic data types
+export interface IntegerOptions {
+  min?: number;
+  max?: number;
+  exclude?: number[];
+}
+
+export interface StringOptions {
+  length?: number;
+  pool?: string;
+  alpha?: boolean;
+  numeric?: boolean;
+  symbols?: boolean;
+  casing?: 'lower' | 'upper' | 'mixed';
+}
+
+// Option interfaces for complex types
+export interface PersonOptions {
+  nationality?: 'zh' | 'en' | 'fr' | 'de';
+  gender?: 'male' | 'female' | 'mixed';
+  middle_initial?: boolean;
+  prefix?: boolean;
+  suffix?: boolean;
+}
+
+// Function overload support
+export interface RandBoxInstance {
+  // Multiple call styles for integer method
+  integer(): number;
+  integer(max: number): number;
+  integer(min: number, max: number): number;
+  integer(options: IntegerOptions): number;
+
+  // Other methods...
+  name(options?: PersonOptions): string;
+  email(options?: EmailOptions): string;
+}
+```
+
+**Type Design Principles:**
+
+1. **Progressive Complexity**: Smooth transition from simple calls to complex configurations
+2. **Smart Inference**: TypeScript automatically infers return types
+3. **Extensibility**: Interface design facilitates future feature extensions
+
+#### 3. **Modular Design Implementation**
+
+Each functional module is developed independently and organized through a unified pattern:
+
+```typescript
+// src/person.ts Example module
+import { RandBox } from './core';
+
+// Name generation function
+export function name(this: RandBox, options?: PersonOptions): string {
+  const opts = this.initOptions(options, {
+    nationality: 'zh',
+    gender: 'mixed',
+    middle_initial: false
+  });
+
+  const firstNames = DATA_SETS.firstNames[opts.nationality][opts.gender];
+  const lastNames = DATA_SETS.lastNames[opts.nationality];
+
+  const firstName = this.pickone(firstNames);
+  const lastName = this.pickone(lastNames);
+
+  return opts.nationality === 'zh'
+    ? `${lastName}${firstName}`
+    : `${firstName} ${lastName}`;
+}
+
+// Email generation function
+export function email(this: RandBox, options?: EmailOptions): string {
+  const opts = this.initOptions(options, {
+    domain: null,
+    length: null
+  });
+
+  const username = opts.length
+    ? this.string({ length: opts.length, casing: 'lower' })
+    : this.first().toLowerCase();
+
+  const domain = opts.domain || this.pickone(COMMON_DOMAINS);
+
+  return `${username}@${domain}`;
+}
+
+// Export all functions
+export const personFunctions = { name, email, age, birthday, gender };
+```
+
+### Data Management Strategy
+
+#### 1. **Localized Data Organization**
+
+RandBox includes rich localized data supporting multiple languages and regions:
+
+```typescript
+// src/datasets.ts Dataset organization
+export const DATA_SETS = {
+  firstNames: {
+    zh: {
+      male: ['Wei', 'Qiang', 'Lei', 'Jun', 'Yang', 'Yong', 'Jie', 'Hua'],
+      female: ['Xiuying', 'Guiying', 'Xiulan', 'Yulan', 'Guilan', 'Xiuzhen', 'Li'],
+      mixed: [] // Combined male and female names
+    },
+    en: {
+      male: ['James', 'John', 'Robert', 'Michael', 'William'],
+      female: ['Mary', 'Patricia', 'Jennifer', 'Linda', 'Elizabeth']
+    }
+  },
+
+  lastNames: {
+    zh: ['Wang', 'Li', 'Zhang', 'Liu', 'Chen', 'Yang', 'Zhao', 'Huang', 'Wu'],
+    en: ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones']
+  },
+
+  // Address data
+  addresses: {
+    zh: {
+      provinces: ['Beijing', 'Shanghai', 'Guangdong', 'Jiangsu'],
+      cities: {
+        'Beijing': ['Chaoyang', 'Haidian', 'Xicheng', 'Dongcheng'],
+        'Shanghai': ['Pudong', 'Huangpu', 'Xuhui', 'Changning']
+      }
+    }
+  },
+
+  // More datasets...
+};
+```
+
+#### 2. **Intelligent Caching Mechanism**
+
+To improve performance, RandBox implements intelligent caching:
+
+```typescript
+class DataCache {
+  private cache = new Map<string, any>();
+  private maxSize = 1000;
+
+  get<T>(key: string, generator: () => T): T {
+    if (this.cache.has(key)) {
+      return this.cache.get(key);
+    }
+
+    const value = generator();
+
+    if (this.cache.size >= this.maxSize) {
+      // LRU eviction strategy
+      const firstKey = this.cache.keys().next().value;
+      this.cache.delete(firstKey);
+    }
+
+    this.cache.set(key, value);
+    return value;
+  }
+}
+```
+
+## Algorithm Core Implementation
+
+### 1. **Mersenne Twister Implementation**
+
+```typescript
+class MersenneTwister {
+  private mt: number[] = new Array(624);
+  private mti: number = 625;
+
+  constructor(seed?: number) {
+    this.init_genrand(seed || Date.now());
+  }
+
+  private init_genrand(s: number): void {
+    this.mt[0] = s >>> 0;
+    for (this.mti = 1; this.mti < 624; this.mti++) {
+      s = this.mt[this.mti - 1] ^ (this.mt[this.mti - 1] >>> 30);
+      this.mt[this.mti] = (((((s & 0xffff0000) >>> 16) * 1812433253) << 16) +
+                          (s & 0x0000ffff) * 1812433253) + this.mti;
+      this.mt[this.mti] >>>= 0;
+    }
+  }
+
+  genrand_int32(): number {
+    let y: number;
+    const mag01 = [0x0, 0x9908b0df];
+
+    if (this.mti >= 624) {
+      // Generate new random number sequence
+      let kk: number;
+
+      for (kk = 0; kk < 227; kk++) {
+        y = (this.mt[kk] & 0x80000000) | (this.mt[kk + 1] & 0x7fffffff);
+        this.mt[kk] = this.mt[kk + 397] ^ (y >>> 1) ^ mag01[y & 0x1];
+      }
+
+      // ... More implementation details
+      this.mti = 0;
+    }
+
+    y = this.mt[this.mti++];
+    // Tempering
+    y ^= y >>> 11;
+    y ^= (y << 7) & 0x9d2c5680;
+    y ^= (y << 15) & 0xefc60000;
+    y ^= y >>> 18;
+
+    return y >>> 0;
+  }
+
+  random(): number {
+    return this.genrand_int32() * (1.0 / 4294967296.0);
+  }
+}
+```
+
+### 2. **Advanced Random Algorithms**
+
+#### Normal Distribution Implementation (Box-Muller Transform)
+
+```typescript
+export function normal(this: RandBox, mean = 0, deviation = 1): number {
+  // Box-Muller transform for normal distribution
+  if (this.normal_cache !== null) {
+    const cached = this.normal_cache;
+    this.normal_cache = null;
+    return cached * deviation + mean;
+  }
+
+  const u1 = this.random();
+  const u2 = this.random();
+
+  const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+  const z1 = Math.sqrt(-2 * Math.log(u1)) * Math.sin(2 * Math.PI * u2);
+
+  this.normal_cache = z1;
+  return z0 * deviation + mean;
+}
+```
+
+#### Weighted Random Selection Implementation
+
+```typescript
+export function weighted<T>(
+  this: RandBox,
+  array: T[],
+  weights: number[]
+): T {
+  if (array.length !== weights.length) {
+    throw new Error('Array and weights must have the same length');
+  }
+
+  // Calculate cumulative weights
+  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+  const cumulativeWeights: number[] = [];
+
+  let sum = 0;
+  for (let i = 0; i < weights.length; i++) {
+    sum += weights[i] / totalWeight;
+    cumulativeWeights[i] = sum;
+  }
+
+  // Random selection
+  const random = this.random();
+  for (let i = 0; i < cumulativeWeights.length; i++) {
+    if (random <= cumulativeWeights[i]) {
+      return array[i];
+    }
+  }
+
+  return array[array.length - 1];
+}
+```
+
+## Build and Optimization
+
+### 1. **Rollup Configuration Optimization**
+
+```javascript
+// rollup.config.js
+import typescript from '@rollup/plugin-typescript';
+import { terser } from 'rollup-plugin-terser';
+import resolve from '@rollup/plugin-node-resolve';
+
+export default {
+  input: 'src/index.ts',
+  output: [
+    // ESM format (Tree Shaking support)
+    {
+      file: 'dist/index.esm.mjs',
+      format: 'es',
+      sourcemap: true
+    },
+    // CommonJS format
+    {
+      file: 'dist/index.cjs',
+      format: 'cjs',
+      sourcemap: true
+    },
+    // UMD format (direct browser use)
+    {
+      file: 'dist/index.umd.js',
+      format: 'umd',
+      name: 'RandBox',
+      sourcemap: true
+    }
+  ],
+  plugins: [
+    resolve(),
+    typescript({
+      tsconfig: './tsconfig.json',
+      declaration: true,
+      declarationDir: 'dist'
+    }),
+    terser() // Code minification
+  ],
+  // External configuration, support for on-demand imports
+  external: id => !id.startsWith('.') && !id.startsWith('/'),
+
+  // Multi-entry configuration
+  input: {
+    index: 'src/index.ts',
+    core: 'src/core.ts',
+    person: 'src/person.ts',
+    location: 'src/location.ts',
+    // ... Other modules
+  }
+};
+```
+
+### 2. **Tree Shaking Optimization**
+
+To achieve the best Tree Shaking effect, we use a special export strategy:
+
+```typescript
+// src/index.ts Main entry
+export { RandBox as default } from './core';
+export * from './types';
+
+// Modular exports
+export * as basics from './basics';
+export * as person from './person';
+export * as location from './location';
+// ... Other modules
+
+// src/person.ts Module exports
+export const name = function(this: RandBox, options?: PersonOptions): string {
+  // Implementation
+};
+
+export const email = function(this: RandBox, options?: EmailOptions): string {
+  // Implementation
+};
+
+// Batch exports (for main class integration)
+export const personFunctions = { name, email, age, birthday };
+```
+
+This design allows users to use it in different ways:
+
+```javascript
+// Method 1: Full import
+import RandBox from 'randbox';
+const randBox = new RandBox();
+
+// Method 2: Module-based import
+import * as person from 'randbox/dist/person';
+console.log(person.name());
+
+// Method 3: On-demand import
+import { name, email } from 'randbox/dist/person';
+```
+
+## Performance Optimization Strategies
+
+### 1. **Lazy Loading Data Sets**
+
+```typescript
+class LazyDataSet<T> {
+  private _data: T | null = null;
+  private loader: () => T;
+
+  constructor(loader: () => T) {
+    this.loader = loader;
+  }
+
+  get data(): T {
+    if (this._data === null) {
+      this._data = this.loader();
+    }
+    return this._data;
+  }
+}
+
+// Usage example
+const CHINESE_NAMES = new LazyDataSet(() =>
+  require('./datasets/chinese-names.json')
+);
+```
+
+### 2. **Memory Pool Optimization**
+
+```typescript
+class ObjectPool<T> {
+  private pool: T[] = [];
+  private createFn: () => T;
+  private resetFn: (obj: T) => void;
+
+  constructor(createFn: () => T, resetFn: (obj: T) => void) {
+    this.createFn = createFn;
+    this.resetFn = resetFn;
+  }
+
+  get(): T {
+    if (this.pool.length > 0) {
+      return this.pool.pop()!;
+    }
+    return this.createFn();
+  }
+
+  release(obj: T): void {
+    this.resetFn(obj);
+    this.pool.push(obj);
+  }
+}
+```
+
+## Error Handling and Debugging
+
+### 1. **User-Friendly Error Messages**
+
+```typescript
+export class RandBoxError extends Error {
+  constructor(message: string, public code: string) {
+    super(message);
+    this.name = 'RandBoxError';
+  }
+}
+
+export class ValidationError extends RandBoxError {
+  constructor(parameter: string, value: any, expected: string) {
+    super(
+      `Invalid parameter "${parameter}": expected ${expected}, got ${typeof value}`,
+      'VALIDATION_ERROR'
+    );
+  }
+}
+
+// Usage example
+export function integer(this: RandBox, min?: number, max?: number): number {
+  if (min !== undefined && typeof min !== 'number') {
+    throw new ValidationError('min', min, 'number');
+  }
+
+  if (max !== undefined && typeof max !== 'number') {
+    throw new ValidationError('max', max, 'number');
+  }
+
+  if (min !== undefined && max !== undefined && min > max) {
+    throw new RandBoxError(
+      `Minimum value (${min}) cannot be greater than maximum value (${max})`,
+      'INVALID_RANGE'
+    );
+  }
+
+  // Implementation logic...
+}
+```
+
+### 2. **Debugging Support**
+
+```typescript
+export class RandBox {
+  private debugMode = false;
+  private callHistory: Array<{ method: string; args: any[]; result: any }> = [];
+
+  enableDebug(): void {
+    this.debugMode = true;
+  }
+
+  getCallHistory(): ReadonlyArray<any> {
+    return this.callHistory;
+  }
+
+  private logCall(method: string, args: any[], result: any): void {
+    if (this.debugMode) {
+      this.callHistory.push({ method, args, result });
+      console.log(`RandBox.${method}(${JSON.stringify(args)}) -> ${result}`);
+    }
+  }
+}
+```
+
+## What's Next
+
+In the next article, I will detail how to implement RandBox's rich functional modules, including:
+
+- Implementation details of data generation in various professional domains
+- Application of complex algorithms (such as geographic coordinate generation, credit card number validation, etc.)
+- Processing and optimization of localized data
+- Implementation techniques for advanced features
+
+Stay tuned for "Building RandBox from Scratch (3/5) - Feature Modules Deep Implementation"!
+
+---
+
+## About RandBox
+
+**🏠 Website**: [https://randbox.top](https://randbox.top)
+**📦 GitHub**: [https://github.com/027xiguapi/randbox](https://github.com/027xiguapi/randbox)
+**📚 Documentation**: [https://randbox.top/en/docs](https://randbox.top/en/docs)
+
+If this project is helpful to you, please give us a ⭐ Star!
 

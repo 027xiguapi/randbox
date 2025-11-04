@@ -1,37 +1,611 @@
 ---
 title: "Building RandBox from Scratch (4/5): Testing System and Quality Assurance"
-description: "The testing strategy behind RandBox: unit tests, fixtures, deterministic seeds, range and format validations (e.g., Luhn), CI integration, and how quality stays high across modules."
-date: 2025-10-16
-tags: [RandBox, testing, QA, CI, validation]
-keywords: [RandBox, tests, QA, CI, fixtures, seeds]
+description: "RandBox page: Building RandBox from Scratch (4/5) - Testing System and Quality Assurance, with examples and explanations."
+date: "2025-10-16"
+tags: ["RandBox", "blog", "04-testing-system-and-quality-assurance"]
+keywords: ["RandBox", "blog", "04-testing-system-and-quality-assurance", "random", "JavaScript", "MDX"]
 ---
 
 # Building RandBox from Scratch (4/5): Testing System and Quality Assurance
 
 ![randbox-home](/img/randbox-home.png)
 
-## Test Philosophy
+## Preface
 
-- Start specific, then go broader.
-- Validate ranges, formats, and locale constraints.
-- Use deterministic seeds for reproducibility.
+In the previous three articles, we delved deep into RandBox's planning, architecture, and feature implementation. Today, I will share how to build a comprehensive testing system for RandBox to ensure the library's quality and reliability. For a random data generation library, testing faces unique challenges: How do you test "random" results? How do you ensure cross-platform consistency? These issues all require clever solutions.
 
-## Coverage
+## Test Strategy Design
 
-- Basics: numeric ranges, string charsets, template placeholders
-- Person: name locales, gender matching, birthday ranges
-- Location: coordinate precision, phone formats, postal/zip
-- Finance: Luhn validation, expiry bounds, currency codes
-- Text: lengths and composition, emoji sets
-- Time: bounds and rollovers, timezone correctness
-- Web: protocol/domain/email rules, IP formats
+### Test Pyramid Principle
 
-## CI and Tooling
+RandBox's testing system follows the classic test pyramid principle:
 
-- Integrate tests into CI pipelines with reporting.
-- Use lightweight fixtures and snapshot tests where helpful.
+```
+        /\
+       /  \
+      / E2E \ (Few end-to-end tests)
+     /______\
+    /        \
+   / Integration  \ (Moderate number)
+  /________________\
+ /                  \
+/   Unit Tests        \ (Large number of basic tests)
+/______________________\
+```
 
-## Outcome
+### Core Testing Challenges
 
-Confidence in correctness and stability lets RandBox be used for serious prototyping and testing workflows.
+#### 1. **The Paradox of Randomness Testing**
+Random data generation results are inherently unpredictable, but testing requires predictable assertions.
 
+**Solution: Seed Control**
+```javascript
+// Use fixed seed to ensure reproducible test results
+const randBox = new RandBox('test-seed-123');
+assert(randBox.integer(1, 10) === 7); // Always returns 7 with the same seed
+```
+
+#### 2. **Statistical Property Validation**
+Need to verify that the statistical characteristics of generated data match expectations.
+
+**Solution: Law of Large Numbers**
+```javascript
+// Generate large amounts of data to verify distribution characteristics
+test('integer distribution should be uniform', () => {
+  const results = {};
+  const iterations = 10000;
+
+  for (let i = 0; i < iterations; i++) {
+    const value = randBox.integer(1, 10);
+    results[value] = (results[value] || 0) + 1;
+  }
+
+  // Verify each number's frequency is close to expected value
+  Object.values(results).forEach(count => {
+    const expected = iterations / 10;
+    const tolerance = expected * 0.1; // 10% tolerance
+    assert(Math.abs(count - expected) < tolerance);
+  });
+});
+```
+
+## Unit Test Implementation
+
+### 1. **Basic Function Testing Framework**
+
+We chose AVA as the testing framework for the following reasons:
+- Clean API design
+- Built-in parallel execution
+- Powerful assertion library
+- Excellent error reporting
+
+```javascript
+// test/basics.test.js
+import test from 'ava';
+import RandBox from '../src/index.js';
+
+test.beforeEach(t => {
+  // Each test uses the same seed to ensure reproducibility
+  t.context.randBox = new RandBox('test-seed');
+});
+
+test('integer() should return number within range', t => {
+  const { randBox } = t.context;
+
+  for (let i = 0; i < 100; i++) {
+    const result = randBox.integer(1, 10);
+    t.true(Number.isInteger(result));
+    t.true(result >= 1 && result <= 10);
+  }
+});
+
+test('integer() with exclude option', t => {
+  const { randBox } = t.context;
+  const exclude = [5, 7, 9];
+
+  for (let i = 0; i < 100; i++) {
+    const result = randBox.integer({ min: 1, max: 10, exclude });
+    t.false(exclude.includes(result));
+  }
+});
+```
+
+### 2. **Parameter Validation Testing**
+
+```javascript
+test('integer() parameter validation', t => {
+  const { randBox } = t.context;
+
+  // Test invalid parameters
+  t.throws(() => randBox.integer('invalid'), {
+    instanceOf: TypeError,
+    message: /Expected number/
+  });
+
+  // Test range errors
+  t.throws(() => randBox.integer(10, 5), {
+    instanceOf: RangeError,
+    message: /Min cannot be greater than max/
+  });
+
+  // Test boundary values
+  t.notThrows(() => randBox.integer(0, 0)); // Should always return 0
+  t.is(randBox.integer(0, 0), 0);
+});
+```
+
+### 3. **Complex Function Testing**
+
+```javascript
+// Test name generation
+test('name() should generate valid names', t => {
+  const { randBox } = t.context;
+
+  // Chinese name test
+  const chineseName = randBox.name({ nationality: 'zh' });
+  t.true(typeof chineseName === 'string');
+  t.true(chineseName.length >= 2 && chineseName.length <= 4);
+
+  // English name test
+  const englishName = randBox.name({ nationality: 'en' });
+  t.true(englishName.includes(' ')); // English names contain spaces
+
+  // Name with prefix
+  const nameWithPrefix = randBox.name({
+    nationality: 'en',
+    prefix: true,
+    gender: 'male'
+  });
+  t.true(nameWithPrefix.startsWith('Mr.') || nameWithPrefix.startsWith('Dr.'));
+});
+
+// Test email generation
+test('email() should generate valid email addresses', t => {
+  const { randBox } = t.context;
+
+  const email = randBox.email();
+
+  // Basic format validation
+  t.regex(email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+
+  // Custom domain test
+  const customEmail = randBox.email({ domain: 'example.com' });
+  t.true(customEmail.endsWith('@example.com'));
+});
+```
+
+## Performance Testing and Benchmarking
+
+### 1. **Performance Testing Framework Setup**
+
+```javascript
+// test/performance.test.js
+import { performance } from 'perf_hooks';
+import test from 'ava';
+import RandBox from '../src/index.js';
+
+function benchmark(name, fn, iterations = 10000) {
+  const start = performance.now();
+
+  for (let i = 0; i < iterations; i++) {
+    fn();
+  }
+
+  const end = performance.now();
+  const duration = end - start;
+  const opsPerSec = (iterations / duration) * 1000;
+
+  console.log(`${name}: ${duration.toFixed(2)}ms (${opsPerSec.toFixed(0)} ops/sec)`);
+
+  return { duration, opsPerSec };
+}
+
+test('performance benchmarks', t => {
+  const randBox = new RandBox();
+
+  // Basic function performance tests
+  const integerPerf = benchmark('integer()', () => randBox.integer());
+  const stringPerf = benchmark('string()', () => randBox.string());
+  const namePerf = benchmark('name()', () => randBox.name());
+
+  // Performance requirements: at least 10000 operations per second
+  t.true(integerPerf.opsPerSec > 10000);
+  t.true(stringPerf.opsPerSec > 5000);
+  t.true(namePerf.opsPerSec > 1000);
+});
+```
+
+### 2. **Memory Usage Testing**
+
+```javascript
+test('memory usage should be reasonable', t => {
+  const initialMemory = process.memoryUsage().heapUsed;
+
+  // Create multiple instances
+  const instances = [];
+  for (let i = 0; i < 1000; i++) {
+    instances.push(new RandBox());
+  }
+
+  // Generate large amounts of data
+  instances.forEach(randBox => {
+    for (let j = 0; j < 100; j++) {
+      randBox.name();
+      randBox.email();
+      randBox.address();
+    }
+  });
+
+  const finalMemory = process.memoryUsage().heapUsed;
+  const memoryIncrease = finalMemory - initialMemory;
+
+  // Memory increase should be within reasonable range (less than 50MB)
+  t.true(memoryIncrease < 50 * 1024 * 1024);
+});
+```
+
+## Statistical Property Validation
+
+### 1. **Random Distribution Testing**
+
+```javascript
+// test/statistics.test.js
+import test from 'ava';
+import RandBox from '../src/index.js';
+
+function chiSquareTest(observed, expected, significance = 0.05) {
+  let chiSquare = 0;
+
+  for (let i = 0; i < observed.length; i++) {
+    const diff = observed[i] - expected[i];
+    chiSquare += (diff * diff) / expected[i];
+  }
+
+  // Simplified chi-square test (actual application requires look-up tables)
+  const degreesOfFreedom = observed.length - 1;
+  const critical = degreesOfFreedom * 2; // Simplified threshold
+
+  return chiSquare < critical;
+}
+
+test('integer distribution should pass chi-square test', t => {
+  const randBox = new RandBox();
+  const buckets = new Array(10).fill(0);
+  const iterations = 10000;
+
+  for (let i = 0; i < iterations; i++) {
+    const value = randBox.integer(0, 9);
+    buckets[value]++;
+  }
+
+  const expected = new Array(10).fill(iterations / 10);
+  const isUniform = chiSquareTest(buckets, expected);
+
+  t.true(isUniform, 'Distribution should be approximately uniform');
+});
+
+test('floating point distribution', t => {
+  const randBox = new RandBox();
+  const samples = [];
+
+  for (let i = 0; i < 1000; i++) {
+    samples.push(randBox.floating(0, 1));
+  }
+
+  // Verify range
+  samples.forEach(sample => {
+    t.true(sample >= 0 && sample <= 1);
+  });
+
+  // Verify mean is close to 0.5
+  const mean = samples.reduce((sum, val) => sum + val, 0) / samples.length;
+  t.true(Math.abs(mean - 0.5) < 0.05);
+});
+```
+
+### 2. **Normal Distribution Testing**
+
+```javascript
+test('normal distribution should have correct properties', t => {
+  const randBox = new RandBox();
+  const samples = [];
+  const mean = 100;
+  const stdDev = 15;
+
+  for (let i = 0; i < 1000; i++) {
+    samples.push(randBox.normal(mean, stdDev));
+  }
+
+  // Calculate sample mean and standard deviation
+  const sampleMean = samples.reduce((sum, val) => sum + val, 0) / samples.length;
+  const variance = samples.reduce((sum, val) => sum + Math.pow(val - sampleMean, 2), 0) / samples.length;
+  const sampleStdDev = Math.sqrt(variance);
+
+  // Verify mean and standard deviation are within reasonable ranges
+  t.true(Math.abs(sampleMean - mean) < 2);
+  t.true(Math.abs(sampleStdDev - stdDev) < 2);
+});
+```
+
+## Compatibility Testing
+
+### 1. **Multi-Environment Testing**
+
+```javascript
+// test/compatibility.test.js
+test('should work in different JavaScript environments', t => {
+  // Node.js environment test
+  if (typeof window === 'undefined') {
+    t.true(true, 'Running in Node.js environment');
+  }
+
+  // Test ES6 module import
+  t.truthy(RandBox);
+  t.true(typeof RandBox === 'function');
+
+  // Test basic functionality
+  const randBox = new RandBox();
+  t.true(typeof randBox.random === 'function');
+});
+
+// Browser environment test (using Puppeteer)
+test('browser compatibility', async t => {
+  const puppeteer = require('puppeteer');
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+
+  await page.addScriptTag({
+    path: './dist/index.umd.js'
+  });
+
+  const result = await page.evaluate(() => {
+    const randBox = new window.RandBox();
+    return {
+      integer: randBox.integer(1, 10),
+      string: randBox.string(),
+      name: randBox.name()
+    };
+  });
+
+  t.true(typeof result.integer === 'number');
+  t.true(typeof result.string === 'string');
+  t.true(typeof result.name === 'string');
+
+  await browser.close();
+});
+```
+
+### 2. **TypeScript Type Testing**
+
+```typescript
+// test/types.test.ts
+import test from 'ava';
+import RandBox from '../src/index';
+
+test('TypeScript type definitions', t => {
+  const randBox = new RandBox();
+
+  // Compile-time type checking
+  const num: number = randBox.integer();
+  const str: string = randBox.string();
+  const bool: boolean = randBox.bool();
+
+  // Optional parameter type checking
+  const customInt: number = randBox.integer({ min: 1, max: 10, exclude: [5] });
+  const customStr: string = randBox.string({ length: 20, alpha: true });
+
+  t.true(typeof num === 'number');
+  t.true(typeof str === 'string');
+  t.true(typeof bool === 'boolean');
+});
+```
+
+## Continuous Integration Configuration
+
+### 1. **GitHub Actions Workflow**
+
+```yaml
+# .github/workflows/test.yml
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [16.x, 18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linting
+      run: npm run lint
+
+    - name: Run type checking
+      run: npm run typecheck
+
+    - name: Run tests
+      run: npm test
+
+    - name: Run coverage
+      run: npm run coverage
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+
+  browser-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build for browser
+      run: npm run build
+
+    - name: Run browser tests
+      run: npm run test:browser
+```
+
+### 2. **Test Coverage Configuration**
+
+```javascript
+// nyc.config.js
+module.exports = {
+  include: ['src/**/*.ts'],
+  exclude: [
+    'src/**/*.test.ts',
+    'src/**/*.spec.ts',
+    'src/types.ts'
+  ],
+  reporter: ['text', 'html', 'lcov'],
+  'report-dir': './coverage',
+  'temp-dir': './coverage/.nyc_output',
+  checkCoverage: true,
+  lines: 90,
+  statements: 90,
+  functions: 90,
+  branches: 85
+};
+```
+
+## Quality Assurance Process
+
+### 1. **Code Quality Checks**
+
+```javascript
+// .eslintrc.js
+module.exports = {
+  extends: [
+    '@typescript-eslint/recommended',
+    'plugin:jest/recommended'
+  ],
+  rules: {
+    // Custom rules
+    'prefer-const': 'error',
+    'no-var': 'error',
+    '@typescript-eslint/explicit-function-return-type': 'warn',
+    '@typescript-eslint/no-explicit-any': 'error'
+  }
+};
+```
+
+### 2. **Automated Release Process**
+
+```json
+{
+  "scripts": {
+    "preversion": "npm run test && npm run build",
+    "version": "npm run docs:build",
+    "postversion": "git push && git push --tags",
+    "prepublishOnly": "npm run test && npm run build",
+    "release": "semantic-release"
+  }
+}
+```
+
+### 3. **Changelog Auto Generation**
+
+```javascript
+// release.config.js
+module.exports = {
+  branches: ['main'],
+  plugins: [
+    '@semantic-release/commit-analyzer',
+    '@semantic-release/release-notes-generator',
+    '@semantic-release/changelog',
+    '@semantic-release/npm',
+    '@semantic-release/github'
+  ]
+};
+```
+
+## Test Data Management
+
+### 1. **Test Data Generator**
+
+```javascript
+// test/helpers/test-data-generator.js
+export class TestDataGenerator {
+  static generateTestCases(count = 100) {
+    const cases = [];
+
+    for (let i = 0; i < count; i++) {
+      cases.push({
+        seed: `test-${i}`,
+        expected: {
+          integer: this.expectedInteger(`test-${i}`),
+          string: this.expectedString(`test-${i}`),
+          name: this.expectedName(`test-${i}`)
+        }
+      });
+    }
+
+    return cases;
+  }
+
+  static expectedInteger(seed) {
+    // Pre-compute expected value based on seed
+    const randBox = new RandBox(seed);
+    return randBox.integer(1, 100);
+  }
+}
+```
+
+### 2. **Snapshot Testing**
+
+```javascript
+test('output consistency snapshot test', t => {
+  const randBox = new RandBox('snapshot-seed');
+
+  const output = {
+    integers: Array(10).fill().map(() => randBox.integer(1, 100)),
+    strings: Array(5).fill().map(() => randBox.string({ length: 10 })),
+    names: Array(5).fill().map(() => randBox.name()),
+    emails: Array(5).fill().map(() => randBox.email())
+  };
+
+  t.snapshot(output, 'Random output should be consistent');
+});
+```
+
+## Next Article Preview
+
+In the final article, I will share RandBox's documentation construction, community operation, and ecosystem development, including:
+
+- Building a modern documentation website
+- Automatic API documentation generation
+- Developing community contribution guidelines
+- Planning and implementing a plugin ecosystem
+
+Stay tuned for "Building RandBox from Scratch (5/5) - Documentation Construction and Ecosystem Development"!
+
+---
+
+## About RandBox
+
+**🏠 Homepage**: [https://randbox.top](https://randbox.top)
+**📦 GitHub**: [https://github.com/027xiguapi/randbox](https://github.com/027xiguapi/randbox)
+**📚 Documentation**: [https://randbox.top/zh/docs](https://randbox.top/zh/docs)
+
+If this project is helpful to you, please give us a ⭐ Star!

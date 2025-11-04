@@ -1,40 +1,770 @@
 ---
-title: "Building RandBox from Scratch (3/5): Feature Modules Deep Implementation"
-description: "Deep implementation tour across RandBox modules: from basic numbers and strings to geospatial coordinates and finance data with Luhn validation, showcasing consistent APIs and robust options."
-date: 2025-10-16
-tags: [RandBox, modules, basics, person, location, finance, text]
-keywords: [RandBox, implementation, modules, examples, options, validation]
+title: "Building RandBox from Scratch: A Powerful JavaScript Random Data Generation Library (3/5) - Feature Modules Deep Implementation"
+description: "RandBox page: Building RandBox from Scratch: A Powerful JavaScript Random Data Generation Library (3/5) - Feature Modules Deep Implementation, with examples and explanations."
+date: "2025-10-16"
+tags: ["RandBox", "blog", "03-feature-modules-deep-implementation"]
+keywords: ["RandBox", "blog", "03-feature-modules-deep-implementation", "random", "JavaScript", "MDX"]
 ---
 
-# Building RandBox from Scratch (3/5): Feature Modules Deep Implementation
+# Building RandBox from Scratch: A Powerful JavaScript Random Data Generation Library (3/5) - Feature Modules Deep Implementation
 
 ![randbox-home](/img/randbox-home.png)
 
-## Basics Module
+## Preface
 
-Multiple overloads unify integer generation while ensuring type and range validation. Floating supports precision; strings support length and custom charsets.
+In the previous two articles, we explored RandBox's project planning and core architecture. Today, I will dive deep into the implementation details of each feature module, sharing how to build rich and diverse random data generation functionality. From basic number and string generation to complex geographic coordinate calculations, each module has its unique challenges and clever solutions.
 
-## Person Module
+## Module Design Philosophy
 
-Flexible name generation by locale and gender; age and birthday utilities; document generators for testing forms with realistic formats.
+Before diving into specific implementations, I want to share the core philosophy behind RandBox's module design:
 
-## Location Module
+### 1. **Progressive Complexity**
+Each feature supports multiple calling methods from simple to complex:
 
-Coordinates, latitude, longitude with precision; address and city generators; phone numbers and postal codes by locale.
+```javascript
+// Simple call
+randBox.name();                    // "John Smith"
 
-## Finance Module
+// Medium complexity
+randBox.name({ nationality: 'en' }); // "John Smith"
 
-Credit card numbers validated by Luhn; expiry month/year; currencies and currency pairs for fintech simulations.
+// Fully custom
+randBox.name({
+  nationality: 'zh',
+  gender: 'female',
+  prefix: true,
+  suffix: false
+});                               // "Ms. Wang"
+```
 
-## Text Module
+### 2. **Smart Defaults**
+Each feature has reasonable default behavior, usable without configuration:
 
-Syllables, words, sentences, and paragraphs with lengths and structure controls; emoji for UX demos.
+```javascript
+// These all produce reasonable default results
+randBox.integer();    // Integer between 0-100
+randBox.email();      // Properly formatted email
+randBox.phone();      // Current region's phone format
+```
 
-## Time Module
+### 3. **Consistency Principle**
+All modules follow the same API design pattern to reduce learning cost.
 
-Dates, timestamps, timezones with AM/PM support and boundaries.
+## Basic Data Type Module (basics.ts)
 
-## Web Module
+The basics module is the foundation of the entire RandBox, implementing the most core random data generation functionality.
 
-Domains, URLs, emails, IPs, MAC addresses, and social tags for realistic web data.
+### 1. **Multiple Implementation Methods for Integer Generation**
 
+```typescript
+export function integer(this: RandBox): number;
+export function integer(this: RandBox, max: number): number;
+export function integer(this: RandBox, min: number, max: number): number;
+export function integer(this: RandBox, options: IntegerOptions): number;
+export function integer(
+  this: RandBox,
+  minOrOptions?: number | IntegerOptions,
+  max?: number
+): number {
+  // Parameter parsing logic
+  let min: number, maxVal: number, exclude: number[] = [];
+
+  if (typeof minOrOptions === 'object') {
+    // Object-form parameters
+    const opts = this.initOptions(minOrOptions, {
+      min: -9007199254740991, // Number.MIN_SAFE_INTEGER
+      max: 9007199254740991,  // Number.MAX_SAFE_INTEGER
+      exclude: []
+    });
+    min = opts.min;
+    maxVal = opts.max;
+    exclude = opts.exclude;
+  } else if (typeof minOrOptions === 'number') {
+    if (max === undefined) {
+      // integer(max) form
+      min = 0;
+      maxVal = minOrOptions;
+    } else {
+      // integer(min, max) form
+      min = minOrOptions;
+      maxVal = max;
+    }
+  } else {
+    // integer() form, use default values
+    min = 0;
+    maxVal = 100;
+  }
+
+  // Parameter validation
+  this.testRange(
+    !Number.isInteger(min) || !Number.isInteger(maxVal),
+    'Min and max must be integers'
+  );
+
+  this.testRange(min > maxVal, 'Min cannot be greater than max');
+
+  // Generate random integer
+  let result: number;
+  const range = maxVal - min + 1;
+
+  do {
+    result = Math.floor(this.random() * range) + min;
+  } while (exclude.includes(result) && exclude.length < range);
+
+  if (exclude.includes(result) && exclude.length >= range) {
+    throw new Error('All possible values are excluded');
+  }
+
+  return result;
+}
+```
+
+### 2. **High-Quality String Generation**
+
+String generation is a feature that seems simple but is actually complex, requiring consideration of multiple character sets and encodings:
+
+```typescript
+interface StringOptions {
+  length?: number;
+  pool?: string;
+  alpha?: boolean;
+  numeric?: boolean;
+  symbols?: boolean;
+  casing?: 'lower' | 'upper' | 'mixed';
+  exclude?: string[];
+}
+
+export function string(this: RandBox, options?: StringOptions): string {
+  const opts = this.initOptions(options, {
+    length: 10,
+    pool: null,
+    alpha: true,
+    numeric: false,
+    symbols: false,
+    casing: 'mixed',
+    exclude: []
+  });
+
+  // Build character pool
+  let pool = opts.pool;
+  if (!pool) {
+    pool = '';
+
+    if (opts.alpha) {
+      pool += 'abcdefghijklmnopqrstuvwxyz';
+      if (opts.casing === 'upper' || opts.casing === 'mixed') {
+        pool += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      }
+    }
+
+    if (opts.numeric) {
+      pool += '0123456789';
+    }
+
+    if (opts.symbols) {
+      pool += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    }
+  }
+
+  // Remove excluded characters
+  if (opts.exclude.length > 0) {
+    for (const char of opts.exclude) {
+      pool = pool.replace(new RegExp(char, 'g'), '');
+    }
+  }
+
+  this.testRange(pool.length === 0, 'Character pool cannot be empty');
+
+  // Generate string
+  let result = '';
+  for (let i = 0; i < opts.length; i++) {
+    result += pool.charAt(Math.floor(this.random() * pool.length));
+  }
+
+  // Casing handling
+  if (opts.casing === 'lower') {
+    result = result.toLowerCase();
+  } else if (opts.casing === 'upper') {
+    result = result.toUpperCase();
+  }
+
+  return result;
+}
+```
+
+### 3. **Floating-Point Precision Control**
+
+Floating-point generation requires special attention to precision control:
+
+```typescript
+export function floating(
+  this: RandBox,
+  min = 0,
+  max = 1,
+  fixed?: number
+): number {
+  this.testRange(min > max, 'Min cannot be greater than max');
+
+  const result = this.random() * (max - min) + min;
+
+  if (fixed !== undefined) {
+    this.testRange(
+      !Number.isInteger(fixed) || fixed < 0,
+      'Fixed must be a non-negative integer'
+    );
+    return Number(result.toFixed(fixed));
+  }
+
+  return result;
+}
+```
+
+## Personal Information Module (person.ts)
+
+The personal information module is one of the most complex modules in RandBox, requiring handling of names, genders, and other data across multiple cultural contexts.
+
+### 1. **Smart Name Generation**
+
+```typescript
+interface PersonOptions {
+  nationality?: 'zh' | 'en' | 'fr' | 'de' | 'jp';
+  gender?: 'male' | 'female' | 'mixed';
+  middle_initial?: boolean;
+  prefix?: boolean;
+  suffix?: boolean;
+}
+
+export function name(this: RandBox, options?: PersonOptions): string {
+  const opts = this.initOptions(options, {
+    nationality: 'zh',
+    gender: 'mixed',
+    middle_initial: false,
+    prefix: false,
+    suffix: false
+  });
+
+  // Select gender
+  const selectedGender = opts.gender === 'mixed'
+    ? this.pickone(['male', 'female'])
+    : opts.gender;
+
+  // Get corresponding dataset
+  const firstNames = DATASETS.firstNames[opts.nationality][selectedGender];
+  const lastNames = DATASETS.lastNames[opts.nationality];
+
+  let result = '';
+
+  // Add prefix
+  if (opts.prefix) {
+    const prefixes = DATASETS.prefixes[opts.nationality][selectedGender];
+    result += this.pickone(prefixes) + ' ';
+  }
+
+  // Generate name
+  const firstName = this.pickone(firstNames);
+  const lastName = this.pickone(lastNames);
+
+  if (opts.nationality === 'zh') {
+    // Chinese: surname + given name
+    result += lastName + firstName;
+  } else {
+    // Western: given name + surname
+    result += firstName;
+
+    // Add middle initial
+    if (opts.middle_initial) {
+      result += ' ' + this.character({ alpha: true, casing: 'upper' }) + '.';
+    }
+
+    result += ' ' + lastName;
+  }
+
+  // Add suffix
+  if (opts.suffix) {
+    const suffixes = DATASETS.suffixes[opts.nationality];
+    result += ' ' + this.pickone(suffixes);
+  }
+
+  return result.trim();
+}
+```
+
+### 2. **Age and Birthday Correlation Generation**
+
+```typescript
+interface AgeOptions {
+  type?: 'child' | 'teen' | 'adult' | 'senior' | 'any';
+  min?: number;
+  max?: number;
+}
+
+export function age(this: RandBox, options?: AgeOptions): number {
+  const opts = this.initOptions(options, {
+    type: 'any',
+    min: null,
+    max: null
+  });
+
+  let min: number, max: number;
+
+  if (opts.min !== null && opts.max !== null) {
+    min = opts.min;
+    max = opts.max;
+  } else {
+    // Determine range based on type
+    switch (opts.type) {
+      case 'child':
+        min = 1; max = 12;
+        break;
+      case 'teen':
+        min = 13; max = 19;
+        break;
+      case 'adult':
+        min = 20; max = 64;
+        break;
+      case 'senior':
+        min = 65; max = 100;
+        break;
+      default:
+        min = 1; max = 100;
+    }
+  }
+
+  return this.integer(min, max);
+}
+
+export function birthday(this: RandBox, options?: {
+  type?: 'child' | 'teen' | 'adult' | 'senior';
+  format?: 'date' | 'string' | 'iso';
+}): Date | string {
+  const opts = this.initOptions(options, {
+    type: 'any',
+    format: 'date'
+  });
+
+  const ageValue = this.age({ type: opts.type });
+  const currentYear = new Date().getFullYear();
+  const birthYear = currentYear - ageValue;
+
+  const birthDate = new Date(
+    birthYear,
+    this.integer(0, 11), // Months 0-11
+    this.integer(1, 28)  // Days 1-28 (avoid month day issues)
+  );
+
+  switch (opts.format) {
+    case 'string':
+      return birthDate.toLocaleDateString();
+    case 'iso':
+      return birthDate.toISOString();
+    default:
+      return birthDate;
+  }
+}
+```
+
+## Geographic Location Module (location.ts)
+
+The geographic location module involves complex geographic calculations and multiple coordinate systems.
+
+### 1. **Precise Coordinate Generation**
+
+```typescript
+interface CoordinatesOptions {
+  min_lat?: number;
+  max_lat?: number;
+  min_lng?: number;
+  max_lng?: number;
+  precision?: number;
+}
+
+export function coordinates(
+  this: RandBox,
+  options?: CoordinatesOptions
+): { lat: number; lng: number } {
+  const opts = this.initOptions(options, {
+    min_lat: -90,
+    max_lat: 90,
+    min_lng: -180,
+    max_lng: 180,
+    precision: 6
+  });
+
+  // Validate coordinate range
+  this.testRange(
+    opts.min_lat < -90 || opts.max_lat > 90,
+    'Latitude must be between -90 and 90'
+  );
+
+  this.testRange(
+    opts.min_lng < -180 || opts.max_lng > 180,
+    'Longitude must be between -180 and 180'
+  );
+
+  const lat = Number(
+    this.floating(opts.min_lat, opts.max_lat).toFixed(opts.precision)
+  );
+
+  const lng = Number(
+    this.floating(opts.min_lng, opts.max_lng).toFixed(opts.precision)
+  );
+
+  return { lat, lng };
+}
+
+// Generate real coordinate ranges based on country
+export function coordinatesInCountry(
+  this: RandBox,
+  country: string
+): { lat: number; lng: number } {
+  const countryBounds = COUNTRY_BOUNDS[country.toUpperCase()];
+
+  if (!countryBounds) {
+    throw new Error(`Country bounds not found for: ${country}`);
+  }
+
+  return this.coordinates({
+    min_lat: countryBounds.minLat,
+    max_lat: countryBounds.maxLat,
+    min_lng: countryBounds.minLng,
+    max_lng: countryBounds.maxLng
+  });
+}
+```
+
+### 2. **Address Generation System**
+
+```typescript
+export function address(this: RandBox, options?: {
+  country?: string;
+  full?: boolean;
+}): string {
+  const opts = this.initOptions(options, {
+    country: 'CN',
+    full: true
+  });
+
+  const countryData = ADDRESS_DATA[opts.country];
+
+  if (!countryData) {
+    throw new Error(`Address data not available for country: ${opts.country}`);
+  }
+
+  let result = '';
+
+  if (opts.country === 'CN') {
+    // Chinese address format
+    const province = this.pickone(countryData.provinces);
+    const city = this.pickone(countryData.cities[province]);
+    const district = this.pickone(countryData.districts[city]);
+    const street = this.pickone(countryData.streets);
+    const number = this.integer(1, 999);
+
+    if (opts.full) {
+      result = `${province}${city}${district}${street}${number}号`;
+    } else {
+      result = `${street}${number}号`;
+    }
+  } else {
+    // Western address format
+    const number = this.integer(1, 9999);
+    const street = this.pickone(countryData.streets);
+    const streetType = this.pickone(countryData.streetTypes);
+
+    result = `${number} ${street} ${streetType}`;
+  }
+
+  return result;
+}
+```
+
+## Finance Module (finance.ts)
+
+The finance module needs to generate financial data that meets real-world standards, especially credit card numbers with Luhn algorithm validation.
+
+### 1. **Luhn Algorithm Implementation**
+
+```typescript
+function luhnChecksum(number: string): number {
+  let sum = 0;
+  let alternate = false;
+
+  // Process each digit from right to left
+  for (let i = number.length - 1; i >= 0; i--) {
+    let digit = parseInt(number.charAt(i), 10);
+
+    if (alternate) {
+      digit *= 2;
+      if (digit > 9) {
+        digit = (digit % 10) + 1;
+      }
+    }
+
+    sum += digit;
+    alternate = !alternate;
+  }
+
+  return sum % 10;
+}
+
+function luhnValid(number: string): boolean {
+  return luhnChecksum(number) === 0;
+}
+
+function generateLuhnValid(prefix: string, length: number): string {
+  // Generate all digits except the last one
+  let number = prefix;
+  while (number.length < length - 1) {
+    number += Math.floor(Math.random() * 10).toString();
+  }
+
+  // Calculate check digit
+  const checksum = luhnChecksum(number + '0');
+  const checkDigit = checksum === 0 ? 0 : 10 - checksum;
+
+  return number + checkDigit.toString();
+}
+```
+
+### 2. **Credit Card Number Generation**
+
+```typescript
+interface CreditCardOptions {
+  type?: 'visa' | 'mastercard' | 'amex' | 'discover' | 'any';
+  formatted?: boolean;
+}
+
+export function cc(this: RandBox, options?: CreditCardOptions): string {
+  const opts = this.initOptions(options, {
+    type: 'any',
+    formatted: false
+  });
+
+  // Credit card type configuration
+  const cardTypes = {
+    visa: { prefix: ['4'], length: [16] },
+    mastercard: { prefix: ['51', '52', '53', '54', '55'], length: [16] },
+    amex: { prefix: ['34', '37'], length: [15] },
+    discover: { prefix: ['6011'], length: [16] }
+  };
+
+  let selectedType: string;
+  if (opts.type === 'any') {
+    selectedType = this.pickone(Object.keys(cardTypes));
+  } else {
+    selectedType = opts.type;
+  }
+
+  const typeConfig = cardTypes[selectedType];
+  const prefix = this.pickone(typeConfig.prefix);
+  const length = this.pickone(typeConfig.length);
+
+  // Generate card number that complies with Luhn algorithm
+  let cardNumber = generateLuhnValid(prefix, length);
+
+  // Format output
+  if (opts.formatted) {
+    if (selectedType === 'amex') {
+      // American Express: 4-6-5 format
+      cardNumber = cardNumber.replace(/(\d{4})(\d{6})(\d{5})/, '$1 $2 $3');
+    } else {
+      // Others: 4-4-4-4 format
+      cardNumber = cardNumber.replace(/(\d{4})/g, '$1 ').trim();
+    }
+  }
+
+  return cardNumber;
+}
+```
+
+## Web Module (web.ts)
+
+The web module generates various internet-related data and needs to comply with relevant RFC standards.
+
+### 1. **Smart Email Generation**
+
+```typescript
+export function email(this: RandBox, options?: {
+  domain?: string;
+  username?: string;
+  length?: number;
+}): string {
+  const opts = this.initOptions(options, {
+    domain: null,
+    username: null,
+    length: null
+  });
+
+  // Generate username
+  let username = opts.username;
+  if (!username) {
+    if (opts.length) {
+      username = this.string({
+        length: opts.length,
+        alpha: true,
+        numeric: true,
+        casing: 'lower'
+      });
+    } else {
+      // Generate based on real name
+      const firstName = this.first().toLowerCase();
+      const lastName = this.last().toLowerCase();
+
+      // Multiple combination patterns
+      const patterns = [
+        `${firstName}.${lastName}`,
+        `${firstName}${lastName}`,
+        `${firstName.charAt(0)}${lastName}`,
+        `${firstName}${this.integer(10, 99)}`
+      ];
+
+      username = this.pickone(patterns);
+    }
+  }
+
+  // Clean username (remove illegal characters)
+  username = username.replace(/[^a-z0-9.-]/g, '');
+
+  // Generate domain
+  let domain = opts.domain;
+  if (!domain) {
+    const commonDomains = [
+      'gmail.com', 'outlook.com', 'yahoo.com', 'hotmail.com',
+      '163.com', 'qq.com', '126.com', 'sina.com'
+    ];
+    domain = this.pickone(commonDomains);
+  }
+
+  return `${username}@${domain}`;
+}
+```
+
+### 2. **IP Address Generation**
+
+```typescript
+export function ip(this: RandBox, options?: {
+  version?: 4 | 6;
+  private?: boolean;
+}): string {
+  const opts = this.initOptions(options, {
+    version: 4,
+    private: false
+  });
+
+  if (opts.version === 4) {
+    if (opts.private) {
+      // Generate private IP address
+      const privateRanges = [
+        { start: [10, 0, 0, 0], end: [10, 255, 255, 255] },
+        { start: [172, 16, 0, 0], end: [172, 31, 255, 255] },
+        { start: [192, 168, 0, 0], end: [192, 168, 255, 255] }
+      ];
+
+      const range = this.pickone(privateRanges);
+      return [
+        this.integer(range.start[0], range.end[0]),
+        this.integer(range.start[1], range.end[1]),
+        this.integer(range.start[2], range.end[2]),
+        this.integer(range.start[3], range.end[3])
+      ].join('.');
+    } else {
+      // Generate public IP address (avoid private and reserved ranges)
+      let octets: number[];
+      do {
+        octets = [
+          this.integer(1, 255),
+          this.integer(0, 255),
+          this.integer(0, 255),
+          this.integer(1, 255)
+        ];
+      } while (isPrivateIP(octets) || isReservedIP(octets));
+
+      return octets.join('.');
+    }
+  } else {
+    // IPv6 address generation
+    const groups = [];
+    for (let i = 0; i < 8; i++) {
+      groups.push(this.string({ length: 4, pool: '0123456789abcdef' }));
+    }
+    return groups.join(':');
+  }
+}
+
+function isPrivateIP(octets: number[]): boolean {
+  return (
+    octets[0] === 10 ||
+    (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
+    (octets[0] === 192 && octets[1] === 168)
+  );
+}
+
+function isReservedIP(octets: number[]): boolean {
+  return (
+    octets[0] === 0 ||       // This network
+    octets[0] === 127 ||     // Loopback address
+    octets[0] === 224 ||     // Multicast address
+    octets[0] >= 240         // Reserved addresses
+  );
+}
+```
+
+## Performance Optimization Techniques
+
+### 1. **Data Preprocessing**
+
+```typescript
+// Pre-compute commonly used data
+const COMMON_PATTERNS = {
+  chinesePhoneFormats: [
+    '13#########',
+    '15#########',
+    '18#########'
+  ].map(pattern => pattern.replace(/#/g, () =>
+    Math.floor(Math.random() * 10).toString()
+  ))
+};
+```
+
+### 2. **Caching Mechanism**
+
+```typescript
+class ModuleCache {
+  private static cache = new Map<string, any>();
+
+  static get<T>(key: string, generator: () => T): T {
+    if (!this.cache.has(key)) {
+      this.cache.set(key, generator());
+    }
+    return this.cache.get(key);
+  }
+}
+
+// Usage example
+export function getCountryData(country: string) {
+  return ModuleCache.get(`country_${country}`, () =>
+    loadCountryData(country)
+  );
+}
+```
+
+## Next Article Preview
+
+In the next article, I will dive deep into RandBox's testing system and quality assurance, including:
+
+- Complete unit test design
+- Performance testing and benchmark comparisons
+- Multi-environment compatibility testing
+- Continuous integration process setup
+
+Stay tuned for "Building RandBox from Scratch (4/5) - Testing System and Quality Assurance"!
+
+---
+
+## About RandBox
+
+**🏠 Homepage**: [https://randbox.top](https://randbox.top)
+**📦 GitHub**: [https://github.com/027xiguapi/randbox](https://github.com/027xiguapi/randbox)
+**📚 Documentation**: [https://randbox.top/zh/docs](https://randbox.top/zh/docs)
+
+If this project is helpful to you, please give us a ⭐ Star!
