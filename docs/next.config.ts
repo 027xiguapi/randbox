@@ -28,4 +28,8 @@ export default withNextra({
   sassOptions: {
     silenceDeprecations: ['legacy-js-api'],
   },
+  productionBrowserSourceMaps: false,
+  experimental: {
+    serverSourceMaps: false,
+  },
 })
