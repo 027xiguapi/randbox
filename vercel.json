@@ -7,9 +7,5 @@
     }
   ],
   "buildCommand": "cd docs && pnpm install --frozen-lockfile && pnpm build",
-  "outputDirectory": "docs/.next",
-  "framework": "nextjs",
-  "installCommand": "pnpm install --frozen-lockfile",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./docs/",
-  "rootDirectory": "docs"
+  "installCommand": "pnpm install --frozen-lockfile"
 }
