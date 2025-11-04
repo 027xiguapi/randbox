@@ -1,8 +1,15 @@
 {
+  "version": 2,
   "builds": [
-    { "src": "docs/next.config.js", "use": "@vercel/next" }
+    {
+      "src": "docs/next.config.js",
+      "use": "@vercel/next"
+    }
   ],
-  "routes": [
-    { "src": "/(.*)", "dest": "docs/$1" }
-  ]
+  "buildCommand": "cd docs && pnpm install --frozen-lockfile && pnpm build",
+  "outputDirectory": "docs/.next",
+  "framework": "nextjs",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./docs/",
+  "rootDirectory": "docs"
 }
