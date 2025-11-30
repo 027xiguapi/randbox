@@ -45,8 +45,8 @@ export function CustomFooter() {
       )}
       >
         <UnderlineLink
-          link="https://creativecommons.org/licenses/by-nc-sa/4.0/"
-          label="CC BY-NC-SA 4.0"
+          link="https://routerpark.com"
+          label="Router Park"
           underlineByDefault
         />
 
