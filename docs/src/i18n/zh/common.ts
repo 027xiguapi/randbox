@@ -7,4 +7,13 @@ export default {
   lastUpdated: '最后更新于:',
   getStarted: '开始使用',
   featuresDesc: '轻松生成各种随机数据，提高开发效率和测试覆盖率',
+  loginLabel: '登录',
+  loginTitle: '登录 RandBox',
+  loginDescription: '使用 QQ 帐号快捷登录。',
+  loginPartnerTitle: '合作帐号登录',
+  loginQQButton: 'QQ帐号登录',
+  loginQQRedirecting: '正在前往 QQ 登录…',
+  loginQQMissing: 'QQ 登录尚未配置，请先设置环境变量 NEXT_PUBLIC_QQ_APP_ID。',
+  loginQQFailed: '无法跳转到 QQ 登录，请稍后重试。',
+  loginClose: '关闭登录弹框',
 }

@@ -7,4 +7,13 @@ export default {
   lastUpdated: 'Last updated on:',
   getStarted: 'Get Started',
   featuresDesc: 'Easily generate various random data to improve development efficiency and test coverage',
+  loginLabel: 'Sign in',
+  loginTitle: 'Sign in to RandBox',
+  loginDescription: 'Use your QQ account for a quick sign-in.',
+  loginPartnerTitle: 'Partner sign-in',
+  loginQQButton: 'Continue with QQ',
+  loginQQRedirecting: 'Redirecting to QQ…',
+  loginQQMissing: 'QQ sign-in is not configured. Set NEXT_PUBLIC_QQ_APP_ID first.',
+  loginQQFailed: 'Unable to open QQ sign-in. Please try again later.',
+  loginClose: 'Close sign-in dialog',
 }

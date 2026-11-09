@@ -5,6 +5,7 @@ import { Footer, LastUpdated, Layout, Navbar } from 'nextra-theme-docs'
 import { Banner, Head, Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import { CustomFooter } from '@/components/CustomFooter'
+import { LoginDialog } from '@/components/login/login-dialog'
 import { useServerLocale } from '@/hooks'
 import LocaleToggle from '@/widgets/locale-toggle'
 import ThemeToggle from '@/widgets/theme-toggle'
@@ -117,6 +118,7 @@ const CustomNavbar = async ({ lang }: I18nLangAsyncProps) => {
       projectLink={repo}
     >
       <>
+        <LoginDialog />
         <LocaleToggle className="max-md:hidden" />
         <ThemeToggle className="max-md:hidden" />
       </>

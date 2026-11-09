@@ -7,4 +7,13 @@ export default {
   lastUpdated: '最終更新日:',
   getStarted: '開始する',
   featuresDesc: '様々なランダムデータを簡単に生成、開発効率とテストカバレッジを向上',
+  loginLabel: 'ログイン',
+  loginTitle: 'RandBox にサインイン',
+  loginDescription: 'QQ アカウントですばやくサインインできます。',
+  loginPartnerTitle: '連携アカウントでログイン',
+  loginQQButton: 'QQ でログイン',
+  loginQQRedirecting: 'QQ にリダイレクト中…',
+  loginQQMissing: 'QQ ログインが設定されていません。NEXT_PUBLIC_QQ_APP_ID を設定してください。',
+  loginQQFailed: 'QQ ログインを開けませんでした。しばらくしてから再試行してください。',
+  loginClose: 'ログインダイアログを閉じる',
 }
